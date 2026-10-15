@@ -1,0 +1,460 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-09-18T03:22:15Z",
+  "policies": [
+    {
+      "policy_id": "fault-code-knowledge",
+      "name": "故障码知识问答",
+      "category": "故障码",
+      "description": "识别设备故障码、报警码和错误码，强制检索企业资料并进行证据校验。",
+      "priority": 200,
+      "match": {
+        "keywords": [
+          "故障码",
+          "错误码",
+          "报警码",
+          "故障",
+          "报警"
+        ],
+        "entity_types": [],
+        "examples": [
+          "北辰47 的 E203 是什么？",
+          "E203 怎么处理？"
+        ],
+        "mode": "any"
+      },
+      "action": {
+        "route": "knowledge_qa",
+        "source_types": [
+          "document",
+          "qa",
+          "graph"
+        ],
+        "top_k": 12,
+        "similarity_threshold": 0.3,
+        "require_evidence": true,
+        "human_confirmation": false
+      },
+      "id": "fault-code-knowledge",
+      "enabled": true,
+      "status": "published",
+      "version": 1,
+      "published_version": 1,
+      "created_at": "2026-09-18T03:22:15Z",
+      "updated_at": "2026-09-18T03:22:15Z",
+      "updated_by": "system",
+      "versions": [
+        {
+          "version": 1,
+          "status": "published",
+          "created_at": "2026-09-18T03:22:15Z",
+          "published_at": "2026-09-18T03:22:15Z",
+          "note": "系统默认策略",
+          "snapshot": {
+            "policy_id": "fault-code-knowledge",
+            "id": "fault-code-knowledge",
+            "name": "故障码知识问答",
+            "category": "故障码",
+            "description": "识别设备故障码、报警码和错误码，强制检索企业资料并进行证据校验。",
+            "enabled": true,
+            "priority": 200,
+            "match": {
+              "keywords": [
+                "故障码",
+                "错误码",
+                "报警码",
+                "故障",
+                "报警"
+              ],
+              "entity_types": [],
+              "examples": [
+                "北辰47 的 E203 是什么？",
+                "E203 怎么处理？"
+              ],
+              "mode": "any"
+            },
+            "action": {
+              "route": "knowledge_qa",
+              "source_types": [
+                "document",
+                "qa",
+                "graph"
+              ],
+              "top_k": 12,
+              "similarity_threshold": 0.3,
+              "require_evidence": true,
+              "human_confirmation": false
+            },
+            "version": 1,
+            "published_version": 1,
+            "status": "published",
+            "updated_at": "2026-09-18T03:22:15Z",
+            "updated_by": "system"
+          }
+        }
+      ]
+    },
+    {
+      "policy_id": "device-status-query",
+      "name": "设备实时状态查询",
+      "category": "业务查询",
+      "description": "查询设备当前状态、报警记录和实时运行数据，不自动执行写操作。",
+      "priority": 180,
+      "match": {
+        "keywords": [
+          "实时状态",
+          "当前状态",
+          "当前报警",
+          "报警记录",
+          "运行状态"
+        ],
+        "entity_types": [],
+        "examples": [
+          "查询北辰47当前状态",
+          "设备现在还在报警吗？"
+        ],
+        "mode": "any"
+      },
+      "action": {
+        "route": "business_query",
+        "source_types": [
+          "api",
+          "sql"
+        ],
+        "top_k": 8,
+        "similarity_threshold": 0.3,
+        "require_evidence": false,
+        "human_confirmation": false
+      },
+      "id": "device-status-query",
+      "enabled": true,
+      "status": "published",
+      "version": 1,
+      "published_version": 1,
+      "created_at": "2026-09-18T03:22:15Z",
+      "updated_at": "2026-09-18T03:22:15Z",
+      "updated_by": "system",
+      "versions": [
+        {
+          "version": 1,
+          "status": "published",
+          "created_at": "2026-09-18T03:22:15Z",
+          "published_at": "2026-09-18T03:22:15Z",
+          "note": "系统默认策略",
+          "snapshot": {
+            "policy_id": "device-status-query",
+            "id": "device-status-query",
+            "name": "设备实时状态查询",
+            "category": "业务查询",
+            "description": "查询设备当前状态、报警记录和实时运行数据，不自动执行写操作。",
+            "enabled": true,
+            "priority": 180,
+            "match": {
+              "keywords": [
+                "实时状态",
+                "当前状态",
+                "当前报警",
+                "报警记录",
+                "运行状态"
+              ],
+              "entity_types": [],
+              "examples": [
+                "查询北辰47当前状态",
+                "设备现在还在报警吗？"
+              ],
+              "mode": "any"
+            },
+            "action": {
+              "route": "business_query",
+              "source_types": [
+                "api",
+                "sql"
+              ],
+              "top_k": 8,
+              "similarity_threshold": 0.3,
+              "require_evidence": false,
+              "human_confirmation": false
+            },
+            "version": 1,
+            "published_version": 1,
+            "status": "published",
+            "updated_at": "2026-09-18T03:22:15Z",
+            "updated_by": "system"
+          }
+        }
+      ]
+    },
+    {
+      "policy_id": "work-order-action",
+      "name": "维修工单动作",
+      "category": "业务动作",
+      "description": "创建、提交或修改维修工单；允许生成草稿，但正式提交必须人工确认。",
+      "priority": 300,
+      "match": {
+        "keywords": [
+          "创建工单",
+          "提交工单",
+          "维修工单",
+          "工单草稿",
+          "修改设备参数"
+        ],
+        "entity_types": [],
+        "examples": [
+          "给北辰47创建维修工单"
+        ],
+        "mode": "any"
+      },
+      "action": {
+        "route": "business_action",
+        "source_types": [
+          "api"
+        ],
+        "top_k": 5,
+        "similarity_threshold": 0.3,
+        "require_evidence": false,
+        "human_confirmation": true
+      },
+      "id": "work-order-action",
+      "enabled": true,
+      "status": "published",
+      "version": 1,
+      "published_version": 1,
+      "created_at": "2026-09-18T03:22:15Z",
+      "updated_at": "2026-09-18T03:22:15Z",
+      "updated_by": "system",
+      "versions": [
+        {
+          "version": 1,
+          "status": "published",
+          "created_at": "2026-09-18T03:22:15Z",
+          "published_at": "2026-09-18T03:22:15Z",
+          "note": "系统默认策略",
+          "snapshot": {
+            "policy_id": "work-order-action",
+            "id": "work-order-action",
+            "name": "维修工单动作",
+            "category": "业务动作",
+            "description": "创建、提交或修改维修工单；允许生成草稿，但正式提交必须人工确认。",
+            "enabled": true,
+            "priority": 300,
+            "match": {
+              "keywords": [
+                "创建工单",
+                "提交工单",
+                "维修工单",
+                "工单草稿",
+                "修改设备参数"
+              ],
+              "entity_types": [],
+              "examples": [
+                "给北辰47创建维修工单"
+              ],
+              "mode": "any"
+            },
+            "action": {
+              "route": "business_action",
+              "source_types": [
+                "api"
+              ],
+              "top_k": 5,
+              "similarity_threshold": 0.3,
+              "require_evidence": false,
+              "human_confirmation": true
+            },
+            "version": 1,
+            "published_version": 1,
+            "status": "published",
+            "updated_at": "2026-09-18T03:22:15Z",
+            "updated_by": "system"
+          }
+        }
+      ]
+    },
+    {
+      "policy_id": "generic-knowledge-question",
+      "name": "通用知识问答",
+      "category": "知识问答",
+      "description": "处理设备参数、协议、功能、规格和说明书等事实型知识问题。",
+      "priority": 100,
+      "match": {
+        "keywords": [
+          "是什么",
+          "多少",
+          "支持",
+          "参数",
+          "规格",
+          "功能",
+          "协议",
+          "接口",
+          "说明书",
+          "手册"
+        ],
+        "entity_types": [],
+        "examples": [
+          "M1101 有多少路数字量输入？",
+          "这个模块支持什么通信协议？"
+        ],
+        "mode": "any"
+      },
+      "action": {
+        "route": "knowledge_qa",
+        "source_types": [
+          "document",
+          "qa",
+          "graph"
+        ],
+        "top_k": 12,
+        "similarity_threshold": 0.3,
+        "require_evidence": true,
+        "human_confirmation": false
+      },
+      "id": "generic-knowledge-question",
+      "enabled": true,
+      "status": "published",
+      "version": 1,
+      "published_version": 1,
+      "created_at": "2026-09-18T03:22:15Z",
+      "updated_at": "2026-09-18T03:22:15Z",
+      "updated_by": "system",
+      "versions": [
+        {
+          "version": 1,
+          "status": "published",
+          "created_at": "2026-09-18T03:22:15Z",
+          "published_at": "2026-09-18T03:22:15Z",
+          "note": "系统默认策略",
+          "snapshot": {
+            "policy_id": "generic-knowledge-question",
+            "id": "generic-knowledge-question",
+            "name": "通用知识问答",
+            "category": "知识问答",
+            "description": "处理设备参数、协议、功能、规格和说明书等事实型知识问题。",
+            "enabled": true,
+            "priority": 100,
+            "match": {
+              "keywords": [
+                "是什么",
+                "多少",
+                "支持",
+                "参数",
+                "规格",
+                "功能",
+                "协议",
+                "接口",
+                "说明书",
+                "手册"
+              ],
+              "entity_types": [],
+              "examples": [
+                "M1101 有多少路数字量输入？",
+                "这个模块支持什么通信协议？"
+              ],
+              "mode": "any"
+            },
+            "action": {
+              "route": "knowledge_qa",
+              "source_types": [
+                "document",
+                "qa",
+                "graph"
+              ],
+              "top_k": 12,
+              "similarity_threshold": 0.3,
+              "require_evidence": true,
+              "human_confirmation": false
+            },
+            "version": 1,
+            "published_version": 1,
+            "status": "published",
+            "updated_at": "2026-09-18T03:22:15Z",
+            "updated_by": "system"
+          }
+        }
+      ]
+    },
+    {
+      "policy_id": "casual-conversation",
+      "name": "普通对话",
+      "category": "普通对话",
+      "description": "处理问候、能力介绍等不需要企业资料的对话。",
+      "priority": 50,
+      "match": {
+        "keywords": [
+          "你好",
+          "您好",
+          "你是谁",
+          "你能做什么",
+          "介绍一下你的能力"
+        ],
+        "entity_types": [],
+        "examples": [
+          "你好",
+          "你能做什么？"
+        ],
+        "mode": "any"
+      },
+      "action": {
+        "route": "casual",
+        "source_types": [],
+        "top_k": 1,
+        "similarity_threshold": 0.0,
+        "require_evidence": false,
+        "human_confirmation": false
+      },
+      "id": "casual-conversation",
+      "enabled": true,
+      "status": "published",
+      "version": 1,
+      "published_version": 1,
+      "created_at": "2026-09-18T03:22:15Z",
+      "updated_at": "2026-09-18T03:22:15Z",
+      "updated_by": "system",
+      "versions": [
+        {
+          "version": 1,
+          "status": "published",
+          "created_at": "2026-09-18T03:22:15Z",
+          "published_at": "2026-09-18T03:22:15Z",
+          "note": "系统默认策略",
+          "snapshot": {
+            "policy_id": "casual-conversation",
+            "id": "casual-conversation",
+            "name": "普通对话",
+            "category": "普通对话",
+            "description": "处理问候、能力介绍等不需要企业资料的对话。",
+            "enabled": true,
+            "priority": 50,
+            "match": {
+              "keywords": [
+                "你好",
+                "您好",
+                "你是谁",
+                "你能做什么",
+                "介绍一下你的能力"
+              ],
+              "entity_types": [],
+              "examples": [
+                "你好",
+                "你能做什么？"
+              ],
+              "mode": "any"
+            },
+            "action": {
+              "route": "casual",
+              "source_types": [],
+              "top_k": 1,
+              "similarity_threshold": 0.0,
+              "require_evidence": false,
+              "human_confirmation": false
+            },
+            "version": 1,
+            "published_version": 1,
+            "status": "published",
+            "updated_at": "2026-09-18T03:22:15Z",
+            "updated_by": "system"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,179 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 900" width="1400" height="900" role="img" aria-labelledby="title desc">
+  <title id="title">鹈鹕骑自行车</title>
+  <desc id="desc">一只友好的白色鹈鹕在阳光明媚的海滨骑着复古自行车。</desc>
+
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#56b9ee"/>
+      <stop offset="1" stop-color="#d8f1fb"/>
+    </linearGradient>
+    <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3ca9d6"/>
+      <stop offset="1" stop-color="#087da9"/>
+    </linearGradient>
+    <linearGradient id="road" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f2d7ae"/>
+      <stop offset="1" stop-color="#d3ad79"/>
+    </linearGradient>
+    <linearGradient id="feather" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fffdf8"/>
+      <stop offset="1" stop-color="#e7e7e1"/>
+    </linearGradient>
+    <linearGradient id="beak" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffd36a"/>
+      <stop offset="1" stop-color="#ed7e28"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="12"/>
+      <feOffset dy="16"/>
+      <feComponentTransfer><feFuncA type="linear" slope=".28"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="8"/>
+      <feOffset dy="8"/>
+      <feComponentTransfer><feFuncA type="linear" slope=".23"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <pattern id="paving" width="150" height="80" patternUnits="userSpaceOnUse">
+      <rect width="150" height="80" fill="url(#road)"/>
+      <path d="M0 0H150M0 80H150M0 0V80M150 0V80" stroke="#bd9463" stroke-width="3" opacity=".35"/>
+      <path d="M70 0V80" stroke="#e6c796" stroke-width="3" opacity=".45"/>
+    </pattern>
+  </defs>
+
+  <!-- sky and seaside -->
+  <rect width="1400" height="900" fill="url(#sky)"/>
+  <circle cx="150" cy="140" r="64" fill="#fff2aa" opacity=".96"/>
+  <circle cx="150" cy="140" r="91" fill="#fff2aa" opacity=".18"/>
+
+  <g fill="#fff" opacity=".9">
+    <path d="M235 174c15-29 59-29 75 0 31-14 68 8 68 42H169c0-28 29-49 66-42z"/>
+    <path d="M899 120c20-38 73-38 94 0 39-18 83 10 83 51H814c0-34 36-59 85-51z"/>
+    <path d="M1030 277c13-25 50-25 64 0 27-12 58 7 58 35H973c0-24 25-42 57-35z"/>
+  </g>
+
+  <path d="M0 390c160-77 260-63 395 5 145 73 236 48 371-11 153-67 267-59 390 3 117 59 160 54 244 13v230H0z" fill="#638b9d" opacity=".55"/>
+  <path d="M0 420c188-72 296-56 416 15 145 84 244 51 375-8 156-71 279-53 401 8 92 45 145 44 208 18v214H0z" fill="#426f89" opacity=".72"/>
+  <rect y="420" width="1400" height="244" fill="url(#water)"/>
+  <path d="M0 448c128 22 193-9 302 4 104 12 185 32 300 12 110-19 185-45 284-20 122 31 196 10 286 0 92-10 155 6 228 25" fill="none" stroke="#a8e5ef" stroke-width="9" opacity=".68"/>
+  <path d="M0 510c124 22 208-10 310 3 103 12 194 33 303 9 122-26 185-38 295-14 109 24 186 11 284-3 86-12 148 2 208 18" fill="none" stroke="#c0f0f3" stroke-width="6" opacity=".58"/>
+  <path d="M0 581c142 18 230-12 352 6 117 18 182 25 291 3 108-21 195-38 307-13 125 28 215 6 307-6 56-7 100-3 143 10" fill="none" stroke="#79d3e6" stroke-width="7" opacity=".7"/>
+
+  <!-- distant town -->
+  <g transform="translate(1040 292)" filter="url(#softShadow)">
+    <path d="M-32 128l44-76 42 76z" fill="#7d9bb0"/>
+    <path d="M-10 111V-8h50v119" fill="#fff6e2"/>
+    <path d="M15-8l10-23 10 23z" fill="#c76b4c"/>
+    <path d="M-94 139h360v120H-94z" fill="#f2ca9d"/>
+    <path d="M-94 139h360v20H-94z" fill="#c66c4c"/>
+    <g fill="#68a0b4">
+      <rect x="-67" y="173" width="24" height="31"/><rect x="-7" y="173" width="24" height="31"/>
+      <rect x="50" y="173" width="24" height="31"/><rect x="108" y="173" width="24" height="31"/>
+      <rect x="166" y="173" width="24" height="31"/><rect x="222" y="173" width="24" height="31"/>
+    </g>
+    <g fill="#f2ebc7"><rect x="-53" y="218" width="38" height="41"/><rect x="35" y="218" width="38" height="41"/><rect x="122" y="218" width="38" height="41"/><rect x="207" y="218" width="38" height="41"/></g>
+  </g>
+
+  <!-- railing and promenade -->
+  <rect y="630" width="1400" height="270" fill="url(#road)"/>
+  <rect y="634" width="1400" height="266" fill="url(#paving)" opacity=".78"/>
+  <g stroke="#2b4a59" stroke-width="10" fill="none">
+    <path d="M0 612H1400"/>
+    <path d="M0 675H1400" opacity=".28"/>
+    <path d="M0 612V672M180 612V672M360 612V672M540 612V672M720 612V672M900 612V672M1080 612V672M1260 612V672M1400 612V672"/>
+  </g>
+  <g fill="#354e5b">
+    <circle cx="0" cy="612" r="18"/><circle cx="180" cy="612" r="18"/><circle cx="360" cy="612" r="18"/><circle cx="540" cy="612" r="18"/><circle cx="720" cy="612" r="18"/><circle cx="900" cy="612" r="18"/><circle cx="1080" cy="612" r="18"/><circle cx="1260" cy="612" r="18"/><circle cx="1400" cy="612" r="18"/>
+  </g>
+
+  <!-- lamp post -->
+  <g transform="translate(1255 98)" fill="#263641">
+    <path d="M39 0h18l10 37H29z"/>
+    <path d="M33 36h30l18 65H15z" fill="#334b56"/>
+    <path d="M39 101h19v487H39z"/>
+    <path d="M13 590h71l18 17H-5z"/>
+    <path d="M20 44h56v42H20z" fill="#ffe5a5" opacity=".85"/>
+    <path d="M15 44h66l-13-25H28z"/>
+  </g>
+
+  <!-- flowers -->
+  <g transform="translate(82 580)" filter="url(#softShadow)">
+    <path d="M0 66h170l-20 119H20z" fill="#d3b187"/>
+    <path d="M-15 67h200l-10 24H-5z" fill="#b88d65"/>
+    <g fill="#4f9c69"><path d="M25 73c-15-74 14-92 30-7 20-83 48-58 22 8 43-69 62-38 20 8 44-37 63 0 11 12z"/><path d="M96 72c-8-67 26-78 29-5 33-53 53-20 13 10z"/></g>
+    <g fill="#f46783"><circle cx="26" cy="55" r="18"/><circle cx="70" cy="27" r="17"/><circle cx="112" cy="54" r="19"/><circle cx="148" cy="36" r="16"/></g>
+    <g fill="#ffd75a"><circle cx="26" cy="55" r="6"/><circle cx="70" cy="27" r="6"/><circle cx="112" cy="54" r="6"/><circle cx="148" cy="36" r="6"/></g>
+  </g>
+
+  <!-- bicycle shadow -->
+  <ellipse cx="746" cy="845" rx="378" ry="28" fill="#694d39" opacity=".26"/>
+
+  <!-- bicycle -->
+  <g filter="url(#shadow)" stroke-linecap="round" stroke-linejoin="round">
+    <g fill="none" stroke="#eaf0e7" stroke-width="13">
+      <circle cx="474" cy="755" r="112"/>
+      <circle cx="1000" cy="755" r="112"/>
+    </g>
+    <g fill="none" stroke="#405f68" stroke-width="6">
+      <circle cx="474" cy="755" r="104" stroke="#f5e8bd" stroke-width="14"/>
+      <circle cx="1000" cy="755" r="104" stroke="#f5e8bd" stroke-width="14"/>
+      <path d="M474 755L628 618 788 755zM628 618l108 0 52 137M628 618l-38 137M788 755h212M788 755l-52-137M736 618l70-75M736 618l-92-2" stroke="#4d858c" stroke-width="12"/>
+      <path d="M736 616l70-73M787 755l-7 48M474 755h154M1000 755h-212"/>
+      <path d="M652 754l41 27M652 754l-40-28M640 746l-18-20M682 770l21 12" stroke="#334d54" stroke-width="9"/>
+      <circle cx="474" cy="755" r="14" fill="#e3a738" stroke="#405f68" stroke-width="6"/>
+      <circle cx="788" cy="755" r="14" fill="#e3a738" stroke="#405f68" stroke-width="6"/>
+    </g>
+    <path d="M786 754l4-111 31-44" fill="none" stroke="#4d858c" stroke-width="12"/>
+    <path d="M806 599c-18-22-18-34-7-47M806 599c27 9 45 3 60-13" fill="none" stroke="#405f68" stroke-width="10"/>
+    <path d="M614 617h-66" fill="none" stroke="#4a4b50" stroke-width="14"/>
+    <path d="M534 604h77" fill="none" stroke="#302f34" stroke-width="20"/>
+    <path d="M675 623h73" fill="none" stroke="#405f68" stroke-width="7"/>
+    <circle cx="806" cy="635" r="39" fill="#f8e2a3" stroke="#405f68" stroke-width="9"/>
+    <circle cx="806" cy="635" r="25" fill="#fff4c9"/>
+    <path d="M806 626v19M797 635h18" stroke="#d2a557" stroke-width="4"/>
+
+    <!-- basket -->
+    <path d="M402 603h180l-16 96H418z" fill="#b98249" stroke="#744d30" stroke-width="8"/>
+    <path d="M410 620h165M414 646h164M419 672h158" stroke="#e6b878" stroke-width="6" opacity=".8"/>
+    <path d="M428 604c-14-37 14-53 34-5M548 604c15-37-13-53-33-5" fill="none" stroke="#744d30" stroke-width="8"/>
+    <path d="M432 597h118" stroke="#6e4b31" stroke-width="14"/>
+    <path d="M447 593c23-20 42-22 66-3 21-25 43-17 57 4" fill="#d7edf3" stroke="#5b94a1" stroke-width="5"/>
+  </g>
+
+  <!-- pelican body -->
+  <g filter="url(#shadow)" stroke-linejoin="round">
+    <ellipse cx="665" cy="463" rx="150" ry="190" fill="url(#feather)" stroke="#c7c8c0" stroke-width="6"/>
+    <path d="M574 465c-68-81-63-180 10-219 64-34 121 13 101 87-12 46-47 69-74 116z" fill="url(#feather)" stroke="#c7c8c0" stroke-width="6"/>
+    <path d="M599 256c-5-91 35-151 104-151 62 0 105 47 104 102-1 56-45 96-102 95-45 0-82-15-106-46z" fill="url(#feather)" stroke="#c7c8c0" stroke-width="6"/>
+    <!-- head feathers -->
+    <path d="M632 128c-35-27-12-66 25-39 3-44 45-39 44 1 27-32 57-7 35 25 45-9 54 29 10 39" fill="#fffdf9" stroke="#c7c8c0" stroke-width="6"/>
+    <!-- wing holding left handlebar -->
+    <path d="M573 369c-87 22-139 95-105 161 20 39 67 16 101-21 30-32 67-72 95-107z" fill="#8b8d94" stroke="#626671" stroke-width="7"/>
+    <path d="M485 494c29-27 61-55 119-99M501 516c37-32 69-58 118-92M527 532c31-27 62-50 100-73" fill="none" stroke="#c9cbd0" stroke-width="7"/>
+    <!-- wing holding right handlebar -->
+    <path d="M755 376c91 14 144 73 122 128-18 45-68 34-105 9-39-26-78-60-104-87z" fill="#8b8d94" stroke="#626671" stroke-width="7"/>
+    <path d="M826 472c-39-27-73-47-130-80M812 501c-43-29-78-49-127-72M791 522c-36-24-70-40-107-58" fill="none" stroke="#c9cbd0" stroke-width="7"/>
+    <!-- face -->
+    <ellipse cx="651" cy="167" rx="25" ry="31" fill="#fff" stroke="#777a7c" stroke-width="5"/>
+    <ellipse cx="651" cy="170" rx="12" ry="18" fill="#252c32"/>
+    <circle cx="656" cy="163" r="5" fill="#fff"/>
+    <path d="M672 192c-18 15-40 18-62 6" fill="none" stroke="#bf6b43" stroke-width="7"/>
+    <!-- beak and pouch -->
+    <path d="M605 194c-67-31-163-18-219 12 66 47 150 74 220 27 36-24 43-21 79-7 22 8 43-3 24-17-24-18-57-1-104-15z" fill="url(#beak)" stroke="#cb6d32" stroke-width="6"/>
+    <path d="M394 206c66 21 134 26 208 18" fill="none" stroke="#fff0b4" stroke-width="7" opacity=".8"/>
+    <path d="M409 220c43 24 94 34 145 27 33-5 65-23 91-21-23 56-97 69-161 38-36-17-59-29-75-44z" fill="#f59b50" stroke="#cf7138" stroke-width="5"/>
+    <path d="M411 221c60 22 124 27 181 18" fill="none" stroke="#bc5e39" stroke-width="4" opacity=".7"/>
+    <!-- belly feathers -->
+    <path d="M592 528c35 26 70 34 111 17M582 555c31 27 65 39 105 29M594 584c27 23 58 32 90 27" fill="none" stroke="#d3d5d0" stroke-width="7" opacity=".9"/>
+    <!-- legs and webbed feet -->
+    <path d="M639 604l-20 114M728 603l12 111" fill="none" stroke="#e99139" stroke-width="18"/>
+    <path d="M618 718c-31 1-48 10-62 22 27-3 48 1 70 8-20 9-30 16-39 29 30-11 52-13 78-11-7-19-20-34-47-48z" fill="#f0a747" stroke="#c87828" stroke-width="5"/>
+    <path d="M740 714c27-4 47 1 67 14-22 3-39 9-57 20 25 2 37 7 49 17-28-2-50 1-73 10 0-22 4-42 14-61z" fill="#f0a747" stroke="#c87828" stroke-width="5"/>
+  </g>
+
+  <!-- small motion accents -->
+  <g fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".8">
+    <path d="M314 737h55"/><path d="M290 764h32"/><path d="M1095 729h45"/>
+  </g>
+</svg>

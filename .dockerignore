@@ -1,0 +1,12 @@
+.env
+.git
+.pytest_cache
+**/__pycache__
+**/*.pyc
+app/data/*.sqlite3
+app/data/*.sqlite3-*
+app/data/*.key
+allAgent
+output
+tmp
+interface_screenshots

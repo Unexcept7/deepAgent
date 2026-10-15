@@ -1,0 +1,8 @@
+INFO:     127.0.0.1:62195 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62196 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63776 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63776 - "GET /conversations HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50335 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50335 - "GET /conversations/86389493-85e6-414c-9e4c-5295bca59e2e/messages HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50335 - "GET /conversations HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50335 - "GET /quick-prompts?conversation_id=86389493-85e6-414c-9e4c-5295bca59e2e HTTP/1.1" 200 OK

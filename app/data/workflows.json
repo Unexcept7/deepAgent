@@ -1,0 +1,3730 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-10-14T06:31:36.577611+00:00",
+  "workflows": [
+    {
+      "workflow_id": "knowledge-research",
+      "id": "knowledge-research",
+      "name": "多源知识检索",
+      "description": "强制检索并对每个需求项执行证据校验、裁判和覆盖审计。",
+      "enabled": true,
+      "status": "published",
+      "version": 2,
+      "published_version": 2,
+      "params": {
+        "source_types": [
+          "document",
+          "qa",
+          "graph",
+          "sql",
+          "api"
+        ],
+        "top_k": 12,
+        "similarity_threshold": 0.3,
+        "evidence_mode": "generic",
+        "timeout_seconds": 8,
+        "max_parallel": 4,
+        "human_confirmation": {
+          "enabled": true,
+          "points": [
+            "human-confirm",
+            "work-order-confirm"
+          ],
+          "actions": [
+            "write",
+            "publish",
+            "submit"
+          ]
+        }
+      },
+      "nodes": [
+        {
+          "id": "route",
+          "name": "意图和实体识别",
+          "type": "router",
+          "x": 40.0,
+          "y": 110.0,
+          "enabled": true,
+          "params": {},
+          "condition": null,
+          "branch": null,
+          "human_confirmation": false
+        },
+        {
+          "id": "plan",
+          "name": "用户需求规划",
+          "type": "requirement_plan",
+          "x": 250.0,
+          "y": 110.0,
+          "enabled": true,
+          "params": {
+            "max_items": 12
+          },
+          "condition": null,
+          "branch": null,
+          "human_confirmation": false
+        },
+        {
+          "id": "search",
+          "name": "统一搜索",
+          "type": "unified_search",
+          "x": 470.0,
+          "y": 110.0,
+          "enabled": true,
+          "params": {
+            "top_k": 12
+          },
+          "condition": null,
+          "branch": null,
+          "human_confirmation": false
+        },
+        {
+          "id": "evidence",
+          "name": "证据校验",
+          "type": "evidence_gate",
+          "x": 690.0,
+          "y": 110.0,
+          "enabled": true,
+          "params": {
+            "threshold": 0.3
+          },
+          "condition": null,
+          "branch": null,
+          "human_confirmation": false
+        },
+        {
+          "id": "judge",
+          "name": "证据裁判与覆盖审计",
+          "type": "claim_judge",
+          "x": 910.0,
+          "y": 110.0,
+          "enabled": true,
+          "params": {},
+          "condition": null,
+          "branch": null,
+          "human_confirmation": false
+        },
+        {
+          "id": "answer",
+          "name": "引用回答",
+          "type": "answer",
+          "x": 1130.0,
+          "y": 110.0,
+          "enabled": true,
+          "params": {},
+          "condition": null,
+          "branch": null,
+          "human_confirmation": false
+        },
+        {
+          "id": "human-confirm",
+          "name": "人工确认点",
+          "type": "human_confirmation",
+          "x": 910.0,
+          "y": 280.0,
+          "enabled": false,
+          "params": {
+            "actions": [
+              "写入",
+              "发布"
+            ]
+          },
+          "condition": null,
+          "branch": null,
+          "human_confirmation": true
+        }
+      ],
+      "edges": [
+        {
+          "id": "edge-route-plan",
+          "source": "route",
+          "target": "plan",
+          "label": null,
+          "condition": null,
+          "enabled": true
+        },
+        {
+          "id": "edge-plan-search",
+          "source": "plan",
+          "target": "search",
+          "label": null,
+          "condition": null,
+          "enabled": true
+        },
+        {
+          "id": "edge-search-evidence",
+          "source": "search",
+          "target": "evidence",
+          "label": null,
+          "condition": null,
+          "enabled": true
+        },
+        {
+          "id": "edge-evidence-judge",
+          "source": "evidence",
+          "target": "judge",
+          "label": null,
+          "condition": null,
+          "enabled": true
+        },
+        {
+          "id": "edge-judge-answer",
+          "source": "judge",
+          "target": "answer",
+          "label": null,
+          "condition": null,
+          "enabled": true
+        },
+        {
+          "id": "edge-judge-human-confirm",
+          "source": "judge",
+          "target": "human-confirm",
+          "label": "需要写入时",
+          "condition": "requires_confirmation == true",
+          "enabled": true
+        },
+        {
+          "id": "edge-human-confirm-answer",
+          "source": "human-confirm",
+          "target": "answer",
+          "label": "确认后",
+          "condition": null,
+          "enabled": true
+        }
+      ],
+      "created_at": "2026-09-17T02:01:37.958543+00:00",
+      "updated_at": "2026-09-17T02:28:39.015824+00:00",
+      "updated_by": "api",
+      "versions": [
+        {
+          "version": 1,
+          "status": "published",
+          "created_at": "2026-09-17T02:01:37.958543+00:00",
+          "published_at": "2026-09-17T02:01:37.958543+00:00",
+          "note": "内置模板",
+          "snapshot": {
+            "workflow_id": "knowledge-research",
+            "id": "knowledge-research",
+            "name": "多源知识检索",
+            "description": "强制检索并对每个需求项执行证据校验、裁判和覆盖审计。",
+            "enabled": true,
+            "params": {
+              "source_types": [
+                "document",
+                "qa",
+                "graph",
+                "sql",
+                "api"
+              ],
+              "top_k": 12,
+              "similarity_threshold": 0.3,
+              "evidence_mode": "generic",
+              "timeout_seconds": 8,
+              "max_parallel": 4,
+              "human_confirmation": {
+                "enabled": true,
+                "points": [
+                  "human-confirm",
+                  "work-order-confirm"
+                ],
+                "actions": [
+                  "write",
+                  "publish",
+                  "submit"
+                ]
+              }
+            },
+            "nodes": [
+              {
+                "id": "route",
+                "name": "意图和实体识别",
+                "type": "router",
+                "x": 40,
+                "y": 110,
+                "enabled": true,
+                "params": {},
+                "condition": null,
+                "branch": null,
+                "human_confirmation": false
+              },
+              {
+                "id": "plan",
+                "name": "用户需求规划",
+                "type": "requirement_plan",
+                "x": 250,
+                "y": 110,
+                "enabled": true,
+                "params": {
+                  "max_items": 12
+                },
+                "condition": null,
+                "branch": null,
+                "human_confirmation": false
+              },
+              {
+                "id": "search",
+                "name": "统一搜索",
+                "type": "unified_search",
+                "x": 470,
+                "y": 110,
+                "enabled": true,
+                "params": {
+                  "top_k": 12
+                },
+                "condition": null,
+                "branch": null,
+                "human_confirmation": false
+              },
+              {
+                "id": "evidence",
+                "name": "证据校验",
+                "type": "evidence_gate",
+                "x": 690,
+                "y": 110,
+                "enabled": true,
+                "params": {
+                  "threshold": 0.3
+                },
+                "condition": null,
+                "branch": null,
+                "human_confirmation": false
+              },
+              {
+                "id": "judge",
+                "name": "证据裁判与覆盖审计",
+                "type": "claim_judge",
+                "x": 910,
+                "y": 110,
+                "enabled": true,
+                "params": {},
+                "condition": null,
+                "branch": null,
+                "human_confirmation": false
+              },
+              {
+                "id": "answer",
+                "name": "引用回答",
+                "type": "answer",
+                "x": 1130,
+                "y": 110,
+                "enabled": true,
+                "params": {},
+                "condition": null,
+                "branch": null,
+                "human_confirmation": false
+              },
+              {
+                "id": "human-confirm",
+                "name": "人工确认点",
+                "type": "human_confirmation",
+                "x": 910,
+                "y": 280,
+                "enabled": false,
+                "params": {
+                  "actions": [
+                    "写入",
+                    "发布"
+                  ]
+                },
+                "condition": null,
+                "branch": null,
+                "human_confirmation": true
+              }
+            ],
+            "edges": [
+              {
+                "id": "edge-route-plan",
+                "source": "route",
+                "target": "plan",
+                "label": null,
+                "condition": null,
+                "enabled": true
+              },
+              {
+                "id": "edge-plan-search",
+                "source": "plan",
+                "target": "search",
+                "label": null,
+                "condition": null,
+                "enabled": true
+              },
+              {
+                "id": "edge-search-evidence",
+                "source": "search",
+                "target": "evidence",
+                "label": null,
+                "condition": null,
+                "enabled": true
+              },
+              {
+                "id": "edge-evidence-judge",
+                "source": "evidence",
+                "target": "judge",
+                "label": null,
+                "condition": null,
+                "enabled": true
+              },
+              {
+                "id": "edge-judge-answer",
+                "source": "judge",
+                "target": "answer",
+                "label": null,
+                "condition": null,
+                "enabled": true
+              },
+              {
+                "id": "edge-judge-human-confirm",
+                "source": "judge",
+                "target": "human-confirm",
+                "label": "需要写入时",
+                "condition": "requires_confirmation == true",
+                "enabled": true
+              },
+              {
+                "id": "edge-human-confirm-answer",
+                "source": "human-confirm",
+                "target": "answer",
+                "label": "确认后",
+                "condition": null,
+                "enabled": true
+              }
+            ],
+            "version": 1
+          }
+        },
+        {
+          "version": 2,
+          "status": "published",
+          "created_at": "2026-09-17T02:28:36.388603+00:00",
+          "published_at": "2026-09-17T02:28:39.015824+00:00",
+          "note": "",
+          "snapshot": {
+            "workflow_id": "knowledge-research",
+            "id": "knowledge-research",
+            "name": "多源知识检索",
+            "description": "强制检索并对每个需求项执行证据校验、裁判和覆盖审计。",
+            "enabled": true,
+            "params": {
+              "source_types": [
+                "document",
+                "qa",
+                "graph",
+                "sql",
+                "api"
+              ],
+              "top_k": 12,
+              "similarity_threshold": 0.3,
+              "evidence_mode": "generic",
+              "timeout_seconds": 8,
+              "max_parallel": 4,
+              "human_confirmation": {
+                "enabled": true,
+                "points": [
+                  "human-confirm",
+                  "work-order-confirm"
+                ],
+                "actions": [
+                  "write",
+                  "publish",
+                  "submit"
+                ]
+              }
+            },
+            "nodes": [
+              {
+                "id": "route",
+                "name": "意图和实体识别",
+                "type": "router",
+                "x": 40.0,
+                "y": 110.0,
+                "enabled": true,
+                "params": {},
+                "condition": null,
+                "branch": null,
+                "human_confirmation": false
+              },
+              {
+                "id": "plan",
+                "name": "用户需求规划",
+                "type": "requirement_plan",
+                "x": 250.0,
+                "y": 110.0,
+                "enabled": true,
+                "params": {
+                  "max_items": 12
+                },
+                "condition": null,
+                "branch": null,
+                "human_confirmation": false
+              },
+              {
+                "id": "search",
+                "name": "统一搜索",
+                "type": "unified_search",
+                "x": 470.0,
+                "y": 110.0,
+                "enabled": true,
+                "params": {
+                  "top_k": 12
+                },
+                "condition": null,
+                "branch": null,
+                "human_confirmation": false
+              },
+              {
+                "id": "evidence",
+                "name": "证据校验",
+                "type": "evidence_gate",
+                "x": 690.0,
+                "y": 110.0,
+                "enabled": true,
+                "params": {
+                  "threshold": 0.3
+                },
+                "condition": null,
+                "branch": null,
+                "human_confirmation": false
+              },
+              {
+                "id": "judge",
+                "name": "证据裁判与覆盖审计",
+                "type": "claim_judge",
+                "x": 910.0,
+                "y": 110.0,
+                "enabled": true,
+                "params": {},
+                "condition": null,
+                "branch": null,
+                "human_confirmation": false
+              },
+              {
+                "id": "answer",
+                "name": "引用回答",
+                "type": "answer",
+                "x": 1130.0,
+                "y": 110.0,
+                "enabled": true,
+                "params": {},
+                "condition": null,
+                "branch": null,
+                "human_confirmation": false
+              },
+              {
+                "id": "human-confirm",
+                "name": "人工确认点",
+                "type": "human_confirmation",
+                "x": 910.0,
+                "y": 280.0,
+                "enabled": false,
+                "params": {
+                  "actions": [
+                    "写入",
+                    "发布"
+                  ]
+                },
+                "condition": null,
+                "branch": null,
+                "human_confirmation": true
+              }
+            ],
+            "edges": [
+              {
+                "id": "edge-route-plan",
+                "source": "route",
+                "target": "plan",
+                "label": null,
+                "condition": null,
+                "enabled": true
+              },
+              {
+                "id": "edge-plan-search",
+                "source": "plan",
+                "target": "search",
+                "label": null,
+                "condition": null,
+                "enabled": true
+              },
+              {
+                "id": "edge-search-evidence",
+                "source": "search",
+                "target": "evidence",
+                "label": null,
+                "condition": null,
+                "enabled": true
+              },
+              {
+                "id": "edge-evidence-judge",
+                "source": "evidence",
+                "target": "judge",
+                "label": null,
+                "condition": null,
+                "enabled": true
+              },
+              {
+                "id": "edge-judge-answer",
+                "source": "judge",
+                "target": "answer",
+                "label": null,
+                "condition": null,
+                "enabled": true
+              },
+              {
+                "id": "edge-judge-human-confirm",
+                "source": "judge",
+                "target": "human-confirm",
+                "label": "需要写入时",
+                "condition": "requires_confirmation == true",
+                "enabled": true
+              },
+              {
+                "id": "edge-human-confirm-answer",
+                "source": "human-confirm",
+                "target": "answer",
+                "label": "确认后",
+                "condition": null,
+                "enabled": true
+              }
+            ],
+            "version": 2
+          }
+        }
+      ],
+      "run_history": [
+        {
+          "started_at": "2026-10-12T04:00:48.209380+00:00",
+          "run_id": "104ad238-4986-4f36-a676-708038624a4d",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-12T04:00:48.209380+00:00",
+          "duration_ms": 17022
+        },
+        {
+          "started_at": "2026-10-12T04:00:55.407379+00:00",
+          "run_id": "86cdaec1-d292-49ef-a09c-aace1365bb1c",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-12T04:00:55.407379+00:00",
+          "duration_ms": 25988
+        },
+        {
+          "started_at": "2026-10-12T04:01:12.916297+00:00",
+          "run_id": "f430827e-876d-40fb-9a12-7d2257165aac",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-12T04:01:12.916297+00:00",
+          "duration_ms": 17468
+        },
+        {
+          "started_at": "2026-10-12T04:01:14.159477+00:00",
+          "run_id": "b63f5d9f-4a4d-4ebf-ba61-8204fd8b2bdc",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-12T04:01:14.159477+00:00",
+          "duration_ms": 25906
+        },
+        {
+          "started_at": "2026-10-12T04:01:36.271679+00:00",
+          "run_id": "567542ba-80ed-4170-a5a5-0538880815df",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-12T04:01:36.271679+00:00",
+          "duration_ms": 22080
+        },
+        {
+          "started_at": "2026-10-12T04:01:40.706594+00:00",
+          "run_id": "91dc4e4f-33e4-4b93-b04d-f218595e9ca4",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-12T04:01:40.706594+00:00",
+          "duration_ms": 27759
+        },
+        {
+          "started_at": "2026-10-12T04:01:53.133664+00:00",
+          "run_id": "d13631cd-d26f-4eaf-9bf1-47a6a7bf4347",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-12T04:01:53.133664+00:00",
+          "duration_ms": 16827
+        },
+        {
+          "started_at": "2026-10-12T04:02:05.858415+00:00",
+          "run_id": "1297b519-ecb9-480b-a6ee-f148cbc1ed5f",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-12T04:02:05.858415+00:00",
+          "duration_ms": 25118
+        },
+        {
+          "started_at": "2026-10-12T04:02:12.570828+00:00",
+          "run_id": "bbdc5de8-f6f1-4493-8414-ffe326a5a58d",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-12T04:02:12.570828+00:00",
+          "duration_ms": 19402
+        },
+        {
+          "started_at": "2026-10-12T04:02:23.512223+00:00",
+          "run_id": "987d576c-5072-4ab5-b2cd-c06ce0f0541d",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-12T04:02:23.512223+00:00",
+          "duration_ms": 17618
+        },
+        {
+          "started_at": "2026-10-12T04:02:30.591771+00:00",
+          "run_id": "6c77a894-efc9-4f05-a19e-773c15e838e3",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-12T04:02:30.591771+00:00",
+          "duration_ms": 17987
+        },
+        {
+          "started_at": "2026-10-12T04:02:41.178137+00:00",
+          "run_id": "2a5adc77-1ba9-4bd5-b6d6-b77d174612c3",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-12T04:02:41.178137+00:00",
+          "duration_ms": 17631
+        },
+        {
+          "started_at": "2026-10-12T04:02:47.852109+00:00",
+          "run_id": "2eeeb433-a02b-4bca-98e6-86a8486b7d7b",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-12T04:02:47.852109+00:00",
+          "duration_ms": 17219
+        },
+        {
+          "started_at": "2026-10-13T07:14:34.508058+00:00",
+          "run_id": "213a2b4f-2523-4b73-bef6-08b7c0c6f06a",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-13T07:14:34.508058+00:00",
+          "duration_ms": 80222
+        },
+        {
+          "started_at": "2026-10-13T07:38:05.945737+00:00",
+          "run_id": "fdc30ccd-6508-4a83-8363-ee19b6893048",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-13T07:38:05.945737+00:00",
+          "duration_ms": 70439
+        },
+        {
+          "started_at": "2026-10-13T09:23:15.926332+00:00",
+          "run_id": "74de4ca0-fd4c-49c9-a487-7da88b6edaf2",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-13T09:23:15.926332+00:00",
+          "duration_ms": 33953
+        },
+        {
+          "started_at": "2026-10-14T01:31:30.895874+00:00",
+          "run_id": "b0026092-65fb-4465-b83b-057321ed1aee",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-14T01:31:30.895874+00:00",
+          "duration_ms": 50275
+        },
+        {
+          "started_at": "2026-10-14T01:54:40.011421+00:00",
+          "run_id": "494c713f-4a33-4c70-b5b6-04951e6ee271",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-14T01:54:40.011421+00:00",
+          "duration_ms": 62394
+        },
+        {
+          "started_at": "2026-10-14T01:58:28.342936+00:00",
+          "run_id": "3616699e-636c-46d7-8517-0780ca933802",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-14T01:58:28.342936+00:00",
+          "duration_ms": 73092
+        },
+        {
+          "started_at": "2026-10-14T01:58:56.856108+00:00",
+          "run_id": "1ef1b798-3fd1-4038-8860-200afcbd6c28",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-14T01:58:56.856108+00:00",
+          "duration_ms": 102150
+        },
+        {
+          "started_at": "2026-10-14T01:59:09.021846+00:00",
+          "run_id": "f669832e-230b-4210-af83-eeb097db6ef1",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-14T01:59:09.021846+00:00",
+          "duration_ms": 40642
+        },
+        {
+          "started_at": "2026-10-14T01:59:34.158796+00:00",
+          "run_id": "cd03f8fe-7395-4ddf-800b-d3e5c8d51aac",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-14T01:59:34.158796+00:00",
+          "duration_ms": 37268
+        },
+        {
+          "started_at": "2026-10-14T01:59:34.250342+00:00",
+          "run_id": "da291ea5-9d78-4fd4-907e-bf9381b5a233",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-14T01:59:34.250342+00:00",
+          "duration_ms": 25163
+        },
+        {
+          "started_at": "2026-10-14T01:59:55.160854+00:00",
+          "run_id": "83dc84ee-fd4c-4bbf-b096-40a85332d4a3",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-14T01:59:55.160854+00:00",
+          "duration_ms": 20875
+        },
+        {
+          "started_at": "2026-10-14T01:59:55.390458+00:00",
+          "run_id": "fb2c0b60-120d-4aa8-bb02-789c071d9306",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-14T01:59:55.389460+00:00",
+          "duration_ms": 21195
+        },
+        {
+          "started_at": "2026-10-14T02:00:20.287160+00:00",
+          "run_id": "ac7b3749-cb89-4fb2-8c5e-ada52d32843b",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-14T02:00:20.287160+00:00",
+          "duration_ms": 24857
+        },
+        {
+          "started_at": "2026-10-14T02:00:22.765617+00:00",
+          "run_id": "018c54d3-3208-46fa-a057-0835391ef3eb",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-14T02:00:22.765617+00:00",
+          "duration_ms": 27570
+        },
+        {
+          "started_at": "2026-10-14T02:00:47.884907+00:00",
+          "run_id": "41dde92f-3268-4f7a-ad31-4c643f658897",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-14T02:00:47.884907+00:00",
+          "duration_ms": 27560
+        },
+        {
+          "started_at": "2026-10-14T02:01:46.363159+00:00",
+          "run_id": "2f2d9173-df3a-41f0-9761-abf6f6e4f1d7",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-14T02:01:46.363159+00:00",
+          "duration_ms": 83557
+        },
+        {
+          "started_at": "2026-10-14T02:02:05.765873+00:00",
+          "run_id": "e2622600-516f-47a0-b825-92bfaf5d50f6",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-14T02:02:05.765873+00:00",
+          "duration_ms": 19366
+        },
+        {
+          "started_at": "2026-10-14T02:02:07.220726+00:00",
+          "run_id": "ebebab87-51ae-4004-a43d-de2177b8ea6a",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-14T02:02:07.220726+00:00",
+          "duration_ms": 79302
+        },
+        {
+          "started_at": "2026-10-14T02:02:32.414027+00:00",
+          "run_id": "a0b8170d-93f6-4fa9-a58b-b6bfe5f4eaa5",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-14T02:02:32.414027+00:00",
+          "duration_ms": 26613
+        },
+        {
+          "started_at": "2026-10-14T02:02:35.590086+00:00",
+          "run_id": "63a88e9e-4aa2-4021-9753-716ab6578e84",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-14T02:02:35.590086+00:00",
+          "duration_ms": 28335
+        },
+        {
+          "started_at": "2026-10-14T02:03:09.505906+00:00",
+          "run_id": "15061706-f645-4d0a-8d59-a45006c7fa0e",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-14T02:03:09.505906+00:00",
+          "duration_ms": 33880
+        },
+        {
+          "started_at": "2026-10-14T02:03:29.250784+00:00",
+          "run_id": "4bdec74a-092e-4d6e-b947-f007b3d5fe14",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-14T02:03:29.250784+00:00",
+          "duration_ms": 56795
+        },
+        {
+          "started_at": "2026-10-14T02:03:40.492933+00:00",
+          "run_id": "3bd24359-7a39-47db-a33c-032ce948e6ed",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-14T02:03:40.492933+00:00",
+          "duration_ms": 30950
+        },
+        {
+          "started_at": "2026-10-14T02:04:02.580317+00:00",
+          "run_id": "03b1873f-a569-4f68-8ba2-d3ef5bb15392",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-14T02:04:02.580317+00:00",
+          "duration_ms": 22056
+        },
+        {
+          "started_at": "2026-10-14T02:04:10.400766+00:00",
+          "run_id": "7c9f0156-f71b-4e9d-a05e-2d1d9def73a8",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-14T02:04:10.400766+00:00",
+          "duration_ms": 41111
+        },
+        {
+          "started_at": "2026-10-14T02:04:35.120816+00:00",
+          "run_id": "8af5bd98-2184-4c42-8f38-e03226bf910e",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-14T02:04:35.120816+00:00",
+          "duration_ms": 32495
+        },
+        {
+          "started_at": "2026-10-14T03:34:43.056409+00:00",
+          "run_id": "7a0c580a-8966-4df8-afe1-ada12d7fe128",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-14T03:34:43.056409+00:00",
+          "duration_ms": 54793
+        },
+        {
+          "started_at": "2026-10-14T03:58:35.158968+00:00",
+          "run_id": "d24e87df-c3d5-4bc0-ac9f-89d7d504d521",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-14T03:58:35.158968+00:00",
+          "duration_ms": 27702
+        },
+        {
+          "started_at": "2026-10-14T05:44:52.182557+00:00",
+          "run_id": "f7496c5d-e071-437d-9bb5-9ac6c520dcc6",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-14T05:44:52.182557+00:00",
+          "duration_ms": 40182
+        },
+        {
+          "started_at": "2026-10-14T06:03:58.385767+00:00",
+          "run_id": "b42e6175-53f7-4927-ab1e-68d02bfb0174",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-14T06:03:58.385767+00:00",
+          "duration_ms": 58649
+        },
+        {
+          "started_at": "2026-10-14T06:14:38.394274+00:00",
+          "run_id": "fcb802b2-92f7-442a-8f72-c46ebe954bd5",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-14T06:14:38.394274+00:00",
+          "duration_ms": 58648
+        },
+        {
+          "started_at": "2026-10-14T06:16:01.058670+00:00",
+          "run_id": "9286825d-d912-4ccb-a08b-fd5582f0469d",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-14T06:16:01.058670+00:00",
+          "duration_ms": 31684
+        },
+        {
+          "started_at": "2026-10-14T06:17:26.854189+00:00",
+          "run_id": "de081ca6-d48d-4652-877b-278e17350e6d",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-14T06:17:26.854189+00:00",
+          "duration_ms": 43121
+        },
+        {
+          "started_at": "2026-10-14T06:18:41.625946+00:00",
+          "run_id": "4700513f-7378-473e-827d-fa3c7a29edf8",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-14T06:18:41.625946+00:00",
+          "duration_ms": 31019
+        },
+        {
+          "started_at": "2026-10-14T06:19:32.554892+00:00",
+          "run_id": "82311e49-422d-4290-a1e0-984dad50e82d",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-14T06:19:32.554892+00:00",
+          "duration_ms": 21952
+        },
+        {
+          "started_at": "2026-10-14T06:20:45.159087+00:00",
+          "run_id": "390d94f4-7146-4b53-a64e-3771c3b027ea",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-14T06:20:45.159087+00:00",
+          "duration_ms": 31637
+        },
+        {
+          "started_at": "2026-10-14T06:31:36.576105+00:00",
+          "run_id": "2e0ac33c-92ca-4848-a871-b7693d6bd9f2",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-14T06:31:36.576105+00:00",
+          "duration_ms": 22865
+        }
+      ]
+    },
+    {
+      "workflow_id": "equipment-diagnosis",
+      "id": "equipment-diagnosis",
+      "name": "设备故障诊断",
+      "description": "实时状态、手册和历史案例并行汇总后生成诊断建议。",
+      "enabled": true,
+      "status": "published",
+      "version": 1,
+      "published_version": 1,
+      "params": {
+        "source_types": [
+          "api",
+          "document",
+          "qa",
+          "graph"
+        ],
+        "top_k": 12,
+        "similarity_threshold": 0.3,
+        "evidence_mode": "generic",
+        "timeout_seconds": 8,
+        "max_parallel": 4,
+        "human_confirmation": {
+          "enabled": true,
+          "points": [
+            "human-confirm",
+            "work-order-confirm"
+          ],
+          "actions": [
+            "write",
+            "publish",
+            "submit"
+          ]
+        }
+      },
+      "nodes": [
+        {
+          "id": "route",
+          "name": "识别设备/故障码",
+          "type": "router",
+          "x": 40,
+          "y": 110,
+          "enabled": true,
+          "params": {},
+          "condition": null,
+          "branch": null,
+          "human_confirmation": false
+        },
+        {
+          "id": "status",
+          "name": "查询实时状态",
+          "type": "api",
+          "x": 280,
+          "y": 110,
+          "enabled": true,
+          "params": {
+            "source": "api",
+            "top_k": 5
+          },
+          "condition": null,
+          "branch": null,
+          "human_confirmation": false
+        },
+        {
+          "id": "parallel-search",
+          "name": "并行检索手册与案例",
+          "type": "parallel",
+          "x": 500,
+          "y": 110,
+          "enabled": true,
+          "params": {
+            "branches": [
+              "manual",
+              "case"
+            ]
+          },
+          "condition": null,
+          "branch": null,
+          "human_confirmation": false
+        },
+        {
+          "id": "manual",
+          "name": "设备手册",
+          "type": "unified_search",
+          "x": 720,
+          "y": 60,
+          "enabled": true,
+          "params": {
+            "source_types": [
+              "document"
+            ],
+            "top_k": 8
+          },
+          "condition": null,
+          "branch": null,
+          "human_confirmation": false
+        },
+        {
+          "id": "case",
+          "name": "历史案例",
+          "type": "unified_search",
+          "x": 720,
+          "y": 190,
+          "enabled": true,
+          "params": {
+            "source_types": [
+              "qa",
+              "graph"
+            ],
+            "top_k": 8
+          },
+          "condition": null,
+          "branch": null,
+          "human_confirmation": false
+        },
+        {
+          "id": "diagnose",
+          "name": "生成诊断建议",
+          "type": "answer",
+          "x": 970,
+          "y": 110,
+          "enabled": true,
+          "params": {},
+          "condition": null,
+          "branch": null,
+          "human_confirmation": false
+        },
+        {
+          "id": "human-confirm",
+          "name": "高风险动作确认",
+          "type": "human_confirmation",
+          "x": 1190,
+          "y": 260,
+          "enabled": false,
+          "params": {},
+          "condition": null,
+          "branch": null,
+          "human_confirmation": true
+        }
+      ],
+      "edges": [
+        {
+          "id": "edge-route-status",
+          "source": "route",
+          "target": "status",
+          "label": null,
+          "condition": null,
+          "enabled": true
+        },
+        {
+          "id": "edge-status-parallel-search",
+          "source": "status",
+          "target": "parallel-search",
+          "label": null,
+          "condition": null,
+          "enabled": true
+        },
+        {
+          "id": "edge-parallel-search-manual",
+          "source": "parallel-search",
+          "target": "manual",
+          "label": "手册",
+          "condition": null,
+          "enabled": true
+        },
+        {
+          "id": "edge-parallel-search-case",
+          "source": "parallel-search",
+          "target": "case",
+          "label": "案例",
+          "condition": null,
+          "enabled": true
+        },
+        {
+          "id": "edge-manual-diagnose",
+          "source": "manual",
+          "target": "diagnose",
+          "label": null,
+          "condition": null,
+          "enabled": true
+        },
+        {
+          "id": "edge-case-diagnose",
+          "source": "case",
+          "target": "diagnose",
+          "label": null,
+          "condition": null,
+          "enabled": true
+        },
+        {
+          "id": "edge-diagnose-human-confirm",
+          "source": "diagnose",
+          "target": "human-confirm",
+          "label": "需要执行动作",
+          "condition": "requires_confirmation == true",
+          "enabled": true
+        }
+      ],
+      "created_at": "2026-09-17T02:01:37.958543+00:00",
+      "updated_at": "2026-09-17T02:01:37.958543+00:00",
+      "updated_by": "system",
+      "versions": [
+        {
+          "version": 1,
+          "status": "published",
+          "created_at": "2026-09-17T02:01:37.958543+00:00",
+          "published_at": "2026-09-17T02:01:37.958543+00:00",
+          "note": "内置模板",
+          "snapshot": {
+            "workflow_id": "equipment-diagnosis",
+            "id": "equipment-diagnosis",
+            "name": "设备故障诊断",
+            "description": "实时状态、手册和历史案例并行汇总后生成诊断建议。",
+            "enabled": true,
+            "params": {
+              "source_types": [
+                "api",
+                "document",
+                "qa",
+                "graph"
+              ],
+              "top_k": 12,
+              "similarity_threshold": 0.3,
+              "evidence_mode": "generic",
+              "timeout_seconds": 8,
+              "max_parallel": 4,
+              "human_confirmation": {
+                "enabled": true,
+                "points": [
+                  "human-confirm",
+                  "work-order-confirm"
+                ],
+                "actions": [
+                  "write",
+                  "publish",
+                  "submit"
+                ]
+              }
+            },
+            "nodes": [
+              {
+                "id": "route",
+                "name": "识别设备/故障码",
+                "type": "router",
+                "x": 40,
+                "y": 110,
+                "enabled": true,
+                "params": {},
+                "condition": null,
+                "branch": null,
+                "human_confirmation": false
+              },
+              {
+                "id": "status",
+                "name": "查询实时状态",
+                "type": "api",
+                "x": 280,
+                "y": 110,
+                "enabled": true,
+                "params": {
+                  "source": "api",
+                  "top_k": 5
+                },
+                "condition": null,
+                "branch": null,
+                "human_confirmation": false
+              },
+              {
+                "id": "parallel-search",
+                "name": "并行检索手册与案例",
+                "type": "parallel",
+                "x": 500,
+                "y": 110,
+                "enabled": true,
+                "params": {
+                  "branches": [
+                    "manual",
+                    "case"
+                  ]
+                },
+                "condition": null,
+                "branch": null,
+                "human_confirmation": false
+              },
+              {
+                "id": "manual",
+                "name": "设备手册",
+                "type": "unified_search",
+                "x": 720,
+                "y": 60,
+                "enabled": true,
+                "params": {
+                  "source_types": [
+                    "document"
+                  ],
+                  "top_k": 8
+                },
+                "condition": null,
+                "branch": null,
+                "human_confirmation": false
+              },
+              {
+                "id": "case",
+                "name": "历史案例",
+                "type": "unified_search",
+                "x": 720,
+                "y": 190,
+                "enabled": true,
+                "params": {
+                  "source_types": [
+                    "qa",
+                    "graph"
+                  ],
+                  "top_k": 8
+                },
+                "condition": null,
+                "branch": null,
+                "human_confirmation": false
+              },
+              {
+                "id": "diagnose",
+                "name": "生成诊断建议",
+                "type": "answer",
+                "x": 970,
+                "y": 110,
+                "enabled": true,
+                "params": {},
+                "condition": null,
+                "branch": null,
+                "human_confirmation": false
+              },
+              {
+                "id": "human-confirm",
+                "name": "高风险动作确认",
+                "type": "human_confirmation",
+                "x": 1190,
+                "y": 260,
+                "enabled": false,
+                "params": {},
+                "condition": null,
+                "branch": null,
+                "human_confirmation": true
+              }
+            ],
+            "edges": [
+              {
+                "id": "edge-route-status",
+                "source": "route",
+                "target": "status",
+                "label": null,
+                "condition": null,
+                "enabled": true
+              },
+              {
+                "id": "edge-status-parallel-search",
+                "source": "status",
+                "target": "parallel-search",
+                "label": null,
+                "condition": null,
+                "enabled": true
+              },
+              {
+                "id": "edge-parallel-search-manual",
+                "source": "parallel-search",
+                "target": "manual",
+                "label": "手册",
+                "condition": null,
+                "enabled": true
+              },
+              {
+                "id": "edge-parallel-search-case",
+                "source": "parallel-search",
+                "target": "case",
+                "label": "案例",
+                "condition": null,
+                "enabled": true
+              },
+              {
+                "id": "edge-manual-diagnose",
+                "source": "manual",
+                "target": "diagnose",
+                "label": null,
+                "condition": null,
+                "enabled": true
+              },
+              {
+                "id": "edge-case-diagnose",
+                "source": "case",
+                "target": "diagnose",
+                "label": null,
+                "condition": null,
+                "enabled": true
+              },
+              {
+                "id": "edge-diagnose-human-confirm",
+                "source": "diagnose",
+                "target": "human-confirm",
+                "label": "需要执行动作",
+                "condition": "requires_confirmation == true",
+                "enabled": true
+              }
+            ],
+            "version": 1
+          }
+        }
+      ],
+      "run_history": []
+    },
+    {
+      "workflow_id": "work-order-draft",
+      "id": "work-order-draft",
+      "name": "维修工单草稿",
+      "description": "先生成可审阅草稿，人工确认后才允许进入受控提交节点。",
+      "enabled": true,
+      "status": "published",
+      "version": 1,
+      "published_version": 1,
+      "params": {
+        "source_types": [
+          "document",
+          "qa",
+          "graph",
+          "api"
+        ],
+        "top_k": 12,
+        "similarity_threshold": 0.3,
+        "evidence_mode": "generic",
+        "timeout_seconds": 8,
+        "max_parallel": 4,
+        "human_confirmation": {
+          "enabled": true,
+          "points": [
+            "human-confirm",
+            "work-order-confirm"
+          ],
+          "actions": [
+            "write",
+            "publish",
+            "submit"
+          ]
+        }
+      },
+      "nodes": [
+        {
+          "id": "aggregate",
+          "name": "汇总诊断证据",
+          "type": "evidence_gate",
+          "x": 50,
+          "y": 110,
+          "enabled": true,
+          "params": {},
+          "condition": null,
+          "branch": null,
+          "human_confirmation": false
+        },
+        {
+          "id": "draft",
+          "name": "生成工单草稿",
+          "type": "answer",
+          "x": 310,
+          "y": 110,
+          "enabled": true,
+          "params": {
+            "output": "work_order_draft"
+          },
+          "condition": null,
+          "branch": null,
+          "human_confirmation": false
+        },
+        {
+          "id": "review",
+          "name": "人工确认",
+          "type": "human_confirmation",
+          "x": 570,
+          "y": 110,
+          "enabled": true,
+          "params": {
+            "actions": [
+              "创建工单"
+            ]
+          },
+          "condition": null,
+          "branch": null,
+          "human_confirmation": true
+        },
+        {
+          "id": "submit",
+          "name": "受控提交",
+          "type": "tool",
+          "x": 830,
+          "y": 110,
+          "enabled": false,
+          "params": {
+            "tool": "create_work_order"
+          },
+          "condition": null,
+          "branch": null,
+          "human_confirmation": false
+        },
+        {
+          "id": "notify",
+          "name": "返回提交结果",
+          "type": "answer",
+          "x": 1090,
+          "y": 110,
+          "enabled": true,
+          "params": {},
+          "condition": null,
+          "branch": null,
+          "human_confirmation": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "edge-aggregate-draft",
+          "source": "aggregate",
+          "target": "draft",
+          "label": null,
+          "condition": null,
+          "enabled": true
+        },
+        {
+          "id": "edge-draft-review",
+          "source": "draft",
+          "target": "review",
+          "label": null,
+          "condition": null,
+          "enabled": true
+        },
+        {
+          "id": "edge-review-submit",
+          "source": "review",
+          "target": "submit",
+          "label": "确认后",
+          "condition": null,
+          "enabled": true
+        },
+        {
+          "id": "edge-submit-notify",
+          "source": "submit",
+          "target": "notify",
+          "label": null,
+          "condition": null,
+          "enabled": true
+        }
+      ],
+      "created_at": "2026-09-17T02:01:37.959126+00:00",
+      "updated_at": "2026-09-17T02:01:37.959126+00:00",
+      "updated_by": "system",
+      "versions": [
+        {
+          "version": 1,
+          "status": "published",
+          "created_at": "2026-09-17T02:01:37.959126+00:00",
+          "published_at": "2026-09-17T02:01:37.959126+00:00",
+          "note": "内置模板",
+          "snapshot": {
+            "workflow_id": "work-order-draft",
+            "id": "work-order-draft",
+            "name": "维修工单草稿",
+            "description": "先生成可审阅草稿，人工确认后才允许进入受控提交节点。",
+            "enabled": true,
+            "params": {
+              "source_types": [
+                "document",
+                "qa",
+                "graph",
+                "api"
+              ],
+              "top_k": 12,
+              "similarity_threshold": 0.3,
+              "evidence_mode": "generic",
+              "timeout_seconds": 8,
+              "max_parallel": 4,
+              "human_confirmation": {
+                "enabled": true,
+                "points": [
+                  "human-confirm",
+                  "work-order-confirm"
+                ],
+                "actions": [
+                  "write",
+                  "publish",
+                  "submit"
+                ]
+              }
+            },
+            "nodes": [
+              {
+                "id": "aggregate",
+                "name": "汇总诊断证据",
+                "type": "evidence_gate",
+                "x": 50,
+                "y": 110,
+                "enabled": true,
+                "params": {},
+                "condition": null,
+                "branch": null,
+                "human_confirmation": false
+              },
+              {
+                "id": "draft",
+                "name": "生成工单草稿",
+                "type": "answer",
+                "x": 310,
+                "y": 110,
+                "enabled": true,
+                "params": {
+                  "output": "work_order_draft"
+                },
+                "condition": null,
+                "branch": null,
+                "human_confirmation": false
+              },
+              {
+                "id": "review",
+                "name": "人工确认",
+                "type": "human_confirmation",
+                "x": 570,
+                "y": 110,
+                "enabled": true,
+                "params": {
+                  "actions": [
+                    "创建工单"
+                  ]
+                },
+                "condition": null,
+                "branch": null,
+                "human_confirmation": true
+              },
+              {
+                "id": "submit",
+                "name": "受控提交",
+                "type": "tool",
+                "x": 830,
+                "y": 110,
+                "enabled": false,
+                "params": {
+                  "tool": "create_work_order"
+                },
+                "condition": null,
+                "branch": null,
+                "human_confirmation": false
+              },
+              {
+                "id": "notify",
+                "name": "返回提交结果",
+                "type": "answer",
+                "x": 1090,
+                "y": 110,
+                "enabled": true,
+                "params": {},
+                "condition": null,
+                "branch": null,
+                "human_confirmation": false
+              }
+            ],
+            "edges": [
+              {
+                "id": "edge-aggregate-draft",
+                "source": "aggregate",
+                "target": "draft",
+                "label": null,
+                "condition": null,
+                "enabled": true
+              },
+              {
+                "id": "edge-draft-review",
+                "source": "draft",
+                "target": "review",
+                "label": null,
+                "condition": null,
+                "enabled": true
+              },
+              {
+                "id": "edge-review-submit",
+                "source": "review",
+                "target": "submit",
+                "label": "确认后",
+                "condition": null,
+                "enabled": true
+              },
+              {
+                "id": "edge-submit-notify",
+                "source": "submit",
+                "target": "notify",
+                "label": null,
+                "condition": null,
+                "enabled": true
+              }
+            ],
+            "version": 1
+          }
+        }
+      ],
+      "run_history": []
+    },
+    {
+      "workflow_id": "evidence-review",
+      "id": "evidence-review",
+      "name": "证据校验流程",
+      "description": "专门用于候选证据、事实声明、需求结果和覆盖范围的严格校验。",
+      "enabled": true,
+      "status": "published",
+      "version": 1,
+      "published_version": 1,
+      "params": {
+        "source_types": [
+          "document",
+          "qa",
+          "graph"
+        ],
+        "top_k": 12,
+        "similarity_threshold": 0.3,
+        "evidence_mode": "industrial_strict",
+        "timeout_seconds": 8,
+        "max_parallel": 4,
+        "human_confirmation": {
+          "enabled": false,
+          "points": [],
+          "actions": []
+        }
+      },
+      "nodes": [
+        {
+          "id": "route",
+          "name": "识别待校验问题",
+          "type": "router",
+          "x": 40,
+          "y": 110,
+          "enabled": true,
+          "params": {},
+          "condition": null,
+          "branch": null,
+          "human_confirmation": false
+        },
+        {
+          "id": "plan",
+          "name": "拆分需求项",
+          "type": "requirement_plan",
+          "x": 250,
+          "y": 110,
+          "enabled": true,
+          "params": {
+            "max_items": 12
+          },
+          "condition": null,
+          "branch": null,
+          "human_confirmation": false
+        },
+        {
+          "id": "search",
+          "name": "召回候选证据",
+          "type": "unified_search",
+          "x": 470,
+          "y": 110,
+          "enabled": true,
+          "params": {
+            "top_k": 12
+          },
+          "condition": null,
+          "branch": null,
+          "human_confirmation": false
+        },
+        {
+          "id": "evidence",
+          "name": "证据门控",
+          "type": "evidence_gate",
+          "x": 690,
+          "y": 110,
+          "enabled": true,
+          "params": {
+            "threshold": 0.3
+          },
+          "condition": null,
+          "branch": null,
+          "human_confirmation": false
+        },
+        {
+          "id": "judge",
+          "name": "需求结果裁判",
+          "type": "claim_judge",
+          "x": 910,
+          "y": 110,
+          "enabled": true,
+          "params": {},
+          "condition": null,
+          "branch": null,
+          "human_confirmation": false
+        },
+        {
+          "id": "answer",
+          "name": "安全引用回答",
+          "type": "answer",
+          "x": 1130,
+          "y": 110,
+          "enabled": true,
+          "params": {},
+          "condition": null,
+          "branch": null,
+          "human_confirmation": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "edge-route-plan",
+          "source": "route",
+          "target": "plan",
+          "label": null,
+          "condition": null,
+          "enabled": true
+        },
+        {
+          "id": "edge-plan-search",
+          "source": "plan",
+          "target": "search",
+          "label": null,
+          "condition": null,
+          "enabled": true
+        },
+        {
+          "id": "edge-search-evidence",
+          "source": "search",
+          "target": "evidence",
+          "label": null,
+          "condition": null,
+          "enabled": true
+        },
+        {
+          "id": "edge-evidence-judge",
+          "source": "evidence",
+          "target": "judge",
+          "label": null,
+          "condition": null,
+          "enabled": true
+        },
+        {
+          "id": "edge-judge-answer",
+          "source": "judge",
+          "target": "answer",
+          "label": null,
+          "condition": null,
+          "enabled": true
+        }
+      ],
+      "created_at": "2026-09-17T03:58:28.028065+00:00",
+      "updated_at": "2026-09-17T03:58:28.028065+00:00",
+      "updated_by": "system",
+      "versions": [
+        {
+          "version": 1,
+          "status": "published",
+          "created_at": "2026-09-17T03:58:28.028065+00:00",
+          "published_at": "2026-09-17T03:58:28.028065+00:00",
+          "note": "内置模板",
+          "snapshot": {
+            "workflow_id": "evidence-review",
+            "id": "evidence-review",
+            "name": "证据校验流程",
+            "description": "专门用于候选证据、事实声明、需求结果和覆盖范围的严格校验。",
+            "enabled": true,
+            "params": {
+              "source_types": [
+                "document",
+                "qa",
+                "graph"
+              ],
+              "top_k": 12,
+              "similarity_threshold": 0.3,
+              "evidence_mode": "industrial_strict",
+              "timeout_seconds": 8,
+              "max_parallel": 4,
+              "human_confirmation": {
+                "enabled": false,
+                "points": [],
+                "actions": []
+              }
+            },
+            "nodes": [
+              {
+                "id": "route",
+                "name": "识别待校验问题",
+                "type": "router",
+                "x": 40,
+                "y": 110,
+                "enabled": true,
+                "params": {},
+                "condition": null,
+                "branch": null,
+                "human_confirmation": false
+              },
+              {
+                "id": "plan",
+                "name": "拆分需求项",
+                "type": "requirement_plan",
+                "x": 250,
+                "y": 110,
+                "enabled": true,
+                "params": {
+                  "max_items": 12
+                },
+                "condition": null,
+                "branch": null,
+                "human_confirmation": false
+              },
+              {
+                "id": "search",
+                "name": "召回候选证据",
+                "type": "unified_search",
+                "x": 470,
+                "y": 110,
+                "enabled": true,
+                "params": {
+                  "top_k": 12
+                },
+                "condition": null,
+                "branch": null,
+                "human_confirmation": false
+              },
+              {
+                "id": "evidence",
+                "name": "证据门控",
+                "type": "evidence_gate",
+                "x": 690,
+                "y": 110,
+                "enabled": true,
+                "params": {
+                  "threshold": 0.3
+                },
+                "condition": null,
+                "branch": null,
+                "human_confirmation": false
+              },
+              {
+                "id": "judge",
+                "name": "需求结果裁判",
+                "type": "claim_judge",
+                "x": 910,
+                "y": 110,
+                "enabled": true,
+                "params": {},
+                "condition": null,
+                "branch": null,
+                "human_confirmation": false
+              },
+              {
+                "id": "answer",
+                "name": "安全引用回答",
+                "type": "answer",
+                "x": 1130,
+                "y": 110,
+                "enabled": true,
+                "params": {},
+                "condition": null,
+                "branch": null,
+                "human_confirmation": false
+              }
+            ],
+            "edges": [
+              {
+                "id": "edge-route-plan",
+                "source": "route",
+                "target": "plan",
+                "label": null,
+                "condition": null,
+                "enabled": true
+              },
+              {
+                "id": "edge-plan-search",
+                "source": "plan",
+                "target": "search",
+                "label": null,
+                "condition": null,
+                "enabled": true
+              },
+              {
+                "id": "edge-search-evidence",
+                "source": "search",
+                "target": "evidence",
+                "label": null,
+                "condition": null,
+                "enabled": true
+              },
+              {
+                "id": "edge-evidence-judge",
+                "source": "evidence",
+                "target": "judge",
+                "label": null,
+                "condition": null,
+                "enabled": true
+              },
+              {
+                "id": "edge-judge-answer",
+                "source": "judge",
+                "target": "answer",
+                "label": null,
+                "condition": null,
+                "enabled": true
+              }
+            ],
+            "version": 1
+          }
+        }
+      ],
+      "run_history": [
+        {
+          "started_at": "2026-09-22T01:22:19.288309+00:00",
+          "run_id": "aa83756b-8ff7-4acd-ba7e-a0ded9d014c6",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-09-22T01:22:19.288309+00:00",
+          "duration_ms": 41900
+        },
+        {
+          "started_at": "2026-09-22T01:52:10.263290+00:00",
+          "run_id": "9f137e68-6a72-42e2-a5f8-26126df4ab55",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-09-22T01:52:10.263290+00:00",
+          "duration_ms": 47095
+        },
+        {
+          "started_at": "2026-09-22T08:59:24.988580+00:00",
+          "run_id": "52c13528-2746-4639-a044-fd3612ecff81",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-09-22T08:59:24.988580+00:00",
+          "duration_ms": 25585
+        },
+        {
+          "started_at": "2026-09-22T08:59:28.536217+00:00",
+          "run_id": "65f99e01-2e29-4daf-bf19-b7f0c9dddbf1",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-09-22T08:59:28.536217+00:00",
+          "duration_ms": 27018
+        },
+        {
+          "started_at": "2026-09-22T09:00:00.392081+00:00",
+          "run_id": "f0301020-8b49-4c50-8698-c27bb4dade3c",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-09-22T09:00:00.392081+00:00",
+          "duration_ms": 35343
+        },
+        {
+          "started_at": "2026-09-22T09:00:10.441218+00:00",
+          "run_id": "d1100068-ac55-424a-b2ec-b483a34f73ba",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-09-22T09:00:10.441218+00:00",
+          "duration_ms": 41830
+        },
+        {
+          "started_at": "2026-09-22T09:00:34.731065+00:00",
+          "run_id": "8917644b-110e-400b-a05c-0a5aa474c897",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-09-22T09:00:34.731065+00:00",
+          "duration_ms": 34290
+        },
+        {
+          "started_at": "2026-09-22T09:00:58.421736+00:00",
+          "run_id": "4a7defc5-3453-4a1f-88e4-73181f51fba2",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-09-22T09:00:58.421736+00:00",
+          "duration_ms": 47945
+        },
+        {
+          "started_at": "2026-09-22T09:01:24.232338+00:00",
+          "run_id": "97b40e12-8939-4781-bbd8-811d3d94ab34",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-09-22T09:01:24.232338+00:00",
+          "duration_ms": 49468
+        },
+        {
+          "started_at": "2026-09-22T09:01:35.975563+00:00",
+          "run_id": "d1ae7f20-bc63-4100-a323-68f9ecdbffb8",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-09-22T09:01:35.975563+00:00",
+          "duration_ms": 37515
+        },
+        {
+          "started_at": "2026-09-22T09:02:03.387149+00:00",
+          "run_id": "9d49d476-6950-4bce-b7ef-6931167f1318",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-09-22T09:02:03.387149+00:00",
+          "duration_ms": 39115
+        },
+        {
+          "started_at": "2026-09-22T09:02:12.582863+00:00",
+          "run_id": "178748c3-53f9-4e37-a776-bbfded70a8e7",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-09-22T09:02:12.582863+00:00",
+          "duration_ms": 36563
+        },
+        {
+          "started_at": "2026-09-22T09:02:31.253256+00:00",
+          "run_id": "cfa7712d-f126-4aac-a29b-09d7a60790ad",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-09-22T09:02:31.253256+00:00",
+          "duration_ms": 27833
+        },
+        {
+          "started_at": "2026-09-22T09:02:40.500561+00:00",
+          "run_id": "3aa38806-ab67-4eae-b0ca-8d86327a18a0",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-09-22T09:02:40.500561+00:00",
+          "duration_ms": 27885
+        },
+        {
+          "started_at": "2026-09-22T09:02:52.947546+00:00",
+          "run_id": "18a968ca-dfa1-4d78-8019-479bb52ace48",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-09-22T09:02:52.947546+00:00",
+          "duration_ms": 21654
+        },
+        {
+          "started_at": "2026-09-22T09:02:58.011467+00:00",
+          "run_id": "74bef894-d122-49ca-a3e7-612b04020c30",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-09-22T09:02:58.011467+00:00",
+          "duration_ms": 17474
+        },
+        {
+          "started_at": "2026-09-22T09:03:13.431906+00:00",
+          "run_id": "abaa4ec0-2ce5-4223-a96f-e7cb6cc579ad",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-09-22T09:03:13.431906+00:00",
+          "duration_ms": 15382
+        },
+        {
+          "started_at": "2026-09-22T09:03:15.796689+00:00",
+          "run_id": "cff3da2f-afb9-4b66-9cdb-8041e147d55f",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-09-22T09:03:15.796689+00:00",
+          "duration_ms": 22801
+        },
+        {
+          "started_at": "2026-10-08T03:01:25.024997+00:00",
+          "run_id": "ec9fdd7b-097f-4e79-8bc9-37ea3d4d2e18",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-08T03:01:25.024997+00:00",
+          "duration_ms": 48370
+        },
+        {
+          "started_at": "2026-10-08T03:19:23.929447+00:00",
+          "run_id": "63db4111-6bc5-4230-8d07-e357de37d60c",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-08T03:19:23.929447+00:00",
+          "duration_ms": 32063
+        },
+        {
+          "started_at": "2026-10-08T05:07:53.594502+00:00",
+          "run_id": "273d4e67-afee-4626-8333-31f2a0476dd1",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-08T05:07:53.594502+00:00",
+          "duration_ms": 27044
+        },
+        {
+          "started_at": "2026-10-08T05:08:24.714541+00:00",
+          "run_id": "df181e81-e91c-41f5-8fe3-1759b46e5baa",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-08T05:08:24.714541+00:00",
+          "duration_ms": 27344
+        },
+        {
+          "started_at": "2026-10-08T05:31:34.567204+00:00",
+          "run_id": "667a7874-8e33-41d4-a5c5-6d5e070c1949",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-08T05:31:34.567204+00:00",
+          "duration_ms": 28969
+        },
+        {
+          "started_at": "2026-10-08T06:02:53.865553+00:00",
+          "run_id": "6046038e-eba2-48f4-b4ac-5ee26c5dfb87",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-08T06:02:53.865553+00:00",
+          "duration_ms": 36173
+        },
+        {
+          "started_at": "2026-10-08T06:51:04.862892+00:00",
+          "run_id": "afc46fb0-6f3a-41a9-b778-8bf7662448b9",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-08T06:51:04.862892+00:00",
+          "duration_ms": 38162
+        },
+        {
+          "started_at": "2026-10-08T06:53:49.947516+00:00",
+          "run_id": "fbcec0d2-c17c-4392-bc39-853f24c18bac",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-08T06:53:49.947516+00:00",
+          "duration_ms": 36802
+        },
+        {
+          "started_at": "2026-10-08T06:56:20.146000+00:00",
+          "run_id": "46eec534-1cd2-417d-b522-a69e9199f47d",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-08T06:56:20.146000+00:00",
+          "duration_ms": 42522
+        },
+        {
+          "started_at": "2026-10-08T07:15:09.487012+00:00",
+          "run_id": "acdbe7fa-8220-4971-a9b8-cf1ace7f70cb",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-08T07:15:09.487012+00:00",
+          "duration_ms": 40312
+        },
+        {
+          "started_at": "2026-10-08T08:16:35.452276+00:00",
+          "run_id": "cdfcb92e-34e3-4fc7-821b-fcca4356cb7d",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-08T08:16:35.452276+00:00",
+          "duration_ms": 50849
+        },
+        {
+          "started_at": "2026-10-08T08:20:03.326059+00:00",
+          "run_id": "15292773-7675-4410-b8ee-53e7f6c52b37",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-08T08:20:03.326059+00:00",
+          "duration_ms": 28085
+        },
+        {
+          "started_at": "2026-10-08T08:51:33.648431+00:00",
+          "run_id": "520eef70-4b48-4a54-8a94-80abe65ed7fc",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-08T08:51:33.648431+00:00",
+          "duration_ms": 34703
+        },
+        {
+          "started_at": "2026-10-08T09:21:43.095131+00:00",
+          "run_id": "862c3724-d3d8-49f7-bb4f-073605c9de5a",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-08T09:21:43.095131+00:00",
+          "duration_ms": 26672
+        },
+        {
+          "started_at": "2026-10-08T09:30:26.229059+00:00",
+          "run_id": "3287e077-c544-4039-96ff-e70f4255fc21",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-08T09:30:26.229059+00:00",
+          "duration_ms": 24960
+        },
+        {
+          "started_at": "2026-10-09T00:45:16.877143+00:00",
+          "run_id": "13bcc2fc-676b-4d65-b791-f2926ea67e5e",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-09T00:45:16.877143+00:00",
+          "duration_ms": 28785
+        },
+        {
+          "started_at": "2026-10-09T00:47:06.006059+00:00",
+          "run_id": "51cb07d4-469d-49b7-89bc-51a2700dae9b",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-09T00:47:06.006059+00:00",
+          "duration_ms": 24358
+        },
+        {
+          "started_at": "2026-10-09T01:08:58.494552+00:00",
+          "run_id": "136df216-8590-4788-af9d-cccdd3e744b2",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-09T01:08:58.494552+00:00",
+          "duration_ms": 22978
+        },
+        {
+          "started_at": "2026-10-09T01:09:40.419409+00:00",
+          "run_id": "3815eb31-e1bb-4c7c-85fd-33c492d7b8c3",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-09T01:09:40.419409+00:00",
+          "duration_ms": 20552
+        },
+        {
+          "started_at": "2026-10-09T01:14:23.286408+00:00",
+          "run_id": "cc7219de-4be1-42c5-9c63-416cdffc59b4",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-09T01:14:23.286408+00:00",
+          "duration_ms": 19388
+        }
+      ]
+    }
+  ],
+  "templates": [
+    {
+      "template_id": "knowledge-research",
+      "name": "多源知识检索",
+      "description": "检索、证据门控、逐项裁判和引用回答。",
+      "category": "知识问答",
+      "workflow": {
+        "workflow_id": "knowledge-research",
+        "id": "knowledge-research",
+        "name": "多源知识检索",
+        "description": "强制检索并对每个需求项执行证据校验、裁判和覆盖审计。",
+        "enabled": true,
+        "status": "published",
+        "version": 1,
+        "published_version": 1,
+        "params": {
+          "source_types": [
+            "document",
+            "qa",
+            "graph",
+            "sql",
+            "api"
+          ],
+          "top_k": 12,
+          "similarity_threshold": 0.3,
+          "evidence_mode": "generic",
+          "timeout_seconds": 8,
+          "max_parallel": 4,
+          "human_confirmation": {
+            "enabled": true,
+            "points": [
+              "human-confirm",
+              "work-order-confirm"
+            ],
+            "actions": [
+              "write",
+              "publish",
+              "submit"
+            ]
+          }
+        },
+        "nodes": [
+          {
+            "id": "route",
+            "name": "意图和实体识别",
+            "type": "router",
+            "x": 40,
+            "y": 110,
+            "enabled": true,
+            "params": {},
+            "condition": null,
+            "branch": null,
+            "human_confirmation": false
+          },
+          {
+            "id": "plan",
+            "name": "用户需求规划",
+            "type": "requirement_plan",
+            "x": 250,
+            "y": 110,
+            "enabled": true,
+            "params": {
+              "max_items": 12
+            },
+            "condition": null,
+            "branch": null,
+            "human_confirmation": false
+          },
+          {
+            "id": "search",
+            "name": "统一搜索",
+            "type": "unified_search",
+            "x": 470,
+            "y": 110,
+            "enabled": true,
+            "params": {
+              "top_k": 12
+            },
+            "condition": null,
+            "branch": null,
+            "human_confirmation": false
+          },
+          {
+            "id": "evidence",
+            "name": "证据校验",
+            "type": "evidence_gate",
+            "x": 690,
+            "y": 110,
+            "enabled": true,
+            "params": {
+              "threshold": 0.3
+            },
+            "condition": null,
+            "branch": null,
+            "human_confirmation": false
+          },
+          {
+            "id": "judge",
+            "name": "证据裁判与覆盖审计",
+            "type": "claim_judge",
+            "x": 910,
+            "y": 110,
+            "enabled": true,
+            "params": {},
+            "condition": null,
+            "branch": null,
+            "human_confirmation": false
+          },
+          {
+            "id": "answer",
+            "name": "引用回答",
+            "type": "answer",
+            "x": 1130,
+            "y": 110,
+            "enabled": true,
+            "params": {},
+            "condition": null,
+            "branch": null,
+            "human_confirmation": false
+          },
+          {
+            "id": "human-confirm",
+            "name": "人工确认点",
+            "type": "human_confirmation",
+            "x": 910,
+            "y": 280,
+            "enabled": false,
+            "params": {
+              "actions": [
+                "写入",
+                "发布"
+              ]
+            },
+            "condition": null,
+            "branch": null,
+            "human_confirmation": true
+          }
+        ],
+        "edges": [
+          {
+            "id": "edge-route-plan",
+            "source": "route",
+            "target": "plan",
+            "label": null,
+            "condition": null,
+            "enabled": true
+          },
+          {
+            "id": "edge-plan-search",
+            "source": "plan",
+            "target": "search",
+            "label": null,
+            "condition": null,
+            "enabled": true
+          },
+          {
+            "id": "edge-search-evidence",
+            "source": "search",
+            "target": "evidence",
+            "label": null,
+            "condition": null,
+            "enabled": true
+          },
+          {
+            "id": "edge-evidence-judge",
+            "source": "evidence",
+            "target": "judge",
+            "label": null,
+            "condition": null,
+            "enabled": true
+          },
+          {
+            "id": "edge-judge-answer",
+            "source": "judge",
+            "target": "answer",
+            "label": null,
+            "condition": null,
+            "enabled": true
+          },
+          {
+            "id": "edge-judge-human-confirm",
+            "source": "judge",
+            "target": "human-confirm",
+            "label": "需要写入时",
+            "condition": "requires_confirmation == true",
+            "enabled": true
+          },
+          {
+            "id": "edge-human-confirm-answer",
+            "source": "human-confirm",
+            "target": "answer",
+            "label": "确认后",
+            "condition": null,
+            "enabled": true
+          }
+        ],
+        "created_at": "2026-09-17T02:01:37.959126+00:00",
+        "updated_at": "2026-09-17T02:01:37.959126+00:00",
+        "updated_by": "system",
+        "versions": [
+          {
+            "version": 1,
+            "status": "published",
+            "created_at": "2026-09-17T02:01:37.959126+00:00",
+            "published_at": "2026-09-17T02:01:37.959126+00:00",
+            "note": "内置模板",
+            "snapshot": {
+              "workflow_id": "knowledge-research",
+              "id": "knowledge-research",
+              "name": "多源知识检索",
+              "description": "强制检索并对每个需求项执行证据校验、裁判和覆盖审计。",
+              "enabled": true,
+              "params": {
+                "source_types": [
+                  "document",
+                  "qa",
+                  "graph",
+                  "sql",
+                  "api"
+                ],
+                "top_k": 12,
+                "similarity_threshold": 0.3,
+                "evidence_mode": "generic",
+                "timeout_seconds": 8,
+                "max_parallel": 4,
+                "human_confirmation": {
+                  "enabled": true,
+                  "points": [
+                    "human-confirm",
+                    "work-order-confirm"
+                  ],
+                  "actions": [
+                    "write",
+                    "publish",
+                    "submit"
+                  ]
+                }
+              },
+              "nodes": [
+                {
+                  "id": "route",
+                  "name": "意图和实体识别",
+                  "type": "router",
+                  "x": 40,
+                  "y": 110,
+                  "enabled": true,
+                  "params": {},
+                  "condition": null,
+                  "branch": null,
+                  "human_confirmation": false
+                },
+                {
+                  "id": "plan",
+                  "name": "用户需求规划",
+                  "type": "requirement_plan",
+                  "x": 250,
+                  "y": 110,
+                  "enabled": true,
+                  "params": {
+                    "max_items": 12
+                  },
+                  "condition": null,
+                  "branch": null,
+                  "human_confirmation": false
+                },
+                {
+                  "id": "search",
+                  "name": "统一搜索",
+                  "type": "unified_search",
+                  "x": 470,
+                  "y": 110,
+                  "enabled": true,
+                  "params": {
+                    "top_k": 12
+                  },
+                  "condition": null,
+                  "branch": null,
+                  "human_confirmation": false
+                },
+                {
+                  "id": "evidence",
+                  "name": "证据校验",
+                  "type": "evidence_gate",
+                  "x": 690,
+                  "y": 110,
+                  "enabled": true,
+                  "params": {
+                    "threshold": 0.3
+                  },
+                  "condition": null,
+                  "branch": null,
+                  "human_confirmation": false
+                },
+                {
+                  "id": "judge",
+                  "name": "证据裁判与覆盖审计",
+                  "type": "claim_judge",
+                  "x": 910,
+                  "y": 110,
+                  "enabled": true,
+                  "params": {},
+                  "condition": null,
+                  "branch": null,
+                  "human_confirmation": false
+                },
+                {
+                  "id": "answer",
+                  "name": "引用回答",
+                  "type": "answer",
+                  "x": 1130,
+                  "y": 110,
+                  "enabled": true,
+                  "params": {},
+                  "condition": null,
+                  "branch": null,
+                  "human_confirmation": false
+                },
+                {
+                  "id": "human-confirm",
+                  "name": "人工确认点",
+                  "type": "human_confirmation",
+                  "x": 910,
+                  "y": 280,
+                  "enabled": false,
+                  "params": {
+                    "actions": [
+                      "写入",
+                      "发布"
+                    ]
+                  },
+                  "condition": null,
+                  "branch": null,
+                  "human_confirmation": true
+                }
+              ],
+              "edges": [
+                {
+                  "id": "edge-route-plan",
+                  "source": "route",
+                  "target": "plan",
+                  "label": null,
+                  "condition": null,
+                  "enabled": true
+                },
+                {
+                  "id": "edge-plan-search",
+                  "source": "plan",
+                  "target": "search",
+                  "label": null,
+                  "condition": null,
+                  "enabled": true
+                },
+                {
+                  "id": "edge-search-evidence",
+                  "source": "search",
+                  "target": "evidence",
+                  "label": null,
+                  "condition": null,
+                  "enabled": true
+                },
+                {
+                  "id": "edge-evidence-judge",
+                  "source": "evidence",
+                  "target": "judge",
+                  "label": null,
+                  "condition": null,
+                  "enabled": true
+                },
+                {
+                  "id": "edge-judge-answer",
+                  "source": "judge",
+                  "target": "answer",
+                  "label": null,
+                  "condition": null,
+                  "enabled": true
+                },
+                {
+                  "id": "edge-judge-human-confirm",
+                  "source": "judge",
+                  "target": "human-confirm",
+                  "label": "需要写入时",
+                  "condition": "requires_confirmation == true",
+                  "enabled": true
+                },
+                {
+                  "id": "edge-human-confirm-answer",
+                  "source": "human-confirm",
+                  "target": "answer",
+                  "label": "确认后",
+                  "condition": null,
+                  "enabled": true
+                }
+              ],
+              "version": 1
+            }
+          }
+        ],
+        "run_history": []
+      }
+    },
+    {
+      "template_id": "equipment-diagnosis",
+      "name": "设备故障诊断",
+      "description": "设备状态与手册/案例并行检索的诊断流程。",
+      "category": "设备运维",
+      "workflow": {
+        "workflow_id": "equipment-diagnosis",
+        "id": "equipment-diagnosis",
+        "name": "设备故障诊断",
+        "description": "实时状态、手册和历史案例并行汇总后生成诊断建议。",
+        "enabled": true,
+        "status": "published",
+        "version": 1,
+        "published_version": 1,
+        "params": {
+          "source_types": [
+            "api",
+            "document",
+            "qa",
+            "graph"
+          ],
+          "top_k": 12,
+          "similarity_threshold": 0.3,
+          "evidence_mode": "generic",
+          "timeout_seconds": 8,
+          "max_parallel": 4,
+          "human_confirmation": {
+            "enabled": true,
+            "points": [
+              "human-confirm",
+              "work-order-confirm"
+            ],
+            "actions": [
+              "write",
+              "publish",
+              "submit"
+            ]
+          }
+        },
+        "nodes": [
+          {
+            "id": "route",
+            "name": "识别设备/故障码",
+            "type": "router",
+            "x": 40,
+            "y": 110,
+            "enabled": true,
+            "params": {},
+            "condition": null,
+            "branch": null,
+            "human_confirmation": false
+          },
+          {
+            "id": "status",
+            "name": "查询实时状态",
+            "type": "api",
+            "x": 280,
+            "y": 110,
+            "enabled": true,
+            "params": {
+              "source": "api",
+              "top_k": 5
+            },
+            "condition": null,
+            "branch": null,
+            "human_confirmation": false
+          },
+          {
+            "id": "parallel-search",
+            "name": "并行检索手册与案例",
+            "type": "parallel",
+            "x": 500,
+            "y": 110,
+            "enabled": true,
+            "params": {
+              "branches": [
+                "manual",
+                "case"
+              ]
+            },
+            "condition": null,
+            "branch": null,
+            "human_confirmation": false
+          },
+          {
+            "id": "manual",
+            "name": "设备手册",
+            "type": "unified_search",
+            "x": 720,
+            "y": 60,
+            "enabled": true,
+            "params": {
+              "source_types": [
+                "document"
+              ],
+              "top_k": 8
+            },
+            "condition": null,
+            "branch": null,
+            "human_confirmation": false
+          },
+          {
+            "id": "case",
+            "name": "历史案例",
+            "type": "unified_search",
+            "x": 720,
+            "y": 190,
+            "enabled": true,
+            "params": {
+              "source_types": [
+                "qa",
+                "graph"
+              ],
+              "top_k": 8
+            },
+            "condition": null,
+            "branch": null,
+            "human_confirmation": false
+          },
+          {
+            "id": "diagnose",
+            "name": "生成诊断建议",
+            "type": "answer",
+            "x": 970,
+            "y": 110,
+            "enabled": true,
+            "params": {},
+            "condition": null,
+            "branch": null,
+            "human_confirmation": false
+          },
+          {
+            "id": "human-confirm",
+            "name": "高风险动作确认",
+            "type": "human_confirmation",
+            "x": 1190,
+            "y": 260,
+            "enabled": false,
+            "params": {},
+            "condition": null,
+            "branch": null,
+            "human_confirmation": true
+          }
+        ],
+        "edges": [
+          {
+            "id": "edge-route-status",
+            "source": "route",
+            "target": "status",
+            "label": null,
+            "condition": null,
+            "enabled": true
+          },
+          {
+            "id": "edge-status-parallel-search",
+            "source": "status",
+            "target": "parallel-search",
+            "label": null,
+            "condition": null,
+            "enabled": true
+          },
+          {
+            "id": "edge-parallel-search-manual",
+            "source": "parallel-search",
+            "target": "manual",
+            "label": "手册",
+            "condition": null,
+            "enabled": true
+          },
+          {
+            "id": "edge-parallel-search-case",
+            "source": "parallel-search",
+            "target": "case",
+            "label": "案例",
+            "condition": null,
+            "enabled": true
+          },
+          {
+            "id": "edge-manual-diagnose",
+            "source": "manual",
+            "target": "diagnose",
+            "label": null,
+            "condition": null,
+            "enabled": true
+          },
+          {
+            "id": "edge-case-diagnose",
+            "source": "case",
+            "target": "diagnose",
+            "label": null,
+            "condition": null,
+            "enabled": true
+          },
+          {
+            "id": "edge-diagnose-human-confirm",
+            "source": "diagnose",
+            "target": "human-confirm",
+            "label": "需要执行动作",
+            "condition": "requires_confirmation == true",
+            "enabled": true
+          }
+        ],
+        "created_at": "2026-09-17T02:01:37.959126+00:00",
+        "updated_at": "2026-09-17T02:01:37.959126+00:00",
+        "updated_by": "system",
+        "versions": [
+          {
+            "version": 1,
+            "status": "published",
+            "created_at": "2026-09-17T02:01:37.959126+00:00",
+            "published_at": "2026-09-17T02:01:37.959126+00:00",
+            "note": "内置模板",
+            "snapshot": {
+              "workflow_id": "equipment-diagnosis",
+              "id": "equipment-diagnosis",
+              "name": "设备故障诊断",
+              "description": "实时状态、手册和历史案例并行汇总后生成诊断建议。",
+              "enabled": true,
+              "params": {
+                "source_types": [
+                  "api",
+                  "document",
+                  "qa",
+                  "graph"
+                ],
+                "top_k": 12,
+                "similarity_threshold": 0.3,
+                "evidence_mode": "generic",
+                "timeout_seconds": 8,
+                "max_parallel": 4,
+                "human_confirmation": {
+                  "enabled": true,
+                  "points": [
+                    "human-confirm",
+                    "work-order-confirm"
+                  ],
+                  "actions": [
+                    "write",
+                    "publish",
+                    "submit"
+                  ]
+                }
+              },
+              "nodes": [
+                {
+                  "id": "route",
+                  "name": "识别设备/故障码",
+                  "type": "router",
+                  "x": 40,
+                  "y": 110,
+                  "enabled": true,
+                  "params": {},
+                  "condition": null,
+                  "branch": null,
+                  "human_confirmation": false
+                },
+                {
+                  "id": "status",
+                  "name": "查询实时状态",
+                  "type": "api",
+                  "x": 280,
+                  "y": 110,
+                  "enabled": true,
+                  "params": {
+                    "source": "api",
+                    "top_k": 5
+                  },
+                  "condition": null,
+                  "branch": null,
+                  "human_confirmation": false
+                },
+                {
+                  "id": "parallel-search",
+                  "name": "并行检索手册与案例",
+                  "type": "parallel",
+                  "x": 500,
+                  "y": 110,
+                  "enabled": true,
+                  "params": {
+                    "branches": [
+                      "manual",
+                      "case"
+                    ]
+                  },
+                  "condition": null,
+                  "branch": null,
+                  "human_confirmation": false
+                },
+                {
+                  "id": "manual",
+                  "name": "设备手册",
+                  "type": "unified_search",
+                  "x": 720,
+                  "y": 60,
+                  "enabled": true,
+                  "params": {
+                    "source_types": [
+                      "document"
+                    ],
+                    "top_k": 8
+                  },
+                  "condition": null,
+                  "branch": null,
+                  "human_confirmation": false
+                },
+                {
+                  "id": "case",
+                  "name": "历史案例",
+                  "type": "unified_search",
+                  "x": 720,
+                  "y": 190,
+                  "enabled": true,
+                  "params": {
+                    "source_types": [
+                      "qa",
+                      "graph"
+                    ],
+                    "top_k": 8
+                  },
+                  "condition": null,
+                  "branch": null,
+                  "human_confirmation": false
+                },
+                {
+                  "id": "diagnose",
+                  "name": "生成诊断建议",
+                  "type": "answer",
+                  "x": 970,
+                  "y": 110,
+                  "enabled": true,
+                  "params": {},
+                  "condition": null,
+                  "branch": null,
+                  "human_confirmation": false
+                },
+                {
+                  "id": "human-confirm",
+                  "name": "高风险动作确认",
+                  "type": "human_confirmation",
+                  "x": 1190,
+                  "y": 260,
+                  "enabled": false,
+                  "params": {},
+                  "condition": null,
+                  "branch": null,
+                  "human_confirmation": true
+                }
+              ],
+              "edges": [
+                {
+                  "id": "edge-route-status",
+                  "source": "route",
+                  "target": "status",
+                  "label": null,
+                  "condition": null,
+                  "enabled": true
+                },
+                {
+                  "id": "edge-status-parallel-search",
+                  "source": "status",
+                  "target": "parallel-search",
+                  "label": null,
+                  "condition": null,
+                  "enabled": true
+                },
+                {
+                  "id": "edge-parallel-search-manual",
+                  "source": "parallel-search",
+                  "target": "manual",
+                  "label": "手册",
+                  "condition": null,
+                  "enabled": true
+                },
+                {
+                  "id": "edge-parallel-search-case",
+                  "source": "parallel-search",
+                  "target": "case",
+                  "label": "案例",
+                  "condition": null,
+                  "enabled": true
+                },
+                {
+                  "id": "edge-manual-diagnose",
+                  "source": "manual",
+                  "target": "diagnose",
+                  "label": null,
+                  "condition": null,
+                  "enabled": true
+                },
+                {
+                  "id": "edge-case-diagnose",
+                  "source": "case",
+                  "target": "diagnose",
+                  "label": null,
+                  "condition": null,
+                  "enabled": true
+                },
+                {
+                  "id": "edge-diagnose-human-confirm",
+                  "source": "diagnose",
+                  "target": "human-confirm",
+                  "label": "需要执行动作",
+                  "condition": "requires_confirmation == true",
+                  "enabled": true
+                }
+              ],
+              "version": 1
+            }
+          }
+        ],
+        "run_history": []
+      }
+    },
+    {
+      "template_id": "work-order-draft",
+      "name": "维修工单草稿",
+      "description": "证据汇总、草稿生成、人工确认和受控提交。",
+      "category": "工单",
+      "workflow": {
+        "workflow_id": "work-order-draft",
+        "id": "work-order-draft",
+        "name": "维修工单草稿",
+        "description": "先生成可审阅草稿，人工确认后才允许进入受控提交节点。",
+        "enabled": true,
+        "status": "published",
+        "version": 1,
+        "published_version": 1,
+        "params": {
+          "source_types": [
+            "document",
+            "qa",
+            "graph",
+            "api"
+          ],
+          "top_k": 12,
+          "similarity_threshold": 0.3,
+          "evidence_mode": "generic",
+          "timeout_seconds": 8,
+          "max_parallel": 4,
+          "human_confirmation": {
+            "enabled": true,
+            "points": [
+              "human-confirm",
+              "work-order-confirm"
+            ],
+            "actions": [
+              "write",
+              "publish",
+              "submit"
+            ]
+          }
+        },
+        "nodes": [
+          {
+            "id": "aggregate",
+            "name": "汇总诊断证据",
+            "type": "evidence_gate",
+            "x": 50,
+            "y": 110,
+            "enabled": true,
+            "params": {},
+            "condition": null,
+            "branch": null,
+            "human_confirmation": false
+          },
+          {
+            "id": "draft",
+            "name": "生成工单草稿",
+            "type": "answer",
+            "x": 310,
+            "y": 110,
+            "enabled": true,
+            "params": {
+              "output": "work_order_draft"
+            },
+            "condition": null,
+            "branch": null,
+            "human_confirmation": false
+          },
+          {
+            "id": "review",
+            "name": "人工确认",
+            "type": "human_confirmation",
+            "x": 570,
+            "y": 110,
+            "enabled": true,
+            "params": {
+              "actions": [
+                "创建工单"
+              ]
+            },
+            "condition": null,
+            "branch": null,
+            "human_confirmation": true
+          },
+          {
+            "id": "submit",
+            "name": "受控提交",
+            "type": "tool",
+            "x": 830,
+            "y": 110,
+            "enabled": false,
+            "params": {
+              "tool": "create_work_order"
+            },
+            "condition": null,
+            "branch": null,
+            "human_confirmation": false
+          },
+          {
+            "id": "notify",
+            "name": "返回提交结果",
+            "type": "answer",
+            "x": 1090,
+            "y": 110,
+            "enabled": true,
+            "params": {},
+            "condition": null,
+            "branch": null,
+            "human_confirmation": false
+          }
+        ],
+        "edges": [
+          {
+            "id": "edge-aggregate-draft",
+            "source": "aggregate",
+            "target": "draft",
+            "label": null,
+            "condition": null,
+            "enabled": true
+          },
+          {
+            "id": "edge-draft-review",
+            "source": "draft",
+            "target": "review",
+            "label": null,
+            "condition": null,
+            "enabled": true
+          },
+          {
+            "id": "edge-review-submit",
+            "source": "review",
+            "target": "submit",
+            "label": "确认后",
+            "condition": null,
+            "enabled": true
+          },
+          {
+            "id": "edge-submit-notify",
+            "source": "submit",
+            "target": "notify",
+            "label": null,
+            "condition": null,
+            "enabled": true
+          }
+        ],
+        "created_at": "2026-09-17T02:01:37.959126+00:00",
+        "updated_at": "2026-09-17T02:01:37.959126+00:00",
+        "updated_by": "system",
+        "versions": [
+          {
+            "version": 1,
+            "status": "published",
+            "created_at": "2026-09-17T02:01:37.959126+00:00",
+            "published_at": "2026-09-17T02:01:37.959126+00:00",
+            "note": "内置模板",
+            "snapshot": {
+              "workflow_id": "work-order-draft",
+              "id": "work-order-draft",
+              "name": "维修工单草稿",
+              "description": "先生成可审阅草稿，人工确认后才允许进入受控提交节点。",
+              "enabled": true,
+              "params": {
+                "source_types": [
+                  "document",
+                  "qa",
+                  "graph",
+                  "api"
+                ],
+                "top_k": 12,
+                "similarity_threshold": 0.3,
+                "evidence_mode": "generic",
+                "timeout_seconds": 8,
+                "max_parallel": 4,
+                "human_confirmation": {
+                  "enabled": true,
+                  "points": [
+                    "human-confirm",
+                    "work-order-confirm"
+                  ],
+                  "actions": [
+                    "write",
+                    "publish",
+                    "submit"
+                  ]
+                }
+              },
+              "nodes": [
+                {
+                  "id": "aggregate",
+                  "name": "汇总诊断证据",
+                  "type": "evidence_gate",
+                  "x": 50,
+                  "y": 110,
+                  "enabled": true,
+                  "params": {},
+                  "condition": null,
+                  "branch": null,
+                  "human_confirmation": false
+                },
+                {
+                  "id": "draft",
+                  "name": "生成工单草稿",
+                  "type": "answer",
+                  "x": 310,
+                  "y": 110,
+                  "enabled": true,
+                  "params": {
+                    "output": "work_order_draft"
+                  },
+                  "condition": null,
+                  "branch": null,
+                  "human_confirmation": false
+                },
+                {
+                  "id": "review",
+                  "name": "人工确认",
+                  "type": "human_confirmation",
+                  "x": 570,
+                  "y": 110,
+                  "enabled": true,
+                  "params": {
+                    "actions": [
+                      "创建工单"
+                    ]
+                  },
+                  "condition": null,
+                  "branch": null,
+                  "human_confirmation": true
+                },
+                {
+                  "id": "submit",
+                  "name": "受控提交",
+                  "type": "tool",
+                  "x": 830,
+                  "y": 110,
+                  "enabled": false,
+                  "params": {
+                    "tool": "create_work_order"
+                  },
+                  "condition": null,
+                  "branch": null,
+                  "human_confirmation": false
+                },
+                {
+                  "id": "notify",
+                  "name": "返回提交结果",
+                  "type": "answer",
+                  "x": 1090,
+                  "y": 110,
+                  "enabled": true,
+                  "params": {},
+                  "condition": null,
+                  "branch": null,
+                  "human_confirmation": false
+                }
+              ],
+              "edges": [
+                {
+                  "id": "edge-aggregate-draft",
+                  "source": "aggregate",
+                  "target": "draft",
+                  "label": null,
+                  "condition": null,
+                  "enabled": true
+                },
+                {
+                  "id": "edge-draft-review",
+                  "source": "draft",
+                  "target": "review",
+                  "label": null,
+                  "condition": null,
+                  "enabled": true
+                },
+                {
+                  "id": "edge-review-submit",
+                  "source": "review",
+                  "target": "submit",
+                  "label": "确认后",
+                  "condition": null,
+                  "enabled": true
+                },
+                {
+                  "id": "edge-submit-notify",
+                  "source": "submit",
+                  "target": "notify",
+                  "label": null,
+                  "condition": null,
+                  "enabled": true
+                }
+              ],
+              "version": 1
+            }
+          }
+        ],
+        "run_history": []
+      }
+    },
+    {
+      "template_id": "evidence-review",
+      "name": "证据校验流程",
+      "description": "候选证据、事实声明、需求结果和覆盖审计。",
+      "category": "质量治理",
+      "workflow": {
+        "workflow_id": "evidence-review",
+        "id": "evidence-review",
+        "name": "证据校验流程",
+        "description": "专门用于候选证据、事实声明、需求结果和覆盖范围的严格校验。",
+        "enabled": true,
+        "status": "published",
+        "version": 1,
+        "published_version": 1,
+        "params": {
+          "source_types": [
+            "document",
+            "qa",
+            "graph"
+          ],
+          "top_k": 12,
+          "similarity_threshold": 0.3,
+          "evidence_mode": "industrial_strict",
+          "timeout_seconds": 8,
+          "max_parallel": 4,
+          "human_confirmation": {
+            "enabled": false,
+            "points": [],
+            "actions": []
+          }
+        },
+        "nodes": [
+          {
+            "id": "route",
+            "name": "识别待校验问题",
+            "type": "router",
+            "x": 40,
+            "y": 110,
+            "enabled": true,
+            "params": {},
+            "condition": null,
+            "branch": null,
+            "human_confirmation": false
+          },
+          {
+            "id": "plan",
+            "name": "拆分需求项",
+            "type": "requirement_plan",
+            "x": 250,
+            "y": 110,
+            "enabled": true,
+            "params": {
+              "max_items": 12
+            },
+            "condition": null,
+            "branch": null,
+            "human_confirmation": false
+          },
+          {
+            "id": "search",
+            "name": "召回候选证据",
+            "type": "unified_search",
+            "x": 470,
+            "y": 110,
+            "enabled": true,
+            "params": {
+              "top_k": 12
+            },
+            "condition": null,
+            "branch": null,
+            "human_confirmation": false
+          },
+          {
+            "id": "evidence",
+            "name": "证据门控",
+            "type": "evidence_gate",
+            "x": 690,
+            "y": 110,
+            "enabled": true,
+            "params": {
+              "threshold": 0.3
+            },
+            "condition": null,
+            "branch": null,
+            "human_confirmation": false
+          },
+          {
+            "id": "judge",
+            "name": "需求结果裁判",
+            "type": "claim_judge",
+            "x": 910,
+            "y": 110,
+            "enabled": true,
+            "params": {},
+            "condition": null,
+            "branch": null,
+            "human_confirmation": false
+          },
+          {
+            "id": "answer",
+            "name": "安全引用回答",
+            "type": "answer",
+            "x": 1130,
+            "y": 110,
+            "enabled": true,
+            "params": {},
+            "condition": null,
+            "branch": null,
+            "human_confirmation": false
+          }
+        ],
+        "edges": [
+          {
+            "id": "edge-route-plan",
+            "source": "route",
+            "target": "plan",
+            "label": null,
+            "condition": null,
+            "enabled": true
+          },
+          {
+            "id": "edge-plan-search",
+            "source": "plan",
+            "target": "search",
+            "label": null,
+            "condition": null,
+            "enabled": true
+          },
+          {
+            "id": "edge-search-evidence",
+            "source": "search",
+            "target": "evidence",
+            "label": null,
+            "condition": null,
+            "enabled": true
+          },
+          {
+            "id": "edge-evidence-judge",
+            "source": "evidence",
+            "target": "judge",
+            "label": null,
+            "condition": null,
+            "enabled": true
+          },
+          {
+            "id": "edge-judge-answer",
+            "source": "judge",
+            "target": "answer",
+            "label": null,
+            "condition": null,
+            "enabled": true
+          }
+        ],
+        "created_at": "2026-09-17T03:58:28.029066+00:00",
+        "updated_at": "2026-09-17T03:58:28.029066+00:00",
+        "updated_by": "system",
+        "versions": [
+          {
+            "version": 1,
+            "status": "published",
+            "created_at": "2026-09-17T03:58:28.029066+00:00",
+            "published_at": "2026-09-17T03:58:28.029066+00:00",
+            "note": "内置模板",
+            "snapshot": {
+              "workflow_id": "evidence-review",
+              "id": "evidence-review",
+              "name": "证据校验流程",
+              "description": "专门用于候选证据、事实声明、需求结果和覆盖范围的严格校验。",
+              "enabled": true,
+              "params": {
+                "source_types": [
+                  "document",
+                  "qa",
+                  "graph"
+                ],
+                "top_k": 12,
+                "similarity_threshold": 0.3,
+                "evidence_mode": "industrial_strict",
+                "timeout_seconds": 8,
+                "max_parallel": 4,
+                "human_confirmation": {
+                  "enabled": false,
+                  "points": [],
+                  "actions": []
+                }
+              },
+              "nodes": [
+                {
+                  "id": "route",
+                  "name": "识别待校验问题",
+                  "type": "router",
+                  "x": 40,
+                  "y": 110,
+                  "enabled": true,
+                  "params": {},
+                  "condition": null,
+                  "branch": null,
+                  "human_confirmation": false
+                },
+                {
+                  "id": "plan",
+                  "name": "拆分需求项",
+                  "type": "requirement_plan",
+                  "x": 250,
+                  "y": 110,
+                  "enabled": true,
+                  "params": {
+                    "max_items": 12
+                  },
+                  "condition": null,
+                  "branch": null,
+                  "human_confirmation": false
+                },
+                {
+                  "id": "search",
+                  "name": "召回候选证据",
+                  "type": "unified_search",
+                  "x": 470,
+                  "y": 110,
+                  "enabled": true,
+                  "params": {
+                    "top_k": 12
+                  },
+                  "condition": null,
+                  "branch": null,
+                  "human_confirmation": false
+                },
+                {
+                  "id": "evidence",
+                  "name": "证据门控",
+                  "type": "evidence_gate",
+                  "x": 690,
+                  "y": 110,
+                  "enabled": true,
+                  "params": {
+                    "threshold": 0.3
+                  },
+                  "condition": null,
+                  "branch": null,
+                  "human_confirmation": false
+                },
+                {
+                  "id": "judge",
+                  "name": "需求结果裁判",
+                  "type": "claim_judge",
+                  "x": 910,
+                  "y": 110,
+                  "enabled": true,
+                  "params": {},
+                  "condition": null,
+                  "branch": null,
+                  "human_confirmation": false
+                },
+                {
+                  "id": "answer",
+                  "name": "安全引用回答",
+                  "type": "answer",
+                  "x": 1130,
+                  "y": 110,
+                  "enabled": true,
+                  "params": {},
+                  "condition": null,
+                  "branch": null,
+                  "human_confirmation": false
+                }
+              ],
+              "edges": [
+                {
+                  "id": "edge-route-plan",
+                  "source": "route",
+                  "target": "plan",
+                  "label": null,
+                  "condition": null,
+                  "enabled": true
+                },
+                {
+                  "id": "edge-plan-search",
+                  "source": "plan",
+                  "target": "search",
+                  "label": null,
+                  "condition": null,
+                  "enabled": true
+                },
+                {
+                  "id": "edge-search-evidence",
+                  "source": "search",
+                  "target": "evidence",
+                  "label": null,
+                  "condition": null,
+                  "enabled": true
+                },
+                {
+                  "id": "edge-evidence-judge",
+                  "source": "evidence",
+                  "target": "judge",
+                  "label": null,
+                  "condition": null,
+                  "enabled": true
+                },
+                {
+                  "id": "edge-judge-answer",
+                  "source": "judge",
+                  "target": "answer",
+                  "label": null,
+                  "condition": null,
+                  "enabled": true
+                }
+              ],
+              "version": 1
+            }
+          }
+        ],
+        "run_history": []
+      }
+    }
+  ]
+}

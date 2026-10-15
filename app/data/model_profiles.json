@@ -1,0 +1,190 @@
+{
+  "schema_version": 1,
+  "version": 14,
+  "updated_at": "2026-10-14T06:01:21.687951+00:00",
+  "profiles": [
+    {
+      "profile_id": "balanced",
+      "name": "均衡模型（当前 Qwen）qwen3.8-27b",
+      "provider": "DashScope / OpenAI 兼容",
+      "model": "qwen3.8-27b",
+      "base_url": "",
+      "base_url_env": "MIANFEI_BASE_URL",
+      "api_key_env": "MIANFEI_API_KEY",
+      "capabilities": [
+        "json",
+        "tool_call",
+        "vision"
+      ],
+      "cost_tier": "medium",
+      "temperature": 0.0,
+      "max_tokens": 4096,
+      "timeout_seconds": 60,
+      "max_retries": 1,
+      "enable_thinking": false,
+      "enabled": true,
+      "description": "兼容现有项目配置，作为所有未配置模型的安全回退。",
+      "version": 3,
+      "created_at": "2026-10-10T07:12:18.868876+00:00",
+      "updated_at": "2026-10-14T06:01:21.687397+00:00"
+    },
+    {
+      "profile_id": "fast",
+      "name": "快速模型 qwen3.7-flash",
+      "provider": "DashScope / OpenAI 兼容",
+      "model": "qwen3.7-flash-2026-07-15",
+      "base_url": "",
+      "base_url_env": "DASHSCOPE_BASE_URL",
+      "api_key_env": "DASHSCOPE_API_KEY",
+      "capabilities": [
+        "json",
+        "tool_call",
+        "vision"
+      ],
+      "cost_tier": "low",
+      "temperature": 0.0,
+      "max_tokens": 8192,
+      "timeout_seconds": 60,
+      "max_retries": 1,
+      "enable_thinking": false,
+      "enabled": true,
+      "description": "用于简单意图识别、摘要和低复杂度任务。",
+      "version": 5,
+      "created_at": "2026-09-23T05:14:14.046404+00:00",
+      "updated_at": "2026-09-23T05:31:36.140449+00:00"
+    },
+    {
+      "profile_id": "reasoning",
+      "name": "推理模型 qwen3.7-plus-2026-05-26",
+      "provider": "DashScope / OpenAI 兼容",
+      "model": "qwen3.7-plus-2026-05-26",
+      "base_url": "",
+      "base_url_env": "DASHSCOPE_BASE_URL",
+      "api_key_env": "DASHSCOPE_API_KEY",
+      "capabilities": [
+        "json",
+        "tool_call",
+        "vision"
+      ],
+      "cost_tier": "high",
+      "temperature": 0.0,
+      "max_tokens": 8192,
+      "timeout_seconds": 60,
+      "max_retries": 1,
+      "enable_thinking": false,
+      "enabled": true,
+      "description": "用于多意图、资料冲突、证据裁判和复杂比较。",
+      "version": 2,
+      "created_at": "2026-09-23T05:41:56.539771+00:00",
+      "updated_at": "2026-09-23T05:41:56.539771+00:00"
+    },
+    {
+      "profile_id": "vision",
+      "name": "多模态模型   qwen3-vl-flash",
+      "provider": "DashScope / OpenAI 兼容",
+      "model": "qwen3-vl-flash",
+      "base_url": "",
+      "base_url_env": "DASHSCOPE_BASE_URL",
+      "api_key_env": "DASHSCOPE_API_KEY",
+      "capabilities": [
+        "json",
+        "vision"
+      ],
+      "cost_tier": "medium",
+      "temperature": 0.0,
+      "max_tokens": 8192,
+      "timeout_seconds": 60,
+      "max_retries": 1,
+      "enable_thinking": false,
+      "enabled": true,
+      "description": "用于图片、截图和扫描资料理解。",
+      "version": 3,
+      "created_at": "2026-09-23T05:42:57.624537+00:00",
+      "updated_at": "2026-09-23T05:43:43.915785+00:00"
+    }
+  ],
+  "routing": [
+    {
+      "stage": "semantic_router",
+      "name": "意图和实体识别",
+      "simple_profile": "balanced",
+      "normal_profile": "balanced",
+      "complex_profile": "balanced",
+      "fallback_profile": "balanced",
+      "required_capabilities": [
+        "json"
+      ],
+      "enabled": true
+    },
+    {
+      "stage": "requirement_plan",
+      "name": "需求规划",
+      "simple_profile": "balanced",
+      "normal_profile": "balanced",
+      "complex_profile": "balanced",
+      "fallback_profile": "balanced",
+      "required_capabilities": [
+        "json"
+      ],
+      "enabled": true
+    },
+    {
+      "stage": "requirement_audit",
+      "name": "需求覆盖审计",
+      "simple_profile": "balanced",
+      "normal_profile": "balanced",
+      "complex_profile": "balanced",
+      "fallback_profile": "balanced",
+      "required_capabilities": [
+        "json"
+      ],
+      "enabled": true
+    },
+    {
+      "stage": "claim_judge",
+      "name": "证据裁判",
+      "simple_profile": "balanced",
+      "normal_profile": "balanced",
+      "complex_profile": "balanced",
+      "fallback_profile": "balanced",
+      "required_capabilities": [
+        "json"
+      ],
+      "enabled": true
+    },
+    {
+      "stage": "answer",
+      "name": "最终回答",
+      "simple_profile": "balanced",
+      "normal_profile": "balanced",
+      "complex_profile": "balanced",
+      "fallback_profile": "balanced",
+      "required_capabilities": [],
+      "enabled": true
+    },
+    {
+      "stage": "agent",
+      "name": "Agent 总控",
+      "simple_profile": "balanced",
+      "normal_profile": "balanced",
+      "complex_profile": "balanced",
+      "fallback_profile": "balanced",
+      "required_capabilities": [
+        "tool_call"
+      ],
+      "enabled": true
+    },
+    {
+      "stage": "graph_extraction",
+      "name": "图谱抽取",
+      "simple_profile": "balanced",
+      "normal_profile": "balanced",
+      "complex_profile": "balanced",
+      "fallback_profile": "balanced",
+      "required_capabilities": [
+        "json"
+      ],
+      "enabled": true
+    }
+  ]
+}

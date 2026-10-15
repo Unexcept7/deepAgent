@@ -1,0 +1,752 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>知识库智能助手</title>
+  <style>
+    :root { font-family: "Microsoft YaHei", system-ui, sans-serif; color: #172033; background: #f3f6fb; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    .app { width: min(1240px, 100%); height: 100vh; margin: auto; display: flex; background: #fff; box-shadow: 0 0 32px #17356616; }
+    .sidebar { width: 250px; flex: 0 0 250px; display: flex; flex-direction: column; padding: 18px 12px; border-right: 1px solid #e4e9f2; background: #f7f9fd; }
+    .sidebar-title { display: flex; align-items: center; justify-content: space-between; padding: 0 6px 14px; }
+    .sidebar-title strong { font-size: 15px; }
+    #new-chat { padding: 6px 10px; color: #2459b8; background: #fff; border: 1px solid #cfdaf0; border-radius: 8px; }
+    #conversation-list { flex: 1; overflow-y: auto; }
+    .conversation-item { display: flex; align-items: center; gap: 4px; margin-bottom: 5px; border-radius: 9px; }
+    .conversation-item.active { background: #e8effc; }
+    .conversation-open { flex: 1; min-width: 0; padding: 9px 8px; text-align: left; background: transparent; border: 0; border-radius: 9px; }
+    .conversation-title { display: block; overflow: hidden; color: #2d3a51; font-size: 13px; white-space: nowrap; text-overflow: ellipsis; }
+    .conversation-time { display: block; margin-top: 3px; color: #8993a5; font-size: 10px; }
+    .conversation-delete { flex: 0 0 auto; padding: 7px; color: #8a94a7; background: transparent; border: 0; border-radius: 7px; }
+    .conversation-delete:hover { color: #b52d2d; background: #fdecec; }
+    .empty-history { padding: 20px 8px; color: #8a94a7; font-size: 12px; text-align: center; }
+    .chat-panel { min-width: 0; flex: 1; display: flex; flex-direction: column; }
+    header { padding: 20px 26px; color: #fff; background: linear-gradient(135deg, #1457d9, #263e9f); }
+    .title { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    h1 { margin: 0; font-size: 22px; }
+    header p { margin: 7px 0 0; font-size: 13px; opacity: .84; }
+    button { font: inherit; cursor: pointer; }
+    #messages { flex: 1; overflow-y: auto; padding: 24px; }
+    .message { display: flex; margin-bottom: 18px; }
+    .message.user { justify-content: flex-end; }
+    .content { max-width: 80%; }
+    .bubble { padding: 12px 15px; border-radius: 13px; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
+    .assistant .bubble { background: #f0f4fb; border-top-left-radius: 3px; }
+    .user .bubble { color: #fff; background: #2463dc; border-top-right-radius: 3px; }
+    .meta { margin-top: 6px; color: #7a8497; font-size: 11px; }
+    .meta a { color: #315fae; text-decoration: none; }
+    .meta a:hover { text-decoration: underline; }
+    .retrieval-hits { margin-top: 10px; border: 1px solid #dbe3f1; border-radius: 10px; background: #fbfcff; }
+    .retrieval-hits > summary { padding: 9px 11px; cursor: pointer; color: #4b5870; font-size: 12px; }
+    .retrieval-hit { margin: 0 10px 9px; padding: 9px 10px; border: 1px solid #e4eaf4; border-radius: 8px; background: #fff; }
+    .retrieval-hit:last-child { margin-bottom: 10px; }
+    .retrieval-hit > summary { cursor: pointer; color: #53617a; font-size: 11px; }
+    .retrieval-hit-meta { display: flex; flex-wrap: wrap; gap: 5px 10px; margin-bottom: 7px; color: #68738a; font-size: 11px; }
+    .retrieval-hit-meta a { color: #315fae; text-decoration: none; }
+    .retrieval-hit-meta a:hover { text-decoration: underline; }
+    .retrieval-hit-content { padding: 8px; color: #3d485d; background: #f5f8fd; border-radius: 6px; font-size: 12px; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
+    .evidence-summary { display: flex; flex-wrap: wrap; gap: 6px 10px; margin-top: 9px; padding: 8px 10px; border: 1px solid #dbe3f1; border-radius: 9px; color: #56627a; background: #fbfcff; font-size: 11px; }
+    .evidence-status { padding: 2px 7px; border-radius: 10px; font-weight: 600; }
+    .evidence-status.supported { color: #087443; background: #e5f7ee; }
+    .evidence-status.partial { color: #8a5700; background: #fff3dc; }
+    .evidence-status.blocked { color: #a12626; background: #fdeaea; }
+    .claims { margin-top: 10px; overflow: hidden; border: 1px solid #dbe3f1; border-radius: 8px; background: #fbfcff; }
+    .claims > summary { padding: 9px 11px; cursor: pointer; color: #4b5870; font-size: 12px; }
+    .claim { margin: 0 10px 9px; padding: 9px 10px; border: 1px solid #e4eaf4; border-left-width: 3px; border-radius: 8px; background: #fff; }
+    .claim.supported { border-left-color: #14955a; }
+    .claim.unsupported { border-left-color: #c94a4a; }
+    .claim.conflict { border-left-color: #c78711; }
+    .claim:last-child { margin-bottom: 10px; }
+    .claim-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: #34415a; font-size: 12px; font-weight: 600; }
+    .claim-value { margin-top: 6px; color: #3d485d; font-size: 13px; line-height: 1.6; white-space: pre-wrap; word-break: break-word; }
+    .claim-meta { margin-top: 6px; color: #68738a; font-size: 11px; line-height: 1.55; word-break: break-word; }
+    .claim-status { flex: 0 0 auto; padding: 2px 7px; border-radius: 8px; font-size: 10px; font-weight: 600; }
+    .claim-status.supported { color: #087443; background: #e5f7ee; }
+    .claim-status.unsupported { color: #a12626; background: #fdeaea; }
+    .claim-status.conflict { color: #8a5700; background: #fff3dc; }
+    .requirement-coverage { margin: 0 10px 9px; padding: 8px 10px; border-radius: 6px; color: #56627a; background: #f4f7fc; font-size: 11px; line-height: 1.55; }
+    .requirement-coverage.complete { color: #087443; background: #e9f7f0; }
+    .claim-source-list { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 7px; font-size: 11px; }
+    .claim-source-list a { color: #315fae; text-decoration: none; }
+    .claim-source-list a:hover { text-decoration: underline; }
+    .trace { margin-top: 10px; overflow: hidden; border: 1px solid #dbe3f1; border-radius: 10px; background: #fbfcff; }
+    .trace summary { display: flex; align-items: center; gap: 8px; padding: 9px 11px; cursor: pointer; color: #4b5870; font-size: 12px; list-style: none; }
+    .trace summary::-webkit-details-marker { display: none; }
+    .trace summary::after { content: "展开"; margin-left: auto; color: #7a8497; }
+    .trace[open] summary::after { content: "收起"; }
+    .trace-badge { padding: 3px 8px; border-radius: 12px; font-weight: 600; }
+    .trace-badge.ragflow { color: #087443; background: #e5f7ee; }
+    .trace-badge.llm { color: #9a5a00; background: #fff3dc; }
+    .trace-badge.error { color: #a12626; background: #fdeaea; }
+    .trace-body { padding: 0 12px 11px; border-top: 1px solid #e8edf5; }
+    .trace-stats { display: flex; flex-wrap: wrap; gap: 7px 14px; padding: 9px 0; color: #68738a; font-size: 11px; }
+    .trace-step { position: relative; margin-left: 6px; padding: 2px 0 10px 17px; border-left: 2px solid #d9e2f2; }
+    .trace-step-index { display: inline-block; min-width: 42px; margin-right: 6px; padding: 2px 6px; color: #315fae; background: #edf3ff; border-radius: 10px; font-size: 10px; font-weight: 600; text-align: center; }
+    .trace-step.error .trace-step-index { color: #a12626; background: #fdeaea; }
+    .trace-step:last-child { padding-bottom: 1px; }
+    .trace-step strong { display: block; color: #34415a; font-size: 12px; }
+    .trace-step span { display: block; margin-top: 2px; color: #727e93; font-size: 11px; line-height: 1.5; word-break: break-word; }
+    .suggestions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .suggestions button, .examples button { padding: 7px 12px; color: #3157a5; background: #fff; border: 1px solid #d6def0; border-radius: 18px; }
+    .suggestions button:hover, .examples button:hover { background: #edf3ff; }
+    .examples { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 24px 12px; }
+    form { display: flex; gap: 10px; padding: 15px 24px 22px; border-top: 1px solid #e9edf5; }
+    textarea { flex: 1; min-height: 48px; max-height: 140px; padding: 13px; resize: none; border: 1px solid #cbd5e5; border-radius: 10px; outline: none; font: inherit; }
+    textarea:focus { border-color: #2463dc; box-shadow: 0 0 0 3px #2463dc18; }
+    #send { min-width: 82px; color: #fff; background: #2463dc; border: 0; border-radius: 10px; font-weight: 600; }
+    #send:disabled { opacity: .55; cursor: wait; }
+    @media (max-width: 700px) {
+      .app { flex-direction: column; }
+      .sidebar { width: 100%; flex: 0 0 auto; max-height: 155px; padding: 10px 12px; border-right: 0; border-bottom: 1px solid #e4e9f2; }
+      #conversation-list { display: flex; gap: 6px; overflow-x: auto; }
+      .conversation-item { min-width: 190px; }
+      .content { max-width: 92%; }
+      header, #messages, form { padding-left: 16px; padding-right: 16px; }
+      .examples { padding-left: 16px; padding-right: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <aside class="sidebar">
+      <div class="sidebar-title"><strong>历史对话</strong><button id="new-chat" type="button">＋ 新建</button></div>
+      <div id="conversation-list"><div class="empty-history">暂无历史对话</div></div>
+    </aside>
+    <section class="chat-panel">
+      <header>
+        <div class="title"><h1>知识库智能助手</h1></div>
+        <p>由 Qwen、DeepAgents、LangGraph 和 RAGFlow 驱动</p>
+      </header>
+      <section id="messages" aria-live="polite">
+        <div class="message assistant"><div class="content"><div class="bubble">你好！我会根据 RAGFlow 中的知识库回答问题。你可以自然提问，不需要使用固定格式。</div></div></div>
+      </section>
+      <div id="quick-prompts" class="examples" aria-label="推荐问题"></div>
+      <form id="chat-form">
+        <textarea id="query" placeholder="输入问题，Enter 发送，Shift+Enter 换行" autofocus></textarea>
+        <button id="send" type="submit">发送</button>
+      </form>
+    </section>
+  </main>
+  <script>
+    const messages = document.querySelector('#messages');
+    const form = document.querySelector('#chat-form');
+    const query = document.querySelector('#query');
+    const send = document.querySelector('#send');
+    const conversationList = document.querySelector('#conversation-list');
+    const quickPrompts = document.querySelector('#quick-prompts');
+    const DEFAULT_APP_ID = 'enterprise-knowledge-assistant';
+    const conversationStorageKey = `deepagent_conversation_id:${DEFAULT_APP_ID}`;
+    let conversationId = localStorage.getItem(conversationStorageKey);
+
+    function resetMessages(text = '新对话已开始。请直接告诉我你想了解什么。') {
+      messages.innerHTML = '';
+      addMessage(text, 'assistant');
+    }
+
+    function renderQuickPrompts(items) {
+      quickPrompts.innerHTML = '';
+      (items || []).slice(0, 4).forEach(item => {
+        const text = typeof item === 'string' ? item : String(item?.text || item?.query || '');
+        const target = typeof item === 'string' ? item : String(item?.query || item?.text || '');
+        if (!text.trim() || !target.trim()) return;
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.textContent = text.trim();
+        button.title = target.trim();
+        button.addEventListener('click', () => ask(target.trim()));
+        quickPrompts.appendChild(button);
+      });
+    }
+
+    async function loadQuickPrompts() {
+      const params = new URLSearchParams({app_id: DEFAULT_APP_ID});
+      if (conversationId) params.set('conversation_id', conversationId);
+      try {
+        const response = await fetch(`/quick-prompts?${params.toString()}`);
+        if (!response.ok) throw new Error(`读取推荐问题失败：HTTP ${response.status}`);
+        const result = await response.json();
+        renderQuickPrompts(result.items);
+      } catch (error) {
+        console.warn(error);
+        renderQuickPrompts([
+          {text: '查询当前知识库', query: '当前系统有哪些已绑定知识库？'},
+          {text: '查询设备技术参数', query: '请查询知识库中的设备技术参数'},
+          {text: '查看协议资料', query: '请查询知识库中的工业通信协议资料'},
+          {text: '比较设备型号', query: '请比较知识库中的两个设备型号'},
+        ]);
+      }
+    }
+
+    function addMessage(text, role) {
+      const row = document.createElement('div');
+      row.className = `message ${role}`;
+      const content = document.createElement('div');
+      content.className = 'content';
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+      bubble.textContent = text;
+      content.appendChild(bubble);
+      row.appendChild(content);
+      messages.appendChild(row);
+      messages.scrollTop = messages.scrollHeight;
+      return content;
+    }
+
+    function showExtras(content, result) {
+      showTrace(content, result.trace);
+      showEvidenceSummary(content, result.evidence);
+      if (result.results?.length) {
+        showRequirementResults(content, result.results, result.coverage);
+      } else {
+        showClaims(content, result.claims);
+      }
+      if (result.citations?.length) {
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        meta.append('参考来源：');
+        const unique = [...new Map(result.citations.map(item => [item.url || item.document_name, item])).values()];
+        unique.forEach((item, index) => {
+          if (index) meta.append('、');
+          if (item.url) {
+            const link = document.createElement('a');
+            link.href = item.url;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            link.textContent = item.document_name;
+            link.title = '点击查看或下载来源文档';
+            meta.appendChild(link);
+          } else {
+            meta.append(item.document_name);
+          }
+        });
+        content.appendChild(meta);
+      }
+      if (result.retrieval_hits?.length) {
+        const details = document.createElement('details');
+        details.className = 'retrieval-hits';
+        const summary = document.createElement('summary');
+        summary.textContent = `已验证证据片段（${result.retrieval_hits.length}）`;
+        details.appendChild(summary);
+        result.retrieval_hits.forEach((hit, index) => {
+          const item = document.createElement('details');
+          item.className = 'retrieval-hit';
+          const itemSummary = document.createElement('summary');
+          itemSummary.textContent = `片段 ${index + 1}：${hit.document_name || '未知文档'}`;
+          item.appendChild(itemSummary);
+
+          const meta = document.createElement('div');
+          meta.className = 'retrieval-hit-meta';
+          if (hit.evidence_id) meta.append(`证据 ${hit.evidence_id}`);
+          if (hit.url) {
+            const link = document.createElement('a');
+            link.href = hit.url;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            link.textContent = hit.document_name || '查看来源文档';
+            link.title = '点击查看或下载来源文档';
+            meta.appendChild(link);
+          } else {
+            meta.append(hit.document_name || '未知文档');
+          }
+          if (hit.page != null) meta.append(`第 ${hit.page} 页`);
+          if (hit.score != null) meta.append(`相似度 ${(Number(hit.score) * 100).toFixed(1)}%`);
+          item.appendChild(meta);
+
+          const excerpt = document.createElement('div');
+          excerpt.className = 'retrieval-hit-content';
+          excerpt.textContent = hit.content || '该片段没有可显示的文本。';
+          item.appendChild(excerpt);
+          details.appendChild(item);
+        });
+        content.appendChild(details);
+      }
+      if (result.suggestions?.length) {
+        const box = document.createElement('div');
+        box.className = 'suggestions';
+        result.suggestions.forEach(item => {
+          // 兼容当前对象格式、历史消息格式以及模型直接返回字符串的情况。
+          const suggestion = typeof item === 'string'
+            ? item.trim()
+            : String(item?.query || item?.text || '').trim();
+          if (!suggestion) return;
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.textContent = typeof item === 'object' && item.text
+            ? item.text
+            : suggestion;
+          button.dataset.query = suggestion;
+          button.addEventListener('click', () => ask(button.dataset.query));
+          box.appendChild(button);
+        });
+        if (box.children.length) content.appendChild(box);
+      }
+    }
+
+    function showRequirementResults(content, results, coverage) {
+      if (!Array.isArray(results) || !results.length) return;
+      const labels = {
+        supported: '已支持',
+        unsupported: '未支持',
+        conflict: '证据冲突',
+      };
+      const details = document.createElement('details');
+      details.className = 'claims';
+      const summary = document.createElement('summary');
+      summary.textContent = `已验证依据（${results.length}）`;
+      details.appendChild(summary);
+
+      if (coverage) {
+        const coverageBox = document.createElement('div');
+        coverageBox.className = `requirement-coverage ${coverage.complete ? 'complete' : ''}`;
+        const base = coverage.complete
+          ? `覆盖审计通过 · ${coverage.result_count ?? results.length}/${coverage.planned_requirement_count ?? results.length} 项均已发布`
+          : `覆盖审计未完全通过 · ${coverage.result_count ?? results.length}/${coverage.planned_requirement_count ?? results.length} 项已发布`;
+        const missing = Array.isArray(coverage.missing_requests)
+          ? coverage.missing_requests
+              .filter(Boolean)
+              .map(item => String(item).replace(/\bR\d+\s*(?:要求|项)?[：:]?\s*/g, '').trim())
+              .filter(Boolean)
+          : [];
+        coverageBox.textContent = missing.length ? `${base} · 尚未支持：${missing.join('；')}` : base;
+        details.appendChild(coverageBox);
+      }
+
+      results.forEach(result => {
+        const status = labels[result?.status] ? result.status : 'unsupported';
+        const item = document.createElement('div');
+        item.className = `claim ${status}`;
+        const head = document.createElement('div');
+        head.className = 'claim-head';
+        const title = document.createElement('span');
+        title.textContent = `${result?.subject || '未指定对象'} · ${result?.request || '未指定事项'}`;
+        const badge = document.createElement('span');
+        badge.className = `claim-status ${status}`;
+        badge.textContent = labels[status];
+        head.append(title, badge);
+        item.appendChild(head);
+
+        const value = document.createElement('div');
+        value.className = 'claim-value';
+        value.textContent = result?.value || '未找到可支持结果';
+        item.appendChild(value);
+
+        const reason = document.createElement('div');
+        reason.className = 'claim-meta';
+        reason.textContent = `裁判原因：${result?.reason || '未返回裁判原因'}`;
+        item.appendChild(reason);
+
+        const sources = Array.isArray(result?.sources) ? result.sources : [];
+        if (sources.length) {
+          const sourceList = document.createElement('div');
+          sourceList.className = 'claim-source-list';
+          sources.forEach(source => {
+            const label = `${source.document_name || '未知文档'}${source.page != null ? `（第 ${source.page} 页）` : ''}`;
+            if (source.url) {
+              const link = document.createElement('a');
+              link.href = source.url;
+              link.target = '_blank';
+              link.rel = 'noopener noreferrer';
+              link.textContent = label;
+              sourceList.appendChild(link);
+            } else {
+              const text = document.createElement('span');
+              text.textContent = label;
+              sourceList.appendChild(text);
+            }
+          });
+          item.appendChild(sourceList);
+        }
+        details.appendChild(item);
+      });
+      content.appendChild(details);
+    }
+
+    function showClaims(content, claims) {
+      if (!Array.isArray(claims) || !claims.length) return;
+      const labels = {
+        supported: '已支持',
+        unsupported: '未支持',
+        conflict: '证据冲突',
+      };
+      const details = document.createElement('details');
+      details.className = 'claims';
+      const summary = document.createElement('summary');
+      summary.textContent = `结构化声明（${claims.length}）`;
+      details.appendChild(summary);
+
+      claims.forEach(claim => {
+        const status = labels[claim?.status] ? claim.status : 'unsupported';
+        const item = document.createElement('div');
+        item.className = `claim ${status}`;
+        const head = document.createElement('div');
+        head.className = 'claim-head';
+        const title = document.createElement('span');
+        title.textContent = `${claim?.entity || '未指定对象'} · ${claim?.attribute || '未指定属性'}`;
+        const badge = document.createElement('span');
+        badge.className = `claim-status ${status}`;
+        badge.textContent = labels[status];
+        head.append(title, badge);
+        item.appendChild(head);
+
+        const value = document.createElement('div');
+        value.className = 'claim-value';
+        value.textContent = claim?.value || '未给出值';
+        item.appendChild(value);
+
+        const reason = document.createElement('div');
+        reason.className = 'claim-meta';
+        reason.textContent = `裁判原因：${claim?.reason || '未返回裁判原因'}`;
+        item.appendChild(reason);
+        const evidenceIds = Array.isArray(claim?.evidence_ids) ? claim.evidence_ids.filter(Boolean) : [];
+        if (evidenceIds.length) {
+          const evidence = document.createElement('div');
+          evidence.className = 'claim-meta';
+          evidence.textContent = `Evidence ID：${evidenceIds.join('、')}`;
+          item.appendChild(evidence);
+        }
+        details.appendChild(item);
+      });
+      content.appendChild(details);
+    }
+
+    function showEvidenceSummary(content, evidence) {
+      if (!evidence || !evidence.requires_evidence) return;
+      const box = document.createElement('div');
+      box.className = 'evidence-summary';
+      const badge = document.createElement('span');
+      const status = evidence.status || 'unknown';
+      const labels = {
+        supported: '证据充分',
+        unverified: '未经过后端证据校验',
+        partial: '部分证据',
+        conflict: '证据冲突',
+        not_found: '未找到可靠证据',
+        retrieval_error: '知识库调用失败',
+        not_retrieved: '应检索但未检索',
+        answer_blocked: '答案被安全校验拦截',
+        agent_error: 'Agent 执行失败',
+        not_required: '无需知识证据',
+        business_action: '业务工具结果',
+        unsupported: '未支持',
+        unknown: '未知',
+      };
+      const style = status === 'supported' ? 'supported' : ['partial', 'unverified'].includes(status) ? 'partial' : 'blocked';
+      badge.className = `evidence-status ${style}`;
+      badge.textContent = labels[status] || status;
+      box.appendChild(badge);
+
+      const counts = document.createElement('span');
+      if (status === 'unverified') {
+        counts.textContent = `候选 ${evidence.candidate_count ?? 0} · 原样提供 ${evidence.provided_count ?? 0} · 后端校验未执行`;
+      } else {
+        counts.textContent = `候选 ${evidence.candidate_count ?? 0} · 通过 ${evidence.verified_count ?? 0} · 拒绝 ${evidence.rejected_count ?? 0}`;
+      }
+      box.appendChild(counts);
+      if (evidence.missing_entities?.length) {
+        const missing = document.createElement('span');
+        missing.textContent = `缺少对象：${evidence.missing_entities.join('、')}`;
+        box.appendChild(missing);
+      }
+      if (evidence.similar_entities?.length) {
+        const similar = document.createElement('span');
+        const labels = evidence.similar_entities
+          .slice(0, 3)
+          .map(item => `${item.requested} → ${item.candidate}`);
+        similar.textContent = `可能的型号纠错：${labels.join('、')}`;
+        box.appendChild(similar);
+      }
+      if (evidence.violations?.length) {
+        const violation = document.createElement('span');
+        violation.textContent = `拦截原因：${evidence.violations.slice(0, 2).join('；')}`;
+        box.appendChild(violation);
+      }
+      if (evidence.warnings?.length) {
+        const warning = document.createElement('span');
+        warning.textContent = `提示：${evidence.warnings.slice(0, 2).join('；')}`;
+        box.appendChild(warning);
+      }
+      content.appendChild(box);
+    }
+
+    function showTrace(content, trace) {
+      if (!trace) return;
+      const details = document.createElement('details');
+      details.className = 'trace';
+      const summary = document.createElement('summary');
+      const badge = document.createElement('span');
+      const isError = trace.route === 'error';
+      badge.className = `trace-badge ${isError ? 'error' : trace.used_ragflow ? 'ragflow' : 'llm'}`;
+      badge.textContent = isError ? '处理失败' : trace.used_ragflow ? 'RAGFlow 已调用' : '仅大模型回答';
+      summary.appendChild(badge);
+      const overview = document.createElement('span');
+      overview.textContent = `模型 ${trace.model_calls ?? 0} 次 · RAGFlow ${trace.ragflow_calls ?? 0} 次`;
+      summary.appendChild(overview);
+      details.appendChild(summary);
+
+      const body = document.createElement('div');
+      body.className = 'trace-body';
+      const stats = document.createElement('div');
+      stats.className = 'trace-stats';
+      if (trace.total_duration_ms != null) {
+        const duration = document.createElement('span');
+        duration.textContent = `总耗时：${(trace.total_duration_ms / 1000).toFixed(2)} 秒`;
+        stats.appendChild(duration);
+      }
+      if (trace.total_tokens != null) {
+        const tokens = document.createElement('span');
+        tokens.textContent = `Token：${trace.total_tokens}（输入 ${trace.input_tokens ?? 0} / 输出 ${trace.output_tokens ?? 0}）`;
+        stats.appendChild(tokens);
+      }
+      body.appendChild(stats);
+
+      const traceSteps = [
+        {
+          name: '进入问答流程',
+          detail: trace.route === 'error'
+            ? '后端问答流程已开始，但本轮在完成前发生错误'
+            : `后端开始执行，路由：${trace.used_ragflow ? '知识库问答' : '直接对话'}`,
+          status: trace.route === 'error' ? 'error' : 'success',
+        },
+        ...(trace.steps || []),
+        {
+          name: trace.route === 'error' ? '流程结束（失败）' : '流程结束',
+          detail: trace.route === 'error'
+            ? '本轮未生成可用的最终结果'
+            : `执行完成：模型 ${trace.model_calls ?? 0} 次，RAGFlow ${trace.ragflow_calls ?? 0} 次`,
+          status: trace.route === 'error' ? 'error' : 'success',
+        },
+      ];
+      traceSteps.forEach((item, index) => {
+        const step = document.createElement('div');
+        step.className = `trace-step ${item.status === 'error' ? 'error' : ''}`;
+        const stepIndex = document.createElement('span');
+        stepIndex.className = 'trace-step-index';
+        stepIndex.textContent = `第 ${index + 1} 步`;
+        const name = document.createElement('strong');
+        name.textContent = item.name;
+        const detail = document.createElement('span');
+        detail.textContent = item.detail;
+        name.prepend(stepIndex);
+        step.append(name, detail);
+        body.appendChild(step);
+      });
+      details.appendChild(body);
+      content.appendChild(details);
+    }
+
+    async function createConversation() {
+      const response = await fetch(`/conversations?app_id=${encodeURIComponent(DEFAULT_APP_ID)}`, {method: 'POST'});
+      if (!response.ok) throw new Error(`创建对话失败：HTTP ${response.status}`);
+      const item = await response.json();
+      conversationId = item.conversation_id;
+      localStorage.setItem(conversationStorageKey, conversationId);
+      resetMessages();
+      await loadConversations();
+      await loadQuickPrompts();
+      return conversationId;
+    }
+
+    async function loadConversations() {
+      const response = await fetch(`/conversations?app_id=${encodeURIComponent(DEFAULT_APP_ID)}`);
+      if (!response.ok) throw new Error(`读取对话列表失败：HTTP ${response.status}`);
+      const items = await response.json();
+      renderConversations(items);
+      return items;
+    }
+
+    function renderConversations(items) {
+      conversationList.innerHTML = '';
+      if (!items.length) {
+        const empty = document.createElement('div');
+        empty.className = 'empty-history';
+        empty.textContent = '暂无历史对话';
+        conversationList.appendChild(empty);
+        return;
+      }
+      items.forEach(item => {
+        const row = document.createElement('div');
+        row.className = `conversation-item ${item.conversation_id === conversationId ? 'active' : ''}`;
+        const open = document.createElement('button');
+        open.type = 'button';
+        open.className = 'conversation-open';
+        const title = document.createElement('span');
+        title.className = 'conversation-title';
+        title.textContent = item.title || '新对话';
+        const time = document.createElement('span');
+        time.className = 'conversation-time';
+        time.textContent = item.updated_at ? new Date(item.updated_at).toLocaleString('zh-CN', {month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'}) : '';
+        open.append(title, time);
+        open.addEventListener('click', () => openConversation(item.conversation_id));
+        const remove = document.createElement('button');
+        remove.type = 'button';
+        remove.className = 'conversation-delete';
+        remove.textContent = '×';
+        remove.title = '删除此对话';
+        remove.addEventListener('click', event => {
+          event.stopPropagation();
+          deleteConversation(item.conversation_id);
+        });
+        row.append(open, remove);
+        conversationList.appendChild(row);
+      });
+    }
+
+    async function openConversation(id) {
+      const response = await fetch(`/conversations/${id}/messages?app_id=${encodeURIComponent(DEFAULT_APP_ID)}`);
+      if (!response.ok) throw new Error(`读取历史消息失败：HTTP ${response.status}`);
+      const result = await response.json();
+      conversationId = id;
+      localStorage.setItem(conversationStorageKey, id);
+      messages.innerHTML = '';
+      if (!result.messages?.length) {
+        resetMessages();
+      } else {
+        result.messages.forEach(item => {
+          const content = addMessage(item.content, item.role);
+          if (item.role === 'assistant') showExtras(content, item);
+        });
+      }
+      await loadConversations();
+      await loadQuickPrompts();
+      query.focus();
+    }
+
+    async function deleteConversation(id) {
+      const response = await fetch(`/conversations/${id}?app_id=${encodeURIComponent(DEFAULT_APP_ID)}`, {method: 'DELETE'});
+      if (!response.ok) throw new Error(`删除对话失败：HTTP ${response.status}`);
+      if (conversationId === id) {
+        conversationId = null;
+        localStorage.removeItem(conversationStorageKey);
+        resetMessages();
+      }
+      await loadConversations();
+    }
+
+    async function ask(text) {
+      const value = typeof text === 'string' ? text.trim() : '';
+      if (!value || send.disabled) return;
+      send.disabled = true;
+      let pending;
+      try {
+        if (!conversationId) await createConversation();
+        addMessage(value, 'user');
+        query.value = '';
+        pending = addMessage('正在分析问题…', 'assistant');
+        const response = await fetch('/chat/stream', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({query: value, conversation_id: conversationId, app_id: DEFAULT_APP_ID}),
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        if (!response.body) throw new Error('浏览器不支持响应流');
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        let streamedAnswer = '';
+        let finalResult = null;
+
+        const handleSseBlock = block => {
+          let eventName = 'message';
+          const dataLines = [];
+          block.split(/\r?\n/).forEach(line => {
+            if (line.startsWith('event:')) eventName = line.slice(6).trim();
+            if (line.startsWith('data:')) dataLines.push(line.slice(5).trimStart());
+          });
+          if (!dataLines.length) return;
+
+          let data;
+          try {
+            data = JSON.parse(dataLines.join('\n'));
+          } catch (error) {
+            console.warn('无法解析 SSE 数据', error, dataLines);
+            return;
+          }
+
+          if (data.conversation_id) {
+            conversationId = data.conversation_id;
+            localStorage.setItem(conversationStorageKey, conversationId);
+          }
+
+          if (eventName === 'run_started') {
+            pending.querySelector('.bubble').textContent = '已进入 Agent，正在分析问题…';
+          } else if (eventName === 'retrieval_started') {
+            pending.querySelector('.bubble').textContent = '正在检索 RAGFlow 知识库…';
+          } else if (eventName === 'requirement_planning') {
+            pending.querySelector('.bubble').textContent = '正在拆解用户需求…';
+          } else if (eventName === 'retrieval_completed') {
+            pending.querySelector('.bubble').textContent = '知识库检索完成，正在生成回答…';
+          } else if (eventName === 'claim_processing') {
+            pending.querySelector('.bubble').textContent = '正在逐项生成结果并进行证据裁判…';
+          } else if (eventName === 'agent_started') {
+            pending.querySelector('.bubble').textContent = 'Qwen 正在生成回答…';
+          } else if (eventName === 'node_update') {
+            const nodes = Array.isArray(data.nodes) ? data.nodes.join('、') : '';
+            if (nodes) pending.querySelector('.bubble').textContent = `正在执行：${nodes}`;
+          } else if (eventName === 'token') {
+            streamedAnswer += String(data.content || '');
+            pending.querySelector('.bubble').textContent = streamedAnswer || '正在生成回答…';
+          } else if (eventName === 'final') {
+            finalResult = data;
+            pending.querySelector('.bubble').textContent = data.answer || streamedAnswer || '没有获得有效回答。';
+            showExtras(pending, data);
+          } else if (eventName === 'error') {
+            pending.querySelector('.bubble').textContent = data.message || '流式请求失败。';
+          }
+        };
+
+        while (true) {
+          const {value: chunk, done} = await reader.read();
+          buffer += decoder.decode(chunk || new Uint8Array(), {stream: !done});
+          const blocks = buffer.split(/\r?\n\r?\n/);
+          buffer = blocks.pop() || '';
+          blocks.forEach(handleSseBlock);
+          if (done) break;
+        }
+        if (buffer.trim()) handleSseBlock(buffer);
+        if (!finalResult && !streamedAnswer) {
+          throw new Error('流式响应未返回最终答案');
+        }
+        await loadQuickPrompts();
+        await loadConversations();
+      } catch (error) {
+        if (!pending) pending = addMessage('', 'assistant');
+        pending.querySelector('.bubble').textContent = `请求失败：${error.message}。请检查后端服务日志。`;
+      } finally {
+        send.disabled = false;
+        query.focus();
+      }
+    }
+
+    form.addEventListener('submit', event => { event.preventDefault(); ask(query.value); });
+    query.addEventListener('keydown', event => {
+      if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); form.requestSubmit(); }
+    });
+    document.querySelector('#new-chat').addEventListener('click', async () => {
+      try {
+        await createConversation();
+        query.focus();
+      } catch (error) {
+        alert(error.message);
+      }
+    });
+
+    (async function initialize() {
+      try {
+        const items = await loadConversations();
+        if (conversationId && items.some(item => item.conversation_id === conversationId)) {
+          await openConversation(conversationId);
+        } else if (items.length) {
+          await openConversation(items[0].conversation_id);
+        } else {
+          await loadQuickPrompts();
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+  </script>
+</body>
+</html>

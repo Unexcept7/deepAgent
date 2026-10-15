@@ -1,0 +1,9 @@
+.list-page-hidden{display:none!important}
+.list-pagination{display:flex;flex:0 0 auto;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:10px;padding:10px 12px;color:#7b8da2;background:#fff;border-top:1px solid #e3eaf2;font-size:11px}
+.list-pagination[hidden]{display:none}
+.list-pagination>div{display:flex;gap:6px;margin-left:auto}
+.list-pagination button{width:auto;padding:5px 9px;color:#1d4ed8;background:#fff;border:1px solid #bfdbfe;border-radius:6px;font:inherit;white-space:nowrap;cursor:pointer}
+.list-pagination button:hover:not(:disabled){background:#eff6ff}
+.list-pagination button:disabled{opacity:.45;cursor:not-allowed}
+.list-pagination-count{white-space:nowrap}
+@media(max-width:600px){.list-pagination{padding:8px;font-size:10px}}

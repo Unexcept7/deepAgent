@@ -1,0 +1,473 @@
+{
+  "schema_version": 2,
+  "updated_at": "2026-10-10T02:01:31.586264+00:00",
+  "applications": [
+    {
+      "app_id": "enterprise-knowledge-assistant",
+      "id": "enterprise-knowledge-assistant",
+      "name": "企业知识助手",
+      "description": "自主规划企业知识、图谱、业务数据和实时 API 查询。",
+      "category": "知识问答",
+      "type": "DeepAgent",
+      "icon": "知",
+      "enabled": true,
+      "status": "draft",
+      "version": 2,
+      "published_version": 1,
+      "tags": [
+        "RAG",
+        "多源检索",
+        "证据引用"
+      ],
+      "workflow_id": "knowledge-research",
+      "workflow_version": 1,
+      "workflow_bindings": [
+        {
+          "workflow_id": "knowledge-research",
+          "version": 1,
+          "role": "primary",
+          "enabled": true
+        }
+      ],
+      "data_sources": [
+        {
+          "source_type": "document",
+          "name": "企业文档",
+          "enabled": true,
+          "config": {}
+        },
+        {
+          "source_type": "qa",
+          "name": "标准问答",
+          "enabled": true,
+          "config": {}
+        },
+        {
+          "source_type": "graph",
+          "name": "知识图谱",
+          "enabled": true,
+          "config": {}
+        },
+        {
+          "source_type": "sql",
+          "name": "业务数据",
+          "enabled": true,
+          "config": {}
+        },
+        {
+          "source_type": "api",
+          "name": "实时 API",
+          "enabled": true,
+          "config": {}
+        }
+      ],
+      "knowledge_binding_mode": "explicit",
+      "knowledge_bindings": [
+        {
+          "connection_id": "env-ragflow",
+          "dataset_id": "dataset-public",
+          "dataset_name": "公开设备资料",
+          "enabled": true,
+          "priority": 100,
+          "environment": "production",
+          "published_revision": 2,
+          "retrieval_profile": {},
+          "document_filters": {},
+          "graph_enabled": false
+        }
+      ],
+      "tools": [
+        {
+          "tool_id": "unified_search",
+          "name": "统一搜索",
+          "enabled": true,
+          "requires_confirmation": false,
+          "config": {}
+        },
+        {
+          "tool_id": "evidence_review",
+          "name": "证据校验",
+          "enabled": true,
+          "requires_confirmation": false,
+          "config": {}
+        },
+        {
+          "tool_id": "device_status",
+          "name": "设备实时状态",
+          "enabled": true,
+          "requires_confirmation": false,
+          "config": {}
+        },
+        {
+          "tool_id": "create_work_order",
+          "name": "创建维修工单",
+          "enabled": true,
+          "requires_confirmation": true,
+          "config": {}
+        }
+      ],
+      "runtime": {
+        "top_k": 12,
+        "similarity_threshold": 0.3,
+        "evidence_mode": "generic",
+        "timeout_seconds": 8,
+        "human_confirmation": {
+          "enabled": true,
+          "actions": [
+            "write",
+            "publish",
+            "submit"
+          ]
+        }
+      },
+      "permissions": {
+        "owner": "当前登录用户",
+        "run_roles": [
+          "员工",
+          "管理员"
+        ],
+        "edit_roles": [
+          "管理员"
+        ],
+        "publish_roles": [
+          "管理员"
+        ]
+      },
+      "channels": [
+        "工作台",
+        "API"
+      ],
+      "created_at": "2026-10-10T02:01:31.128144+00:00",
+      "updated_at": "2026-10-10T02:01:31.584757+00:00",
+      "updated_by": "api",
+      "versions": [
+        {
+          "version": 1,
+          "status": "published",
+          "created_at": "2026-10-10T02:01:31.128144+00:00",
+          "published_at": "2026-10-10T02:01:31.128144+00:00",
+          "note": "内置应用",
+          "snapshot": {
+            "app_id": "enterprise-knowledge-assistant",
+            "id": "enterprise-knowledge-assistant",
+            "name": "企业知识助手",
+            "description": "自主规划企业知识、图谱、业务数据和实时 API 查询。",
+            "category": "知识问答",
+            "type": "DeepAgent",
+            "icon": "知",
+            "enabled": true,
+            "tags": [
+              "RAG",
+              "多源检索",
+              "证据引用"
+            ],
+            "workflow_id": "knowledge-research",
+            "workflow_version": 1,
+            "workflow_bindings": [
+              {
+                "workflow_id": "knowledge-research",
+                "version": 1,
+                "role": "primary",
+                "enabled": true
+              }
+            ],
+            "data_sources": [
+              {
+                "source_type": "document",
+                "name": "企业文档",
+                "enabled": true,
+                "config": {}
+              },
+              {
+                "source_type": "qa",
+                "name": "标准问答",
+                "enabled": true,
+                "config": {}
+              },
+              {
+                "source_type": "graph",
+                "name": "知识图谱",
+                "enabled": true,
+                "config": {}
+              },
+              {
+                "source_type": "sql",
+                "name": "业务数据",
+                "enabled": true,
+                "config": {}
+              },
+              {
+                "source_type": "api",
+                "name": "实时 API",
+                "enabled": true,
+                "config": {}
+              }
+            ],
+            "knowledge_binding_mode": "inherit",
+            "knowledge_bindings": [],
+            "tools": [
+              {
+                "tool_id": "unified_search",
+                "name": "统一搜索",
+                "enabled": true,
+                "requires_confirmation": false,
+                "config": {}
+              },
+              {
+                "tool_id": "evidence_review",
+                "name": "证据校验",
+                "enabled": true,
+                "requires_confirmation": false,
+                "config": {}
+              },
+              {
+                "tool_id": "device_status",
+                "name": "设备实时状态",
+                "enabled": true,
+                "requires_confirmation": false,
+                "config": {}
+              },
+              {
+                "tool_id": "create_work_order",
+                "name": "创建维修工单",
+                "enabled": true,
+                "requires_confirmation": true,
+                "config": {}
+              }
+            ],
+            "runtime": {
+              "top_k": 12,
+              "similarity_threshold": 0.3,
+              "evidence_mode": "generic",
+              "timeout_seconds": 8,
+              "human_confirmation": {
+                "enabled": true,
+                "actions": [
+                  "write",
+                  "publish",
+                  "submit"
+                ]
+              }
+            },
+            "permissions": {
+              "owner": "当前登录用户",
+              "run_roles": [
+                "员工",
+                "管理员"
+              ],
+              "edit_roles": [
+                "管理员"
+              ],
+              "publish_roles": [
+                "管理员"
+              ]
+            },
+            "channels": [
+              "工作台",
+              "API"
+            ],
+            "version": 1
+          }
+        }
+      ],
+      "run_history": []
+    },
+    {
+      "app_id": "evidence-reviewer",
+      "id": "evidence-reviewer",
+      "name": "证据校验 Agent",
+      "description": "对检索结果、事实声明、版本和引用进行后端校验。",
+      "category": "质量治理",
+      "type": "DeepAgent",
+      "icon": "证",
+      "enabled": true,
+      "status": "published",
+      "version": 1,
+      "published_version": 1,
+      "tags": [
+        "Evidence",
+        "覆盖审计",
+        "冲突提示"
+      ],
+      "workflow_id": "evidence-review",
+      "workflow_version": 1,
+      "workflow_bindings": [
+        {
+          "workflow_id": "evidence-review",
+          "version": 1,
+          "role": "primary",
+          "enabled": true
+        }
+      ],
+      "data_sources": [
+        {
+          "source_type": "document",
+          "name": "检索文档",
+          "enabled": true,
+          "config": {}
+        },
+        {
+          "source_type": "qa",
+          "name": "标准 QA",
+          "enabled": true,
+          "config": {}
+        },
+        {
+          "source_type": "graph",
+          "name": "知识图谱",
+          "enabled": true,
+          "config": {}
+        }
+      ],
+      "knowledge_binding_mode": "inherit",
+      "knowledge_bindings": [],
+      "tools": [
+        {
+          "tool_id": "evidence_review",
+          "name": "证据裁判",
+          "enabled": true,
+          "requires_confirmation": false,
+          "config": {}
+        },
+        {
+          "tool_id": "coverage_audit",
+          "name": "覆盖审计",
+          "enabled": true,
+          "requires_confirmation": false,
+          "config": {}
+        }
+      ],
+      "runtime": {
+        "top_k": 12,
+        "similarity_threshold": 0.3,
+        "evidence_mode": "industrial_strict",
+        "timeout_seconds": 8,
+        "human_confirmation": {
+          "enabled": false,
+          "actions": []
+        }
+      },
+      "permissions": {
+        "owner": "当前登录用户",
+        "run_roles": [
+          "员工",
+          "管理员"
+        ],
+        "edit_roles": [
+          "管理员"
+        ],
+        "publish_roles": [
+          "管理员"
+        ]
+      },
+      "channels": [
+        "工作台",
+        "API"
+      ],
+      "created_at": "2026-10-10T02:01:31.128144+00:00",
+      "updated_at": "2026-10-10T02:01:31.128144+00:00",
+      "updated_by": "system",
+      "versions": [
+        {
+          "version": 1,
+          "status": "published",
+          "created_at": "2026-10-10T02:01:31.128144+00:00",
+          "published_at": "2026-10-10T02:01:31.128144+00:00",
+          "note": "内置应用",
+          "snapshot": {
+            "app_id": "evidence-reviewer",
+            "id": "evidence-reviewer",
+            "name": "证据校验 Agent",
+            "description": "对检索结果、事实声明、版本和引用进行后端校验。",
+            "category": "质量治理",
+            "type": "DeepAgent",
+            "icon": "证",
+            "enabled": true,
+            "tags": [
+              "Evidence",
+              "覆盖审计",
+              "冲突提示"
+            ],
+            "workflow_id": "evidence-review",
+            "workflow_version": 1,
+            "workflow_bindings": [
+              {
+                "workflow_id": "evidence-review",
+                "version": 1,
+                "role": "primary",
+                "enabled": true
+              }
+            ],
+            "data_sources": [
+              {
+                "source_type": "document",
+                "name": "检索文档",
+                "enabled": true,
+                "config": {}
+              },
+              {
+                "source_type": "qa",
+                "name": "标准 QA",
+                "enabled": true,
+                "config": {}
+              },
+              {
+                "source_type": "graph",
+                "name": "知识图谱",
+                "enabled": true,
+                "config": {}
+              }
+            ],
+            "knowledge_binding_mode": "inherit",
+            "knowledge_bindings": [],
+            "tools": [
+              {
+                "tool_id": "evidence_review",
+                "name": "证据裁判",
+                "enabled": true,
+                "requires_confirmation": false,
+                "config": {}
+              },
+              {
+                "tool_id": "coverage_audit",
+                "name": "覆盖审计",
+                "enabled": true,
+                "requires_confirmation": false,
+                "config": {}
+              }
+            ],
+            "runtime": {
+              "top_k": 12,
+              "similarity_threshold": 0.3,
+              "evidence_mode": "industrial_strict",
+              "timeout_seconds": 8,
+              "human_confirmation": {
+                "enabled": false,
+                "actions": []
+              }
+            },
+            "permissions": {
+              "owner": "当前登录用户",
+              "run_roles": [
+                "员工",
+                "管理员"
+              ],
+              "edit_roles": [
+                "管理员"
+              ],
+              "publish_roles": [
+                "管理员"
+              ]
+            },
+            "channels": [
+              "工作台",
+              "API"
+            ],
+            "version": 1
+          }
+        }
+      ],
+      "run_history": []
+    }
+  ]
+}

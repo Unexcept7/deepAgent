@@ -1,0 +1,49 @@
+services:
+  neo4j:
+    # Docker Hub 在部分企业网络不可达，使用 Docker Hub 的国内镜像代理。
+    image: docker.m.daocloud.io/library/neo4j:5.26-community
+    container_name: deepagent-neo4j
+    environment:
+      NEO4J_AUTH: neo4j/${NEO4J_PASSWORD}
+      NEO4J_server_memory_heap_initial__size: 512m
+      NEO4J_server_memory_heap_max__size: 512m
+      NEO4J_server_memory_pagecache_size: 512m
+    ports:
+      - "127.0.0.1:7474:7474"
+      - "127.0.0.1:7687:7687"
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "cypher-shell -a bolt://localhost:7687 -u neo4j -p \"$${NEO4J_AUTH#*/}\" 'RETURN 1' >/dev/null 2>&1"]
+      interval: 20s
+      timeout: 10s
+      retries: 10
+
+  deepagent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      TOOL_CENTER_LOCAL_ADMIN: ${TOOL_CENTER_LOCAL_ADMIN:-false}
+    volumes:
+      - deepagent_data:/app/app/data
+    ports:
+      - "127.0.0.1:8000:8000"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    read_only: true
+    tmpfs:
+      - /tmp
+
+volumes:
+  neo4j_data:
+  neo4j_logs:
+  deepagent_data:

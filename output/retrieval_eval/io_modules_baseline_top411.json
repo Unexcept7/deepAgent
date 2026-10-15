@@ -1,0 +1,1455 @@
+{
+  "dataset": "tests\\retrieval_eval\\purchased_io_modules_retrieval_v1.jsonl",
+  "split": "all",
+  "summary": {
+    "top_k": 4,
+    "case_count": 25,
+    "retrieval_case_count": 22,
+    "abstention_case_count": 3,
+    "mean_document_hit_precision_at_k": 0.6590909090909091,
+    "mean_document_recall_at_k": 0.8257575757575758,
+    "mrr": 0.8409090909090909,
+    "all_gold_documents_retrieved_rate": 0.7272727272727273,
+    "mean_duration_ms": 3233.12,
+    "abstention_candidates": [
+      {
+        "id": "IOM-023",
+        "retrieved": [
+          {
+            "document_id": "7cc5ee10956311f1ae737f9ffb05e7d0",
+            "document_name": "M1503（4路模拟量输入、16路数字量输入、4路数字量输出）.pdf",
+            "page": 17,
+            "score": 0.5013
+          },
+          {
+            "document_id": "7cba75d0956311f1ae737f9ffb05e7d0",
+            "document_name": "M1502（4路模拟量输入、8路数字量输入、4路数字量输出）.pdf",
+            "page": 18,
+            "score": 0.501
+          },
+          {
+            "document_id": "7cdc9fe8956311f1ae737f9ffb05e7d0",
+            "document_name": "M1508（4路模拟量输入、10路数字量输出）.pdf",
+            "page": 15,
+            "score": 0.4999
+          },
+          {
+            "document_id": "7c66d1c8956311f1ae737f9ffb05e7d0",
+            "document_name": "M1101（16 路数字量输入）.pdf",
+            "page": 11,
+            "score": 0.4916
+          }
+        ]
+      },
+      {
+        "id": "IOM-024",
+        "retrieved": [
+          {
+            "document_id": "7b93d98a956311f1ae737f9ffb05e7d0",
+            "document_name": "FT-RSA-020408M(MODBUS-RTU协议)说明书V1.0-中性.pdf",
+            "page": 7,
+            "score": 0.4067
+          },
+          {
+            "document_id": "7c90a2c8956311f1ae737f9ffb05e7d0",
+            "document_name": "M1304（4路热电阻输入）.pdf",
+            "page": 4,
+            "score": 0.3967
+          },
+          {
+            "document_id": "7c48239a956311f1ae737f9ffb05e7d0",
+            "document_name": "Mxx说明书.pdf",
+            "page": 13,
+            "score": 0.3726
+          },
+          {
+            "document_id": "7b853484956311f1ae737f9ffb05e7d0",
+            "document_name": "FT-RS-0808_MODBUS-RTU协议_新8路开关量输入8路开关量输入说明书.pdf",
+            "page": 4,
+            "score": 0.3717
+          }
+        ]
+      },
+      {
+        "id": "IOM-025",
+        "retrieved": [
+          {
+            "document_id": "7c48239a956311f1ae737f9ffb05e7d0",
+            "document_name": "Mxx说明书.pdf",
+            "page": 5,
+            "score": 0.3459
+          },
+          {
+            "document_id": "7c854cf2956311f1ae737f9ffb05e7d0",
+            "document_name": "M1303（8路热电偶输入）.pdf",
+            "page": 1,
+            "score": 0.3425
+          },
+          {
+            "document_id": "7bb84e14956311f1ae737f9ffb05e7d0",
+            "document_name": "K75系列模块Modbus协议软件说明书.pdf",
+            "page": 6,
+            "score": 0.3421
+          },
+          {
+            "document_id": "7c90a2c8956311f1ae737f9ffb05e7d0",
+            "document_name": "M1304（4路热电阻输入）.pdf",
+            "page": 1,
+            "score": 0.3362
+          }
+        ]
+      }
+    ]
+  },
+  "records": [
+    {
+      "id": "IOM-001",
+      "group_id": "m1101_profile",
+      "split": "dev",
+      "query": "M1101 模块有多少路数字量输入？通信接口和模块用途是什么？",
+      "expected_outcome": "retrieve",
+      "gold_documents": [
+        {
+          "document_id": "7c66d1c8956311f1ae737f9ffb05e7d0",
+          "document_name": "M1101（16 路数字量输入）.pdf"
+        }
+      ],
+      "required_concepts": [
+        "M1101",
+        "16路数字量输入",
+        "通信接口"
+      ],
+      "difficulty": "exact_model_lookup",
+      "retrieved": [
+        {
+          "document_id": "7c66d1c8956311f1ae737f9ffb05e7d0",
+          "document_name": "M1101（16 路数字量输入）.pdf",
+          "page": 3,
+          "score": 0.4432
+        },
+        {
+          "document_id": "7c66d1c8956311f1ae737f9ffb05e7d0",
+          "document_name": "M1101（16 路数字量输入）.pdf",
+          "page": 4,
+          "score": 0.4425
+        },
+        {
+          "document_id": "7c66d1c8956311f1ae737f9ffb05e7d0",
+          "document_name": "M1101（16 路数字量输入）.pdf",
+          "page": 1,
+          "score": 0.4299
+        },
+        {
+          "document_id": "7c66d1c8956311f1ae737f9ffb05e7d0",
+          "document_name": "M1101（16 路数字量输入）.pdf",
+          "page": 5,
+          "score": 0.4268
+        }
+      ],
+      "candidate_count": 4,
+      "total": 64,
+      "duration_ms": 3482,
+      "document_hit_precision_at_k": 1.0,
+      "document_recall_at_k": 1.0,
+      "reciprocal_rank": 1.0,
+      "all_gold_documents_retrieved": true
+    },
+    {
+      "id": "IOM-002",
+      "group_id": "m1201_profile",
+      "split": "dev",
+      "query": "需要 16 路数字量输出时，M1201 的通道能力和通信接口是什么？",
+      "expected_outcome": "retrieve",
+      "gold_documents": [
+        {
+          "document_id": "7c719bda956311f1ae737f9ffb05e7d0",
+          "document_name": "M1201（16 路数字量输出）.pdf"
+        }
+      ],
+      "required_concepts": [
+        "M1201",
+        "16路数字量输出",
+        "通信接口"
+      ],
+      "difficulty": "paraphrase",
+      "retrieved": [
+        {
+          "document_id": "7c719bda956311f1ae737f9ffb05e7d0",
+          "document_name": "M1201（16 路数字量输出）.pdf",
+          "page": 3,
+          "score": 0.4641
+        },
+        {
+          "document_id": "7c719bda956311f1ae737f9ffb05e7d0",
+          "document_name": "M1201（16 路数字量输出）.pdf",
+          "page": 17,
+          "score": 0.4464
+        },
+        {
+          "document_id": "7c719bda956311f1ae737f9ffb05e7d0",
+          "document_name": "M1201（16 路数字量输出）.pdf",
+          "page": 5,
+          "score": 0.4452
+        },
+        {
+          "document_id": "7c719bda956311f1ae737f9ffb05e7d0",
+          "document_name": "M1201（16 路数字量输出）.pdf",
+          "page": 10,
+          "score": 0.4365
+        }
+      ],
+      "candidate_count": 4,
+      "total": 64,
+      "duration_ms": 3484,
+      "document_hit_precision_at_k": 1.0,
+      "document_recall_at_k": 1.0,
+      "reciprocal_rank": 1.0,
+      "all_gold_documents_retrieved": true
+    },
+    {
+      "id": "IOM-003",
+      "group_id": "m123_profile",
+      "split": "dev",
+      "query": "M123-16DI16DO 的数字量输入、数字量输出各有多少路？",
+      "expected_outcome": "retrieve",
+      "gold_documents": [
+        {
+          "document_id": "7c5bcec2956311f1ae737f9ffb05e7d0",
+          "document_name": "M123-16DI16DO（16路数字量输入、16路数字量输出）.pdf"
+        }
+      ],
+      "required_concepts": [
+        "M123-16DI16DO",
+        "16路数字量输入",
+        "16路数字量输出"
+      ],
+      "difficulty": "exact_model_lookup",
+      "retrieved": [
+        {
+          "document_id": "7bacee20956311f1ae737f9ffb05e7d0",
+          "document_name": "YC1008数字量输入输出模块使用说明书V1.0.pdf",
+          "page": 5,
+          "score": 0.5573
+        },
+        {
+          "document_id": "7c48239a956311f1ae737f9ffb05e7d0",
+          "document_name": "Mxx说明书.pdf",
+          "page": 3,
+          "score": 0.5492
+        },
+        {
+          "document_id": "7bacee20956311f1ae737f9ffb05e7d0",
+          "document_name": "YC1008数字量输入输出模块使用说明书V1.0.pdf",
+          "page": 3,
+          "score": 0.5433
+        },
+        {
+          "document_id": "7bacee20956311f1ae737f9ffb05e7d0",
+          "document_name": "YC1008数字量输入输出模块使用说明书V1.0.pdf",
+          "page": 4,
+          "score": 0.5431
+        }
+      ],
+      "candidate_count": 4,
+      "total": 64,
+      "duration_ms": 3918,
+      "document_hit_precision_at_k": 0.0,
+      "document_recall_at_k": 0.0,
+      "reciprocal_rank": 0,
+      "all_gold_documents_retrieved": false
+    },
+    {
+      "id": "IOM-004",
+      "group_id": "m1303_profile",
+      "split": "dev",
+      "query": "M1303 采集什么类型的温度信号？支持几路输入，数据映射如何查看？",
+      "expected_outcome": "retrieve",
+      "gold_documents": [
+        {
+          "document_id": "7c854cf2956311f1ae737f9ffb05e7d0",
+          "document_name": "M1303（8路热电偶输入）.pdf"
+        }
+      ],
+      "required_concepts": [
+        "M1303",
+        "热电偶",
+        "8路",
+        "数据映射"
+      ],
+      "difficulty": "technical_lookup",
+      "retrieved": [
+        {
+          "document_id": "7c854cf2956311f1ae737f9ffb05e7d0",
+          "document_name": "M1303（8路热电偶输入）.pdf",
+          "page": 8,
+          "score": 0.4338
+        },
+        {
+          "document_id": "7cc5ee10956311f1ae737f9ffb05e7d0",
+          "document_name": "M1503（4路模拟量输入、16路数字量输入、4路数字量输出）.pdf",
+          "page": 1,
+          "score": 0.3969
+        },
+        {
+          "document_id": "7c90a2c8956311f1ae737f9ffb05e7d0",
+          "document_name": "M1304（4路热电阻输入）.pdf",
+          "page": 6,
+          "score": 0.3901
+        },
+        {
+          "document_id": "7bc446c4956311f1ae737f9ffb05e7d0",
+          "document_name": "K85_modbus硬件说明书.pdf",
+          "page": 5,
+          "score": 0.3871
+        }
+      ],
+      "candidate_count": 4,
+      "total": 64,
+      "duration_ms": 3605,
+      "document_hit_precision_at_k": 0.25,
+      "document_recall_at_k": 1.0,
+      "reciprocal_rank": 1.0,
+      "all_gold_documents_retrieved": true
+    },
+    {
+      "id": "IOM-005",
+      "group_id": "m1304_profile",
+      "split": "dev",
+      "query": "需要采集 4 路热电阻信号时应查看哪份 M 系列手册？接线和寄存器映射在哪里？",
+      "expected_outcome": "retrieve",
+      "gold_documents": [
+        {
+          "document_id": "7c90a2c8956311f1ae737f9ffb05e7d0",
+          "document_name": "M1304（4路热电阻输入）.pdf"
+        }
+      ],
+      "required_concepts": [
+        "M1304",
+        "热电阻",
+        "4路",
+        "接线",
+        "寄存器映射"
+      ],
+      "difficulty": "paraphrase",
+      "retrieved": [
+        {
+          "document_id": "7c90a2c8956311f1ae737f9ffb05e7d0",
+          "document_name": "M1304（4路热电阻输入）.pdf",
+          "page": 1,
+          "score": 0.3544
+        },
+        {
+          "document_id": "7c90a2c8956311f1ae737f9ffb05e7d0",
+          "document_name": "M1304（4路热电阻输入）.pdf",
+          "page": 11,
+          "score": 0.3404
+        },
+        {
+          "document_id": "7c854cf2956311f1ae737f9ffb05e7d0",
+          "document_name": "M1303（8路热电偶输入）.pdf",
+          "page": 13,
+          "score": 0.3221
+        },
+        {
+          "document_id": "7c90a2c8956311f1ae737f9ffb05e7d0",
+          "document_name": "M1304（4路热电阻输入）.pdf",
+          "page": 13,
+          "score": 0.3182
+        }
+      ],
+      "candidate_count": 4,
+      "total": 64,
+      "duration_ms": 3163,
+      "document_hit_precision_at_k": 0.75,
+      "document_recall_at_k": 1.0,
+      "reciprocal_rank": 1.0,
+      "all_gold_documents_retrieved": true
+    },
+    {
+      "id": "IOM-006",
+      "group_id": "m1501_profile",
+      "split": "dev",
+      "query": "M1501 的 DI/DO 通道数分别是多少？读取输入和控制输出应参考哪些 IO 映射？",
+      "expected_outcome": "retrieve",
+      "gold_documents": [
+        {
+          "document_id": "7caf722a956311f1ae737f9ffb05e7d0",
+          "document_name": "M1501（8路数字量输入、8路数字量输出）.pdf"
+        }
+      ],
+      "required_concepts": [
+        "M1501",
+        "8路数字量输入",
+        "8路数字量输出",
+        "IO映射"
+      ],
+      "difficulty": "technical_lookup",
+      "retrieved": [
+        {
+          "document_id": "7caf722a956311f1ae737f9ffb05e7d0",
+          "document_name": "M1501（8路数字量输入、8路数字量输出）.pdf",
+          "page": 10,
+          "score": 0.4168
+        },
+        {
+          "document_id": "7c7c50a2956311f1ae737f9ffb05e7d0",
+          "document_name": "M1301A（8 路模拟量输入）.pdf",
+          "page": 9,
+          "score": 0.3871
+        },
+        {
+          "document_id": "7ce715fe956311f1ae737f9ffb05e7d0",
+          "document_name": "M1516（8路数字量输入、8路数字量输出）.pdf",
+          "page": 14,
+          "score": 0.3821
+        },
+        {
+          "document_id": "7c90a2c8956311f1ae737f9ffb05e7d0",
+          "document_name": "M1304（4路热电阻输入）.pdf",
+          "page": 11,
+          "score": 0.3818
+        }
+      ],
+      "candidate_count": 4,
+      "total": 64,
+      "duration_ms": 2898,
+      "document_hit_precision_at_k": 0.25,
+      "document_recall_at_k": 1.0,
+      "reciprocal_rank": 1.0,
+      "all_gold_documents_retrieved": true
+    },
+    {
+      "id": "IOM-007",
+      "group_id": "m1502_profile",
+      "split": "dev",
+      "query": "M1502 同时提供哪些模拟量、数字量输入输出通道？",
+      "expected_outcome": "retrieve",
+      "gold_documents": [
+        {
+          "document_id": "7cba75d0956311f1ae737f9ffb05e7d0",
+          "document_name": "M1502（4路模拟量输入、8路数字量输入、4路数字量输出）.pdf"
+        }
+      ],
+      "required_concepts": [
+        "M1502",
+        "模拟量输入",
+        "数字量输入",
+        "数字量输出"
+      ],
+      "difficulty": "exact_model_lookup",
+      "retrieved": [
+        {
+          "document_id": "7cba75d0956311f1ae737f9ffb05e7d0",
+          "document_name": "M1502（4路模拟量输入、8路数字量输入、4路数字量输出）.pdf",
+          "page": 3,
+          "score": 0.4452
+        },
+        {
+          "document_id": "7bacee20956311f1ae737f9ffb05e7d0",
+          "document_name": "YC1008数字量输入输出模块使用说明书V1.0.pdf",
+          "page": 5,
+          "score": 0.4387
+        },
+        {
+          "document_id": "7cba75d0956311f1ae737f9ffb05e7d0",
+          "document_name": "M1502（4路模拟量输入、8路数字量输入、4路数字量输出）.pdf",
+          "page": 1,
+          "score": 0.416
+        },
+        {
+          "document_id": "7cba75d0956311f1ae737f9ffb05e7d0",
+          "document_name": "M1502（4路模拟量输入、8路数字量输入、4路数字量输出）.pdf",
+          "page": 16,
+          "score": 0.4113
+        }
+      ],
+      "candidate_count": 4,
+      "total": 64,
+      "duration_ms": 2936,
+      "document_hit_precision_at_k": 0.75,
+      "document_recall_at_k": 1.0,
+      "reciprocal_rank": 1.0,
+      "all_gold_documents_retrieved": true
+    },
+    {
+      "id": "IOM-008",
+      "group_id": "m1503_profile",
+      "split": "dev",
+      "query": "M1503 的模拟量输入、数字量输入和数字量输出各有多少路？",
+      "expected_outcome": "retrieve",
+      "gold_documents": [
+        {
+          "document_id": "7cc5ee10956311f1ae737f9ffb05e7d0",
+          "document_name": "M1503（4路模拟量输入、16路数字量输入、4路数字量输出）.pdf"
+        }
+      ],
+      "required_concepts": [
+        "M1503",
+        "4路模拟量输入",
+        "16路数字量输入",
+        "4路数字量输出"
+      ],
+      "difficulty": "exact_model_lookup",
+      "retrieved": [
+        {
+          "document_id": "7cc5ee10956311f1ae737f9ffb05e7d0",
+          "document_name": "M1503（4路模拟量输入、16路数字量输入、4路数字量输出）.pdf",
+          "page": 3,
+          "score": 0.4815
+        },
+        {
+          "document_id": "7c48239a956311f1ae737f9ffb05e7d0",
+          "document_name": "Mxx说明书.pdf",
+          "page": 9,
+          "score": 0.4613
+        },
+        {
+          "document_id": "7cc5ee10956311f1ae737f9ffb05e7d0",
+          "document_name": "M1503（4路模拟量输入、16路数字量输入、4路数字量输出）.pdf",
+          "page": 1,
+          "score": 0.4538
+        },
+        {
+          "document_id": "7cc5ee10956311f1ae737f9ffb05e7d0",
+          "document_name": "M1503（4路模拟量输入、16路数字量输入、4路数字量输出）.pdf",
+          "page": 4,
+          "score": 0.4496
+        }
+      ],
+      "candidate_count": 4,
+      "total": 64,
+      "duration_ms": 3106,
+      "document_hit_precision_at_k": 0.75,
+      "document_recall_at_k": 1.0,
+      "reciprocal_rank": 1.0,
+      "all_gold_documents_retrieved": true
+    },
+    {
+      "id": "IOM-009",
+      "group_id": "ft_rs_0808_protocol",
+      "split": "dev",
+      "query": "FT-RS-0808 支持哪些 Modbus RTU 功能码？默认站号、波特率和有效地址范围是什么？",
+      "expected_outcome": "retrieve",
+      "gold_documents": [
+        {
+          "document_id": "7b853484956311f1ae737f9ffb05e7d0",
+          "document_name": "FT-RS-0808_MODBUS-RTU协议_新8路开关量输入8路开关量输出说明书.pdf"
+        }
+      ],
+      "required_concepts": [
+        "FT-RS-0808",
+        "Modbus RTU",
+        "功能码",
+        "默认站号",
+        "波特率",
+        "地址范围"
+      ],
+      "difficulty": "protocol_lookup",
+      "retrieved": [
+        {
+          "document_id": "7b853484956311f1ae737f9ffb05e7d0",
+          "document_name": "FT-RS-0808_MODBUS-RTU协议_新8路开关量输入8路开关量输入说明书.pdf",
+          "page": 2,
+          "score": 0.4983
+        },
+        {
+          "document_id": "7b853484956311f1ae737f9ffb05e7d0",
+          "document_name": "FT-RS-0808_MODBUS-RTU协议_新8路开关量输入8路开关量输入说明书.pdf",
+          "page": 5,
+          "score": 0.4909
+        },
+        {
+          "document_id": "7b853484956311f1ae737f9ffb05e7d0",
+          "document_name": "FT-RS-0808_MODBUS-RTU协议_新8路开关量输入8路开关量输入说明书.pdf",
+          "page": 1,
+          "score": 0.4822
+        },
+        {
+          "document_id": "7b93d98a956311f1ae737f9ffb05e7d0",
+          "document_name": "FT-RSA-020408M(MODBUS-RTU协议)说明书V1.0-中性.pdf",
+          "page": 7,
+          "score": 0.477
+        }
+      ],
+      "candidate_count": 4,
+      "total": 64,
+      "duration_ms": 3130,
+      "document_hit_precision_at_k": 0.75,
+      "document_recall_at_k": 1.0,
+      "reciprocal_rank": 1.0,
+      "all_gold_documents_retrieved": true
+    },
+    {
+      "id": "IOM-010",
+      "group_id": "ft_rsa_020408m_protocol",
+      "split": "dev",
+      "query": "FT-RSA-020408M 的模拟量、数字量输入输出能力是什么？读取和写入分别使用哪些 Modbus 功能码？",
+      "expected_outcome": "retrieve",
+      "gold_documents": [
+        {
+          "document_id": "7b93d98a956311f1ae737f9ffb05e7d0",
+          "document_name": "FT-RSA-020408M(MODBUS-RTU协议)说明书V1.0-中性.pdf"
+        }
+      ],
+      "required_concepts": [
+        "FT-RSA-020408M",
+        "模拟量输入",
+        "数字量输入",
+        "数字量输出",
+        "Modbus功能码"
+      ],
+      "difficulty": "protocol_lookup",
+      "retrieved": [
+        {
+          "document_id": "7b93d98a956311f1ae737f9ffb05e7d0",
+          "document_name": "FT-RSA-020408M(MODBUS-RTU协议)说明书V1.0-中性.pdf",
+          "page": 7,
+          "score": 0.4244
+        },
+        {
+          "document_id": "7b93d98a956311f1ae737f9ffb05e7d0",
+          "document_name": "FT-RSA-020408M(MODBUS-RTU协议)说明书V1.0-中性.pdf",
+          "page": 1,
+          "score": 0.4032
+        },
+        {
+          "document_id": "7bd421ac956311f1ae737f9ffb05e7d0",
+          "document_name": "K85系列模块Modbus协议软件说明书.pdf",
+          "page": 25,
+          "score": 0.4
+        },
+        {
+          "document_id": "7cba75d0956311f1ae737f9ffb05e7d0",
+          "document_name": "M1502（4路模拟量输入、8路数字量输入、4路数字量输出）.pdf",
+          "page": 19,
+          "score": 0.3825
+        }
+      ],
+      "candidate_count": 4,
+      "total": 64,
+      "duration_ms": 3037,
+      "document_hit_precision_at_k": 0.5,
+      "document_recall_at_k": 1.0,
+      "reciprocal_rank": 1.0,
+      "all_gold_documents_retrieved": true
+    },
+    {
+      "id": "IOM-011",
+      "group_id": "ft_pc_02a_profile",
+      "split": "dev",
+      "query": "FT-PC-02A 编码器采集模块采集什么信号？支持多少路输入，使用什么现场总线协议？",
+      "expected_outcome": "retrieve",
+      "gold_documents": [
+        {
+          "document_id": "7b6d6afc956311f1ae737f9ffb05e7d0",
+          "document_name": "FT-PC-02A编码器采集模块说明书V2.1.2.pdf"
+        }
+      ],
+      "required_concepts": [
+        "FT-PC-02A",
+        "编码器",
+        "输入通道",
+        "Modbus RTU",
+        "RS485"
+      ],
+      "difficulty": "technical_lookup",
+      "retrieved": [
+        {
+          "document_id": "7b6d6afc956311f1ae737f9ffb05e7d0",
+          "document_name": "FT-PC-02A编码器采集模块说明书V2.1.2.pdf",
+          "page": 1,
+          "score": 0.4462
+        },
+        {
+          "document_id": "7b6d6afc956311f1ae737f9ffb05e7d0",
+          "document_name": "FT-PC-02A编码器采集模块说明书V2.1.2.pdf",
+          "page": 2,
+          "score": 0.4144
+        },
+        {
+          "document_id": "7b6d6afc956311f1ae737f9ffb05e7d0",
+          "document_name": "FT-PC-02A编码器采集模块说明书V2.1.2.pdf",
+          "page": 1,
+          "score": 0.4068
+        },
+        {
+          "document_id": "7cba75d0956311f1ae737f9ffb05e7d0",
+          "document_name": "M1502（4路模拟量输入、8路数字量输入、4路数字量输出）.pdf",
+          "page": 1,
+          "score": 0.3836
+        }
+      ],
+      "candidate_count": 4,
+      "total": 64,
+      "duration_ms": 3393,
+      "document_hit_precision_at_k": 0.75,
+      "document_recall_at_k": 1.0,
+      "reciprocal_rank": 1.0,
+      "all_gold_documents_retrieved": true
+    },
+    {
+      "id": "IOM-012",
+      "group_id": "yc1008_profile",
+      "split": "dev",
+      "query": "YC1008 的 DI/DO 数量、通信接口、Modbus RTU 通信参数和可设置波特率是什么？",
+      "expected_outcome": "retrieve",
+      "gold_documents": [
+        {
+          "document_id": "7bacee20956311f1ae737f9ffb05e7d0",
+          "document_name": "YC1008数字量输入输出模块使用说明书V1.0.pdf"
+        }
+      ],
+      "required_concepts": [
+        "YC1008",
+        "DI/DO",
+        "RS485",
+        "Modbus RTU",
+        "波特率"
+      ],
+      "difficulty": "technical_lookup",
+      "retrieved": [
+        {
+          "document_id": "7bacee20956311f1ae737f9ffb05e7d0",
+          "document_name": "YC1008数字量输入输出模块使用说明书V1.0.pdf",
+          "page": 1,
+          "score": 0.4411
+        },
+        {
+          "document_id": "7c90a2c8956311f1ae737f9ffb05e7d0",
+          "document_name": "M1304（4路热电阻输入）.pdf",
+          "page": 4,
+          "score": 0.4332
+        },
+        {
+          "document_id": "7c7c50a2956311f1ae737f9ffb05e7d0",
+          "document_name": "M1301A（8 路模拟量输入）.pdf",
+          "page": 7,
+          "score": 0.4311
+        },
+        {
+          "document_id": "7c854cf2956311f1ae737f9ffb05e7d0",
+          "document_name": "M1303（8路热电偶输入）.pdf",
+          "page": 4,
+          "score": 0.4241
+        }
+      ],
+      "candidate_count": 4,
+      "total": 64,
+      "duration_ms": 3261,
+      "document_hit_precision_at_k": 0.25,
+      "document_recall_at_k": 1.0,
+      "reciprocal_rank": 1.0,
+      "all_gold_documents_retrieved": true
+    },
+    {
+      "id": "IOM-013",
+      "group_id": "k85_protocol",
+      "split": "dev",
+      "query": "K85 系列模块的 Modbus RTU 数据帧、CRC 校验、异常码和功能码说明应查询哪份资料？",
+      "expected_outcome": "retrieve",
+      "gold_documents": [
+        {
+          "document_id": "7bd421ac956311f1ae737f9ffb05e7d0",
+          "document_name": "K85系列模块Modbus协议软件说明书.pdf"
+        }
+      ],
+      "required_concepts": [
+        "K85",
+        "Modbus RTU",
+        "CRC",
+        "异常码",
+        "功能码"
+      ],
+      "difficulty": "document_role_disambiguation",
+      "retrieved": [
+        {
+          "document_id": "7bd421ac956311f1ae737f9ffb05e7d0",
+          "document_name": "K85系列模块Modbus协议软件说明书.pdf",
+          "page": 12,
+          "score": 0.5328
+        },
+        {
+          "document_id": "7bd421ac956311f1ae737f9ffb05e7d0",
+          "document_name": "K85系列模块Modbus协议软件说明书.pdf",
+          "page": 6,
+          "score": 0.5306
+        },
+        {
+          "document_id": "7bd421ac956311f1ae737f9ffb05e7d0",
+          "document_name": "K85系列模块Modbus协议软件说明书.pdf",
+          "page": 12,
+          "score": 0.5291
+        },
+        {
+          "document_id": "7bd421ac956311f1ae737f9ffb05e7d0",
+          "document_name": "K85系列模块Modbus协议软件说明书.pdf",
+          "page": 13,
+          "score": 0.5256
+        }
+      ],
+      "candidate_count": 4,
+      "total": 64,
+      "duration_ms": 2861,
+      "document_hit_precision_at_k": 1.0,
+      "document_recall_at_k": 1.0,
+      "reciprocal_rank": 1.0,
+      "all_gold_documents_retrieved": true
+    },
+    {
+      "id": "IOM-014",
+      "group_id": "k85_configuration",
+      "split": "dev",
+      "query": "要用上位机配置 K85 模块的串口、站号和波特率，应查硬件配置资料还是 Modbus 协议软件手册？",
+      "expected_outcome": "retrieve",
+      "gold_documents": [
+        {
+          "document_id": "7bc446c4956311f1ae737f9ffb05e7d0",
+          "document_name": "K85_modbus硬件说明书.pdf"
+        }
+      ],
+      "required_concepts": [
+        "K85",
+        "上位机配置",
+        "串口",
+        "站号",
+        "波特率"
+      ],
+      "difficulty": "document_role_disambiguation",
+      "retrieved": [
+        {
+          "document_id": "7bd421ac956311f1ae737f9ffb05e7d0",
+          "document_name": "K85系列模块Modbus协议软件说明书.pdf",
+          "page": 4,
+          "score": 0.4589
+        },
+        {
+          "document_id": "7bb84e14956311f1ae737f9ffb05e7d0",
+          "document_name": "K75系列模块Modbus协议软件说明书.pdf",
+          "page": 3,
+          "score": 0.4391
+        },
+        {
+          "document_id": "7bd421ac956311f1ae737f9ffb05e7d0",
+          "document_name": "K85系列模块Modbus协议软件说明书.pdf",
+          "page": 1,
+          "score": 0.4234
+        },
+        {
+          "document_id": "7bd421ac956311f1ae737f9ffb05e7d0",
+          "document_name": "K85系列模块Modbus协议软件说明书.pdf",
+          "page": 2,
+          "score": 0.4233
+        }
+      ],
+      "candidate_count": 4,
+      "total": 64,
+      "duration_ms": 3036,
+      "document_hit_precision_at_k": 0.0,
+      "document_recall_at_k": 0.0,
+      "reciprocal_rank": 0,
+      "all_gold_documents_retrieved": false
+    },
+    {
+      "id": "IOM-015",
+      "group_id": "k75_hardware_protocol",
+      "split": "dev",
+      "query": "K75 系列采用 RS485 通信时，硬件接线和 Modbus 寄存器/功能码应分别查哪些资料？",
+      "expected_outcome": "retrieve",
+      "gold_documents": [
+        {
+          "document_id": "7bfcde76956311f1ae737f9ffb05e7d0",
+          "document_name": "K75_485硬件说明书.pdf"
+        },
+        {
+          "document_id": "7bb84e14956311f1ae737f9ffb05e7d0",
+          "document_name": "K75系列模块Modbus协议软件说明书.pdf"
+        }
+      ],
+      "required_concepts": [
+        "K75",
+        "RS485接线",
+        "Modbus寄存器",
+        "功能码"
+      ],
+      "difficulty": "multi_document_role_disambiguation",
+      "retrieved": [
+        {
+          "document_id": "7bd421ac956311f1ae737f9ffb05e7d0",
+          "document_name": "K85系列模块Modbus协议软件说明书.pdf",
+          "page": 6,
+          "score": 0.4003
+        },
+        {
+          "document_id": "7bb84e14956311f1ae737f9ffb05e7d0",
+          "document_name": "K75系列模块Modbus协议软件说明书.pdf",
+          "page": 6,
+          "score": 0.3882
+        },
+        {
+          "document_id": "7bb84e14956311f1ae737f9ffb05e7d0",
+          "document_name": "K75系列模块Modbus协议软件说明书.pdf",
+          "page": 6,
+          "score": 0.3732
+        },
+        {
+          "document_id": "7bb84e14956311f1ae737f9ffb05e7d0",
+          "document_name": "K75系列模块Modbus协议软件说明书.pdf",
+          "page": 1,
+          "score": 0.3708
+        }
+      ],
+      "candidate_count": 4,
+      "total": 64,
+      "duration_ms": 3131,
+      "document_hit_precision_at_k": 0.75,
+      "document_recall_at_k": 0.5,
+      "reciprocal_rank": 0.5,
+      "all_gold_documents_retrieved": false
+    },
+    {
+      "id": "IOM-016",
+      "group_id": "m1401_ambiguous_name",
+      "split": "test",
+      "query": "资料中有两份 M1401 手册。请分别找出 8 路数字量输出版本和 8 路模拟量输出版本，不能把两者混为同一模块。",
+      "expected_outcome": "retrieve",
+      "gold_documents": [
+        {
+          "document_id": "7ca45a52956311f1ae737f9ffb05e7d0",
+          "document_name": "M1401（8路数字量输出）.pdf"
+        },
+        {
+          "document_id": "7c999d7e956311f1ae737f9ffb05e7d0",
+          "document_name": "M1401（8路模拟量输出）.pdf"
+        }
+      ],
+      "required_concepts": [
+        "M1401",
+        "数字量输出",
+        "模拟量输出",
+        "版本区分"
+      ],
+      "difficulty": "same_name_collision",
+      "retrieved": [
+        {
+          "document_id": "7ca45a52956311f1ae737f9ffb05e7d0",
+          "document_name": "M1401（8路数字量输出）.pdf",
+          "page": 1,
+          "score": 0.382
+        },
+        {
+          "document_id": "7ca45a52956311f1ae737f9ffb05e7d0",
+          "document_name": "M1401（8路数字量输出）.pdf",
+          "page": 4,
+          "score": 0.3763
+        },
+        {
+          "document_id": "7ca45a52956311f1ae737f9ffb05e7d0",
+          "document_name": "M1401（8路数字量输出）.pdf",
+          "page": 3,
+          "score": 0.3744
+        },
+        {
+          "document_id": "7bacee20956311f1ae737f9ffb05e7d0",
+          "document_name": "YC1008数字量输入输出模块使用说明书V1.0.pdf",
+          "page": 1,
+          "score": 0.368
+        }
+      ],
+      "candidate_count": 4,
+      "total": 64,
+      "duration_ms": 3533,
+      "document_hit_precision_at_k": 0.75,
+      "document_recall_at_k": 0.5,
+      "reciprocal_rank": 1.0,
+      "all_gold_documents_retrieved": false
+    },
+    {
+      "id": "IOM-017",
+      "group_id": "m1501_m1516_compare",
+      "split": "test",
+      "query": "比较 M1501 与 M1516 的数字量输入输出通道数量，并分别给出对应来源。",
+      "expected_outcome": "retrieve",
+      "gold_documents": [
+        {
+          "document_id": "7caf722a956311f1ae737f9ffb05e7d0",
+          "document_name": "M1501（8路数字量输入、8路数字量输出）.pdf"
+        },
+        {
+          "document_id": "7ce715fe956311f1ae737f9ffb05e7d0",
+          "document_name": "M1516（8路数字量输入、8路数字量输出）.pdf"
+        }
+      ],
+      "required_concepts": [
+        "M1501",
+        "M1516",
+        "数字量输入",
+        "数字量输出"
+      ],
+      "difficulty": "multi_model_comparison",
+      "retrieved": [
+        {
+          "document_id": "7bacee20956311f1ae737f9ffb05e7d0",
+          "document_name": "YC1008数字量输入输出模块使用说明书V1.0.pdf",
+          "page": 5,
+          "score": 0.3762
+        },
+        {
+          "document_id": "7ce715fe956311f1ae737f9ffb05e7d0",
+          "document_name": "M1516（8路数字量输入、8路数字量输出）.pdf",
+          "page": 3,
+          "score": 0.3631
+        },
+        {
+          "document_id": "7caf722a956311f1ae737f9ffb05e7d0",
+          "document_name": "M1501（8路数字量输入、8路数字量输出）.pdf",
+          "page": 19,
+          "score": 0.3603
+        },
+        {
+          "document_id": "7ce715fe956311f1ae737f9ffb05e7d0",
+          "document_name": "M1516（8路数字量输入、8路数字量输出）.pdf",
+          "page": 14,
+          "score": 0.3555
+        }
+      ],
+      "candidate_count": 4,
+      "total": 64,
+      "duration_ms": 3218,
+      "document_hit_precision_at_k": 0.75,
+      "document_recall_at_k": 1.0,
+      "reciprocal_rank": 0.5,
+      "all_gold_documents_retrieved": true
+    },
+    {
+      "id": "IOM-018",
+      "group_id": "m1303_m1304_compare",
+      "split": "test",
+      "query": "比较 M1303 和 M1304：分别适合热电偶还是热电阻采集，且各自有多少通道？",
+      "expected_outcome": "retrieve",
+      "gold_documents": [
+        {
+          "document_id": "7c854cf2956311f1ae737f9ffb05e7d0",
+          "document_name": "M1303（8路热电偶输入）.pdf"
+        },
+        {
+          "document_id": "7c90a2c8956311f1ae737f9ffb05e7d0",
+          "document_name": "M1304（4路热电阻输入）.pdf"
+        }
+      ],
+      "required_concepts": [
+        "M1303",
+        "M1304",
+        "热电偶",
+        "热电阻",
+        "通道数"
+      ],
+      "difficulty": "nearby_model_comparison",
+      "retrieved": [
+        {
+          "document_id": "7c90a2c8956311f1ae737f9ffb05e7d0",
+          "document_name": "M1304（4路热电阻输入）.pdf",
+          "page": 6,
+          "score": 0.3813
+        },
+        {
+          "document_id": "7c854cf2956311f1ae737f9ffb05e7d0",
+          "document_name": "M1303（8路热电偶输入）.pdf",
+          "page": 7,
+          "score": 0.3747
+        },
+        {
+          "document_id": "7c854cf2956311f1ae737f9ffb05e7d0",
+          "document_name": "M1303（8路热电偶输入）.pdf",
+          "page": 3,
+          "score": 0.3678
+        },
+        {
+          "document_id": "7c90a2c8956311f1ae737f9ffb05e7d0",
+          "document_name": "M1304（4路热电阻输入）.pdf",
+          "page": 1,
+          "score": 0.3666
+        }
+      ],
+      "candidate_count": 4,
+      "total": 64,
+      "duration_ms": 2834,
+      "document_hit_precision_at_k": 1.0,
+      "document_recall_at_k": 1.0,
+      "reciprocal_rank": 1.0,
+      "all_gold_documents_retrieved": true
+    },
+    {
+      "id": "IOM-019",
+      "group_id": "m1503_m1507_compare",
+      "split": "test",
+      "query": "M1503 与 M1507 的模拟量输入、数字量输入、数字量输出能力有什么差异？",
+      "expected_outcome": "retrieve",
+      "gold_documents": [
+        {
+          "document_id": "7cc5ee10956311f1ae737f9ffb05e7d0",
+          "document_name": "M1503（4路模拟量输入、16路数字量输入、4路数字量输出）.pdf"
+        },
+        {
+          "document_id": "7cd11f74956311f1ae737f9ffb05e7d0",
+          "document_name": "M1507（4路模拟量输入、4路数字量输入、4路数字量输出）.pdf"
+        }
+      ],
+      "required_concepts": [
+        "M1503",
+        "M1507",
+        "模拟量输入",
+        "数字量输入",
+        "数字量输出"
+      ],
+      "difficulty": "nearby_model_comparison",
+      "retrieved": [
+        {
+          "document_id": "7cd11f74956311f1ae737f9ffb05e7d0",
+          "document_name": "M1507（4路模拟量输入、4路数字量输入、4路数字量输出）.pdf",
+          "page": 3,
+          "score": 0.4656
+        },
+        {
+          "document_id": "7cc5ee10956311f1ae737f9ffb05e7d0",
+          "document_name": "M1503（4路模拟量输入、16路数字量输入、4路数字量输出）.pdf",
+          "page": 3,
+          "score": 0.4596
+        },
+        {
+          "document_id": "7caf722a956311f1ae737f9ffb05e7d0",
+          "document_name": "M1501（8路数字量输入、8路数字量输出）.pdf",
+          "page": 3,
+          "score": 0.4292
+        },
+        {
+          "document_id": "7cba75d0956311f1ae737f9ffb05e7d0",
+          "document_name": "M1502（4路模拟量输入、8路数字量输入、4路数字量输出）.pdf",
+          "page": 3,
+          "score": 0.4284
+        }
+      ],
+      "candidate_count": 4,
+      "total": 64,
+      "duration_ms": 3206,
+      "document_hit_precision_at_k": 0.5,
+      "document_recall_at_k": 1.0,
+      "reciprocal_rank": 1.0,
+      "all_gold_documents_retrieved": true
+    },
+    {
+      "id": "IOM-020",
+      "group_id": "xp_family_compare",
+      "split": "test",
+      "query": "XP2001、XP2006、XP2018 分别是几通道采集模块？请返回每个型号的对应手册。",
+      "expected_outcome": "retrieve",
+      "gold_documents": [
+        {
+          "document_id": "7cf1fa46956311f1ae737f9ffb05e7d0",
+          "document_name": "XP2001单路数据采集模块.pdf"
+        },
+        {
+          "document_id": "7d00dad4956311f1ae737f9ffb05e7d0",
+          "document_name": "XP2006信号采集模块（6通道）.pdf"
+        },
+        {
+          "document_id": "7d0f0b90956311f1ae737f9ffb05e7d0",
+          "document_name": "XP2018信号采集模块（8通道）.pdf"
+        }
+      ],
+      "required_concepts": [
+        "XP2001",
+        "XP2006",
+        "XP2018",
+        "通道数"
+      ],
+      "difficulty": "multi_model_comparison",
+      "retrieved": [
+        {
+          "document_id": "7d259298956311f1ae737f9ffb05e7d0",
+          "document_name": "XP3018-AO、DO_DI 共8通道.pdf",
+          "page": 1,
+          "score": 0.3499
+        },
+        {
+          "document_id": "7d00dad4956311f1ae737f9ffb05e7d0",
+          "document_name": "XP2006信号采集模块（6通道）.pdf",
+          "page": 3,
+          "score": 0.3443
+        },
+        {
+          "document_id": "7d0f0b90956311f1ae737f9ffb05e7d0",
+          "document_name": "XP2018信号采集模块（8通道）.pdf",
+          "page": 2,
+          "score": 0.3442
+        },
+        {
+          "document_id": "7d00dad4956311f1ae737f9ffb05e7d0",
+          "document_name": "XP2006信号采集模块（6通道）.pdf",
+          "page": 3,
+          "score": 0.3424
+        }
+      ],
+      "candidate_count": 4,
+      "total": 64,
+      "duration_ms": 3593,
+      "document_hit_precision_at_k": 0.75,
+      "document_recall_at_k": 0.6666666666666666,
+      "reciprocal_rank": 0.5,
+      "all_gold_documents_retrieved": false
+    },
+    {
+      "id": "IOM-021",
+      "group_id": "xp3018_variant",
+      "split": "test",
+      "query": "XP3018 IO 模块与 XP3018-AO、DO_DI 共 8 通道版本分别支持哪些输入输出组合？",
+      "expected_outcome": "retrieve",
+      "gold_documents": [
+        {
+          "document_id": "7d1ae816956311f1ae737f9ffb05e7d0",
+          "document_name": "XP3018 IO模块（8路）.pdf"
+        },
+        {
+          "document_id": "7d259298956311f1ae737f9ffb05e7d0",
+          "document_name": "XP3018-AO、DO_DI 共8通道.pdf"
+        }
+      ],
+      "required_concepts": [
+        "XP3018",
+        "AO",
+        "DO",
+        "DI",
+        "通道组合"
+      ],
+      "difficulty": "variant_comparison",
+      "retrieved": [
+        {
+          "document_id": "7d259298956311f1ae737f9ffb05e7d0",
+          "document_name": "XP3018-AO、DO_DI 共8通道.pdf",
+          "page": 1,
+          "score": 0.434
+        },
+        {
+          "document_id": "7d1ae816956311f1ae737f9ffb05e7d0",
+          "document_name": "XP3018 IO模块（8路）.pdf",
+          "page": 1,
+          "score": 0.4133
+        },
+        {
+          "document_id": "7d1ae816956311f1ae737f9ffb05e7d0",
+          "document_name": "XP3018 IO模块（8路）.pdf",
+          "page": 2,
+          "score": 0.4058
+        },
+        {
+          "document_id": "7d259298956311f1ae737f9ffb05e7d0",
+          "document_name": "XP3018-AO、DO_DI 共8通道.pdf",
+          "page": 1,
+          "score": 0.3973
+        }
+      ],
+      "candidate_count": 4,
+      "total": 64,
+      "duration_ms": 4075,
+      "document_hit_precision_at_k": 1.0,
+      "document_recall_at_k": 1.0,
+      "reciprocal_rank": 1.0,
+      "all_gold_documents_retrieved": true
+    },
+    {
+      "id": "IOM-022",
+      "group_id": "k75_k85_boundary",
+      "split": "test",
+      "query": "K75 与 K85 系列的 Modbus 协议资料和硬件配置资料如何区分？不能把 K75 的参数引用给 K85。",
+      "expected_outcome": "retrieve",
+      "gold_documents": [
+        {
+          "document_id": "7bb84e14956311f1ae737f9ffb05e7d0",
+          "document_name": "K75系列模块Modbus协议软件说明书.pdf"
+        },
+        {
+          "document_id": "7bd421ac956311f1ae737f9ffb05e7d0",
+          "document_name": "K85系列模块Modbus协议软件说明书.pdf"
+        },
+        {
+          "document_id": "7bfcde76956311f1ae737f9ffb05e7d0",
+          "document_name": "K75_485硬件说明书.pdf"
+        },
+        {
+          "document_id": "7bc446c4956311f1ae737f9ffb05e7d0",
+          "document_name": "K85_modbus硬件说明书.pdf"
+        }
+      ],
+      "required_concepts": [
+        "K75",
+        "K85",
+        "Modbus协议",
+        "硬件配置",
+        "型号隔离"
+      ],
+      "difficulty": "series_boundary",
+      "retrieved": [
+        {
+          "document_id": "7bd421ac956311f1ae737f9ffb05e7d0",
+          "document_name": "K85系列模块Modbus协议软件说明书.pdf",
+          "page": 6,
+          "score": 0.3834
+        },
+        {
+          "document_id": "7bb84e14956311f1ae737f9ffb05e7d0",
+          "document_name": "K75系列模块Modbus协议软件说明书.pdf",
+          "page": 1,
+          "score": 0.3713
+        },
+        {
+          "document_id": "7bd421ac956311f1ae737f9ffb05e7d0",
+          "document_name": "K85系列模块Modbus协议软件说明书.pdf",
+          "page": 1,
+          "score": 0.3677
+        },
+        {
+          "document_id": "7bd421ac956311f1ae737f9ffb05e7d0",
+          "document_name": "K85系列模块Modbus协议软件说明书.pdf",
+          "page": 4,
+          "score": 0.3664
+        }
+      ],
+      "candidate_count": 4,
+      "total": 64,
+      "duration_ms": 3007,
+      "document_hit_precision_at_k": 1.0,
+      "document_recall_at_k": 0.5,
+      "reciprocal_rank": 1.0,
+      "all_gold_documents_retrieved": false
+    },
+    {
+      "id": "IOM-023",
+      "group_id": "unknown_m_series",
+      "split": "test",
+      "query": "M1999 模块有多少路数字量输入输出？支持哪些 Modbus 功能码？",
+      "expected_outcome": "abstain",
+      "gold_documents": [],
+      "required_concepts": [
+        "M1999",
+        "资料不存在",
+        "不能确认"
+      ],
+      "difficulty": "hard_negative",
+      "retrieved": [
+        {
+          "document_id": "7cc5ee10956311f1ae737f9ffb05e7d0",
+          "document_name": "M1503（4路模拟量输入、16路数字量输入、4路数字量输出）.pdf",
+          "page": 17,
+          "score": 0.5013
+        },
+        {
+          "document_id": "7cba75d0956311f1ae737f9ffb05e7d0",
+          "document_name": "M1502（4路模拟量输入、8路数字量输入、4路数字量输出）.pdf",
+          "page": 18,
+          "score": 0.501
+        },
+        {
+          "document_id": "7cdc9fe8956311f1ae737f9ffb05e7d0",
+          "document_name": "M1508（4路模拟量输入、10路数字量输出）.pdf",
+          "page": 15,
+          "score": 0.4999
+        },
+        {
+          "document_id": "7c66d1c8956311f1ae737f9ffb05e7d0",
+          "document_name": "M1101（16 路数字量输入）.pdf",
+          "page": 11,
+          "score": 0.4916
+        }
+      ],
+      "candidate_count": 4,
+      "total": 64,
+      "duration_ms": 2832
+    },
+    {
+      "id": "IOM-024",
+      "group_id": "unknown_ft_series",
+      "split": "test",
+      "query": "FT-RS-9999 的默认地址、波特率和功能码是什么？",
+      "expected_outcome": "abstain",
+      "gold_documents": [],
+      "required_concepts": [
+        "FT-RS-9999",
+        "资料不存在",
+        "不能确认"
+      ],
+      "difficulty": "hard_negative",
+      "retrieved": [
+        {
+          "document_id": "7b93d98a956311f1ae737f9ffb05e7d0",
+          "document_name": "FT-RSA-020408M(MODBUS-RTU协议)说明书V1.0-中性.pdf",
+          "page": 7,
+          "score": 0.4067
+        },
+        {
+          "document_id": "7c90a2c8956311f1ae737f9ffb05e7d0",
+          "document_name": "M1304（4路热电阻输入）.pdf",
+          "page": 4,
+          "score": 0.3967
+        },
+        {
+          "document_id": "7c48239a956311f1ae737f9ffb05e7d0",
+          "document_name": "Mxx说明书.pdf",
+          "page": 13,
+          "score": 0.3726
+        },
+        {
+          "document_id": "7b853484956311f1ae737f9ffb05e7d0",
+          "document_name": "FT-RS-0808_MODBUS-RTU协议_新8路开关量输入8路开关量输入说明书.pdf",
+          "page": 4,
+          "score": 0.3717
+        }
+      ],
+      "candidate_count": 4,
+      "total": 64,
+      "duration_ms": 2909
+    },
+    {
+      "id": "IOM-025",
+      "group_id": "unknown_xp_series",
+      "split": "test",
+      "query": "XP9999 支持 PROFINET 通信和 32 路热电偶采集吗？",
+      "expected_outcome": "abstain",
+      "gold_documents": [],
+      "required_concepts": [
+        "XP9999",
+        "资料不存在",
+        "不能确认"
+      ],
+      "difficulty": "hard_negative",
+      "retrieved": [
+        {
+          "document_id": "7c48239a956311f1ae737f9ffb05e7d0",
+          "document_name": "Mxx说明书.pdf",
+          "page": 5,
+          "score": 0.3459
+        },
+        {
+          "document_id": "7c854cf2956311f1ae737f9ffb05e7d0",
+          "document_name": "M1303（8路热电偶输入）.pdf",
+          "page": 1,
+          "score": 0.3425
+        },
+        {
+          "document_id": "7bb84e14956311f1ae737f9ffb05e7d0",
+          "document_name": "K75系列模块Modbus协议软件说明书.pdf",
+          "page": 6,
+          "score": 0.3421
+        },
+        {
+          "document_id": "7c90a2c8956311f1ae737f9ffb05e7d0",
+          "document_name": "M1304（4路热电阻输入）.pdf",
+          "page": 1,
+          "score": 0.3362
+        }
+      ],
+      "candidate_count": 4,
+      "total": 64,
+      "duration_ms": 3180
+    }
+  ],
+  "failures": []
+}

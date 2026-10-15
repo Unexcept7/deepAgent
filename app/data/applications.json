@@ -1,0 +1,2027 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-10-14T06:31:36.607647+00:00",
+  "applications": [
+    {
+      "app_id": "enterprise-knowledge-assistant",
+      "id": "enterprise-knowledge-assistant",
+      "name": "企业知识助手",
+      "description": "自主规划企业知识、图谱、业务数据和实时 API 查询。",
+      "category": "知识问答",
+      "type": "DeepAgent",
+      "icon": "企",
+      "enabled": true,
+      "status": "published",
+      "version": 5,
+      "published_version": 5,
+      "tags": [
+        "RAG",
+        "多源检索",
+        "证据引用"
+      ],
+      "workflow_id": "knowledge-research",
+      "workflow_version": 1,
+      "workflow_bindings": [
+        {
+          "workflow_id": "knowledge-research",
+          "version": 1,
+          "role": "primary",
+          "enabled": true
+        }
+      ],
+      "data_sources": [
+        {
+          "source_type": "document",
+          "name": "企业文档",
+          "enabled": true,
+          "config": {
+            "connection_ids": [
+              "env-ragflow"
+            ]
+          }
+        },
+        {
+          "source_type": "graph",
+          "name": "知识图谱",
+          "enabled": true,
+          "config": {
+            "connection_ids": [
+              "env-neo4j"
+            ]
+          }
+        }
+      ],
+      "knowledge_binding_mode": "inherit",
+      "knowledge_bindings": [],
+      "tools": [
+        {
+          "tool_id": "get_device_status",
+          "name": "设备实时状态",
+          "enabled": true,
+          "requires_confirmation": false,
+          "config": {}
+        },
+        {
+          "tool_id": "submit_work_order",
+          "name": "提交正式维修工单",
+          "enabled": true,
+          "requires_confirmation": true,
+          "config": {}
+        },
+        {
+          "tool_id": "unified_search",
+          "name": "统一搜索",
+          "enabled": true,
+          "requires_confirmation": false,
+          "config": {}
+        },
+        {
+          "tool_id": "evidence_review",
+          "name": "证据校验",
+          "enabled": true,
+          "requires_confirmation": false,
+          "config": {}
+        }
+      ],
+      "runtime": {
+        "top_k": 12,
+        "similarity_threshold": 0.15,
+        "evidence_mode": "off",
+        "timeout_seconds": 8,
+        "human_confirmation": {
+          "enabled": true,
+          "actions": [
+            "write",
+            "publish",
+            "submit"
+          ]
+        },
+        "environment": "production"
+      },
+      "permissions": {
+        "owner": "当前登录用户",
+        "run_roles": [
+          "员工",
+          "管理员"
+        ],
+        "edit_roles": [
+          "管理员"
+        ],
+        "publish_roles": [
+          "管理员"
+        ]
+      },
+      "channels": [
+        "工作台",
+        "API"
+      ],
+      "created_at": "2026-09-17T02:44:39.423667+00:00",
+      "updated_at": "2026-10-09T06:39:06.370571+00:00",
+      "updated_by": "api",
+      "versions": [
+        {
+          "version": 1,
+          "status": "published",
+          "created_at": "2026-09-17T02:44:39.423667+00:00",
+          "published_at": "2026-09-17T03:45:35.147736+00:00",
+          "note": "应用中心发布",
+          "snapshot": {
+            "app_id": "enterprise-knowledge-assistant",
+            "id": "enterprise-knowledge-assistant",
+            "name": "企业知识助手",
+            "description": "自主规划企业知识、图谱、业务数据和实时 API 查询。",
+            "category": "知识问答",
+            "type": "DeepAgent",
+            "icon": "知",
+            "enabled": true,
+            "tags": [
+              "RAG",
+              "多源检索",
+              "证据引用"
+            ],
+            "workflow_id": "knowledge-research",
+            "workflow_version": 1,
+            "workflow_bindings": [
+              {
+                "workflow_id": "knowledge-research",
+                "version": 1,
+                "role": "primary",
+                "enabled": true
+              }
+            ],
+            "data_sources": [
+              {
+                "source_type": "document",
+                "name": "企业文档",
+                "enabled": true,
+                "config": {}
+              },
+              {
+                "source_type": "qa",
+                "name": "标准问答",
+                "enabled": true,
+                "config": {}
+              },
+              {
+                "source_type": "graph",
+                "name": "知识图谱",
+                "enabled": true,
+                "config": {}
+              },
+              {
+                "source_type": "sql",
+                "name": "业务数据",
+                "enabled": true,
+                "config": {}
+              },
+              {
+                "source_type": "api",
+                "name": "实时 API",
+                "enabled": true,
+                "config": {}
+              }
+            ],
+            "tools": [
+              {
+                "tool_id": "unified_search",
+                "name": "统一搜索",
+                "enabled": true,
+                "requires_confirmation": false,
+                "config": {}
+              },
+              {
+                "tool_id": "evidence_review",
+                "name": "证据校验",
+                "enabled": true,
+                "requires_confirmation": false,
+                "config": {}
+              },
+              {
+                "tool_id": "device_status",
+                "name": "设备实时状态",
+                "enabled": true,
+                "requires_confirmation": false,
+                "config": {}
+              },
+              {
+                "tool_id": "create_work_order",
+                "name": "创建维修工单",
+                "enabled": true,
+                "requires_confirmation": true,
+                "config": {}
+              }
+            ],
+            "runtime": {
+              "top_k": 12,
+              "similarity_threshold": 0.3,
+              "evidence_mode": "generic",
+              "timeout_seconds": 8,
+              "human_confirmation": {
+                "enabled": true,
+                "actions": [
+                  "write",
+                  "publish",
+                  "submit"
+                ]
+              }
+            },
+            "permissions": {
+              "owner": "当前登录用户",
+              "run_roles": [
+                "员工",
+                "管理员"
+              ],
+              "edit_roles": [
+                "管理员"
+              ],
+              "publish_roles": [
+                "管理员"
+              ]
+            },
+            "channels": [
+              "工作台",
+              "API"
+            ],
+            "version": 1,
+            "knowledge_binding_mode": "inherit",
+            "knowledge_bindings": []
+          }
+        },
+        {
+          "version": 2,
+          "status": "published",
+          "created_at": "2026-09-30T03:41:37.308744+00:00",
+          "published_at": "2026-09-30T03:41:37.392973+00:00",
+          "note": "应用中心发布",
+          "snapshot": {
+            "app_id": "enterprise-knowledge-assistant",
+            "id": "enterprise-knowledge-assistant",
+            "name": "企业知识助手",
+            "description": "自主规划企业知识、图谱、业务数据和实时 API 查询。",
+            "category": "知识问答",
+            "type": "DeepAgent",
+            "icon": "企",
+            "enabled": true,
+            "tags": [
+              "RAG",
+              "多源检索",
+              "证据引用"
+            ],
+            "workflow_id": "knowledge-research",
+            "workflow_version": 1,
+            "workflow_bindings": [
+              {
+                "workflow_id": "knowledge-research",
+                "version": 1,
+                "role": "primary",
+                "enabled": true
+              }
+            ],
+            "data_sources": [
+              {
+                "source_type": "document",
+                "name": "企业文档",
+                "enabled": true,
+                "config": {
+                  "connection_ids": [
+                    "env-ragflow"
+                  ]
+                }
+              },
+              {
+                "source_type": "qa",
+                "name": "标准问答",
+                "enabled": true,
+                "config": {
+                  "connection_ids": [
+                    "env-qa"
+                  ]
+                }
+              },
+              {
+                "source_type": "graph",
+                "name": "知识图谱",
+                "enabled": true,
+                "config": {
+                  "connection_ids": [
+                    "env-neo4j"
+                  ]
+                }
+              },
+              {
+                "source_type": "sql",
+                "name": "业务数据",
+                "enabled": true,
+                "config": {
+                  "connection_ids": [
+                    "env-sql"
+                  ]
+                }
+              },
+              {
+                "source_type": "api",
+                "name": "实时 API",
+                "enabled": true,
+                "config": {
+                  "connection_ids": [
+                    "env-business"
+                  ]
+                }
+              }
+            ],
+            "tools": [
+              {
+                "tool_id": "get_device_status",
+                "name": "设备实时状态",
+                "enabled": true,
+                "requires_confirmation": false,
+                "config": {}
+              },
+              {
+                "tool_id": "submit_work_order",
+                "name": "提交正式维修工单",
+                "enabled": true,
+                "requires_confirmation": true,
+                "config": {}
+              },
+              {
+                "tool_id": "unified_search",
+                "name": "统一搜索",
+                "enabled": true,
+                "requires_confirmation": false,
+                "config": {}
+              },
+              {
+                "tool_id": "evidence_review",
+                "name": "证据校验",
+                "enabled": true,
+                "requires_confirmation": false,
+                "config": {}
+              }
+            ],
+            "runtime": {
+              "top_k": 12,
+              "similarity_threshold": 0.3,
+              "evidence_mode": "generic",
+              "timeout_seconds": 8,
+              "human_confirmation": {
+                "enabled": true,
+                "actions": [
+                  "write",
+                  "publish",
+                  "submit"
+                ]
+              },
+              "environment": "production"
+            },
+            "permissions": {
+              "owner": "当前登录用户",
+              "run_roles": [
+                "员工",
+                "管理员"
+              ],
+              "edit_roles": [
+                "管理员"
+              ],
+              "publish_roles": [
+                "管理员"
+              ]
+            },
+            "channels": [
+              "工作台",
+              "API"
+            ],
+            "version": 2,
+            "knowledge_binding_mode": "inherit",
+            "knowledge_bindings": []
+          }
+        },
+        {
+          "version": 3,
+          "status": "published",
+          "created_at": "2026-09-30T03:42:00.538643+00:00",
+          "published_at": "2026-09-30T03:42:03.007864+00:00",
+          "note": "应用中心发布",
+          "snapshot": {
+            "app_id": "enterprise-knowledge-assistant",
+            "id": "enterprise-knowledge-assistant",
+            "name": "企业知识助手",
+            "description": "自主规划企业知识、图谱、业务数据和实时 API 查询。",
+            "category": "知识问答",
+            "type": "DeepAgent",
+            "icon": "企",
+            "enabled": true,
+            "tags": [
+              "RAG",
+              "多源检索",
+              "证据引用"
+            ],
+            "workflow_id": "knowledge-research",
+            "workflow_version": 1,
+            "workflow_bindings": [
+              {
+                "workflow_id": "knowledge-research",
+                "version": 1,
+                "role": "primary",
+                "enabled": true
+              }
+            ],
+            "data_sources": [
+              {
+                "source_type": "document",
+                "name": "企业文档",
+                "enabled": true,
+                "config": {
+                  "connection_ids": [
+                    "env-ragflow"
+                  ]
+                }
+              },
+              {
+                "source_type": "qa",
+                "name": "标准问答",
+                "enabled": true,
+                "config": {
+                  "connection_ids": [
+                    "env-qa"
+                  ]
+                }
+              },
+              {
+                "source_type": "graph",
+                "name": "知识图谱",
+                "enabled": true,
+                "config": {
+                  "connection_ids": [
+                    "env-neo4j"
+                  ]
+                }
+              },
+              {
+                "source_type": "sql",
+                "name": "业务数据",
+                "enabled": true,
+                "config": {
+                  "connection_ids": [
+                    "env-sql"
+                  ]
+                }
+              },
+              {
+                "source_type": "api",
+                "name": "实时 API",
+                "enabled": true,
+                "config": {
+                  "connection_ids": [
+                    "env-business"
+                  ]
+                }
+              }
+            ],
+            "tools": [
+              {
+                "tool_id": "get_device_status",
+                "name": "设备实时状态",
+                "enabled": true,
+                "requires_confirmation": false,
+                "config": {}
+              },
+              {
+                "tool_id": "submit_work_order",
+                "name": "提交正式维修工单",
+                "enabled": true,
+                "requires_confirmation": true,
+                "config": {}
+              },
+              {
+                "tool_id": "unified_search",
+                "name": "统一搜索",
+                "enabled": true,
+                "requires_confirmation": false,
+                "config": {}
+              },
+              {
+                "tool_id": "evidence_review",
+                "name": "证据校验",
+                "enabled": true,
+                "requires_confirmation": false,
+                "config": {}
+              }
+            ],
+            "runtime": {
+              "top_k": 12,
+              "similarity_threshold": 0.3,
+              "evidence_mode": "generic",
+              "timeout_seconds": 8,
+              "human_confirmation": {
+                "enabled": true,
+                "actions": [
+                  "write",
+                  "publish",
+                  "submit"
+                ]
+              },
+              "environment": "production"
+            },
+            "permissions": {
+              "owner": "当前登录用户",
+              "run_roles": [
+                "员工",
+                "管理员"
+              ],
+              "edit_roles": [
+                "管理员"
+              ],
+              "publish_roles": [
+                "管理员"
+              ]
+            },
+            "channels": [
+              "工作台",
+              "API"
+            ],
+            "version": 3,
+            "knowledge_binding_mode": "inherit",
+            "knowledge_bindings": []
+          }
+        },
+        {
+          "version": 4,
+          "status": "published",
+          "created_at": "2026-10-09T02:30:54.173070+00:00",
+          "published_at": "2026-10-09T02:30:54.210082+00:00",
+          "note": "应用中心发布",
+          "snapshot": {
+            "app_id": "enterprise-knowledge-assistant",
+            "id": "enterprise-knowledge-assistant",
+            "name": "企业知识助手",
+            "description": "自主规划企业知识、图谱、业务数据和实时 API 查询。",
+            "category": "知识问答",
+            "type": "DeepAgent",
+            "icon": "企",
+            "enabled": true,
+            "tags": [
+              "RAG",
+              "多源检索",
+              "证据引用"
+            ],
+            "workflow_id": "knowledge-research",
+            "workflow_version": 1,
+            "workflow_bindings": [
+              {
+                "workflow_id": "knowledge-research",
+                "version": 1,
+                "role": "primary",
+                "enabled": true
+              }
+            ],
+            "data_sources": [
+              {
+                "source_type": "document",
+                "name": "企业文档",
+                "enabled": true,
+                "config": {
+                  "connection_ids": [
+                    "env-ragflow"
+                  ]
+                }
+              },
+              {
+                "source_type": "qa",
+                "name": "标准问答",
+                "enabled": true,
+                "config": {
+                  "connection_ids": [
+                    "env-qa"
+                  ]
+                }
+              },
+              {
+                "source_type": "graph",
+                "name": "知识图谱",
+                "enabled": true,
+                "config": {
+                  "connection_ids": [
+                    "env-neo4j"
+                  ]
+                }
+              },
+              {
+                "source_type": "sql",
+                "name": "业务数据",
+                "enabled": true,
+                "config": {
+                  "connection_ids": [
+                    "env-sql"
+                  ]
+                }
+              },
+              {
+                "source_type": "api",
+                "name": "实时 API",
+                "enabled": true,
+                "config": {
+                  "connection_ids": [
+                    "env-business"
+                  ]
+                }
+              }
+            ],
+            "tools": [
+              {
+                "tool_id": "get_device_status",
+                "name": "设备实时状态",
+                "enabled": true,
+                "requires_confirmation": false,
+                "config": {}
+              },
+              {
+                "tool_id": "submit_work_order",
+                "name": "提交正式维修工单",
+                "enabled": true,
+                "requires_confirmation": true,
+                "config": {}
+              },
+              {
+                "tool_id": "unified_search",
+                "name": "统一搜索",
+                "enabled": true,
+                "requires_confirmation": false,
+                "config": {}
+              },
+              {
+                "tool_id": "evidence_review",
+                "name": "证据校验",
+                "enabled": true,
+                "requires_confirmation": false,
+                "config": {}
+              }
+            ],
+            "runtime": {
+              "top_k": 12,
+              "similarity_threshold": 0.15,
+              "evidence_mode": "off",
+              "timeout_seconds": 8,
+              "human_confirmation": {
+                "enabled": true,
+                "actions": [
+                  "write",
+                  "publish",
+                  "submit"
+                ]
+              },
+              "environment": "production"
+            },
+            "permissions": {
+              "owner": "当前登录用户",
+              "run_roles": [
+                "员工",
+                "管理员"
+              ],
+              "edit_roles": [
+                "管理员"
+              ],
+              "publish_roles": [
+                "管理员"
+              ]
+            },
+            "channels": [
+              "工作台",
+              "API"
+            ],
+            "version": 4,
+            "knowledge_binding_mode": "inherit",
+            "knowledge_bindings": []
+          }
+        },
+        {
+          "version": 5,
+          "status": "published",
+          "created_at": "2026-10-09T06:39:06.327443+00:00",
+          "published_at": "2026-10-09T06:39:06.370571+00:00",
+          "note": "应用中心发布",
+          "snapshot": {
+            "app_id": "enterprise-knowledge-assistant",
+            "id": "enterprise-knowledge-assistant",
+            "name": "企业知识助手",
+            "description": "自主规划企业知识、图谱、业务数据和实时 API 查询。",
+            "category": "知识问答",
+            "type": "DeepAgent",
+            "icon": "企",
+            "enabled": true,
+            "tags": [
+              "RAG",
+              "多源检索",
+              "证据引用"
+            ],
+            "workflow_id": "knowledge-research",
+            "workflow_version": 1,
+            "workflow_bindings": [
+              {
+                "workflow_id": "knowledge-research",
+                "version": 1,
+                "role": "primary",
+                "enabled": true
+              }
+            ],
+            "data_sources": [
+              {
+                "source_type": "document",
+                "name": "企业文档",
+                "enabled": true,
+                "config": {
+                  "connection_ids": [
+                    "env-ragflow"
+                  ]
+                }
+              },
+              {
+                "source_type": "graph",
+                "name": "知识图谱",
+                "enabled": true,
+                "config": {
+                  "connection_ids": [
+                    "env-neo4j"
+                  ]
+                }
+              }
+            ],
+            "knowledge_binding_mode": "inherit",
+            "knowledge_bindings": [],
+            "tools": [
+              {
+                "tool_id": "get_device_status",
+                "name": "设备实时状态",
+                "enabled": true,
+                "requires_confirmation": false,
+                "config": {}
+              },
+              {
+                "tool_id": "submit_work_order",
+                "name": "提交正式维修工单",
+                "enabled": true,
+                "requires_confirmation": true,
+                "config": {}
+              },
+              {
+                "tool_id": "unified_search",
+                "name": "统一搜索",
+                "enabled": true,
+                "requires_confirmation": false,
+                "config": {}
+              },
+              {
+                "tool_id": "evidence_review",
+                "name": "证据校验",
+                "enabled": true,
+                "requires_confirmation": false,
+                "config": {}
+              }
+            ],
+            "runtime": {
+              "top_k": 12,
+              "similarity_threshold": 0.15,
+              "evidence_mode": "off",
+              "timeout_seconds": 8,
+              "human_confirmation": {
+                "enabled": true,
+                "actions": [
+                  "write",
+                  "publish",
+                  "submit"
+                ]
+              },
+              "environment": "production"
+            },
+            "permissions": {
+              "owner": "当前登录用户",
+              "run_roles": [
+                "员工",
+                "管理员"
+              ],
+              "edit_roles": [
+                "管理员"
+              ],
+              "publish_roles": [
+                "管理员"
+              ]
+            },
+            "channels": [
+              "工作台",
+              "API"
+            ],
+            "version": 5
+          }
+        }
+      ],
+      "run_history": [
+        {
+          "started_at": "2026-10-08T02:04:41.159716+00:00",
+          "run_id": "app-2abde13a-4684-42d8-9bf8-819dfb80f0f0",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T02:04:41.159716+00:00",
+          "error": "RAGFlow 文档知识库 检索失败：ModelException('Error: status: 400: code: Arrearage, message: Access denied, please make sure your account is in good standing. For details, see: https://help.aliyun.com/zh/model-studio/error-code#overdue-payment')"
+        },
+        {
+          "started_at": "2026-10-08T02:05:03.929720+00:00",
+          "run_id": "app-3049b529-955a-421e-9703-fba2a06e155f",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T02:05:03.929720+00:00",
+          "error": "RAGFlow 文档知识库 检索失败：ModelException('Error: status: 400: code: Arrearage, message: Access denied, please make sure your account is in good standing. For details, see: https://help.aliyun.com/zh/model-studio/error-code#overdue-payment')"
+        },
+        {
+          "started_at": "2026-10-08T02:38:56.314962+00:00",
+          "run_id": "app-5edb1fe8-9a0b-4523-ab19-74973086ded0",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T02:38:56.314962+00:00",
+          "error": "没有候选片段通过通用相关性和证据校验"
+        },
+        {
+          "started_at": "2026-10-08T02:40:29.683531+00:00",
+          "run_id": "app-4f37a9f5-c038-4563-b473-11df0a190879",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T02:40:29.683531+00:00",
+          "error": "12 个候选片段通过通用相关性和证据校验"
+        },
+        {
+          "started_at": "2026-10-08T02:45:43.531296+00:00",
+          "run_id": "app-5f0af42d-47ac-4130-afc8-d0f6fc024237",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T02:45:43.531296+00:00",
+          "error": "12 个候选片段通过通用相关性和证据校验"
+        },
+        {
+          "started_at": "2026-10-08T02:46:58.595847+00:00",
+          "run_id": "app-be61b451-b218-488b-83bd-32a87e2d2f7e",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T02:46:58.595847+00:00",
+          "error": "6 个候选片段通过通用相关性和证据校验"
+        },
+        {
+          "started_at": "2026-10-08T02:55:55.149886+00:00",
+          "run_id": "app-109a6a58-f5e2-4a2d-afbe-721bcd3dd74c",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T02:55:55.149886+00:00",
+          "error": "12 个候选片段通过通用相关性和证据校验"
+        },
+        {
+          "started_at": "2026-10-08T04:32:16.083657+00:00",
+          "run_id": "app-7c0e24b7-200e-4428-a553-5d79845219ba",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T04:32:16.083657+00:00",
+          "error": "RAGFlow 文档知识库 检索失败：HTTPConnectionPool(host='localhost', port=9380): Read timed out. (read timeout=8)"
+        },
+        {
+          "started_at": "2026-10-08T04:32:56.667935+00:00",
+          "run_id": "app-967fc41a-2b7c-40b6-8e3a-737312fcc2eb",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T04:32:56.667935+00:00",
+          "error": "RAGFlow 文档知识库 检索失败：HTTPConnectionPool(host='localhost', port=9380): Read timed out. (read timeout=8)"
+        },
+        {
+          "started_at": "2026-10-08T04:33:28.700811+00:00",
+          "run_id": "app-3beeea39-cef7-429d-b6c3-4a31c260ac20",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T04:33:28.700811+00:00",
+          "error": "RAGFlow 文档知识库 检索失败：HTTPConnectionPool(host='localhost', port=9380): Read timed out. (read timeout=8)"
+        },
+        {
+          "started_at": "2026-10-08T04:34:12.518268+00:00",
+          "run_id": "app-ac88497c-6623-4291-b41a-24f4a2434dd5",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T04:34:12.518268+00:00",
+          "error": "RAGFlow 文档知识库 检索失败：HTTPConnectionPool(host='localhost', port=9380): Read timed out. (read timeout=8)"
+        },
+        {
+          "started_at": "2026-10-08T04:34:47.278224+00:00",
+          "run_id": "app-877a4ea4-891b-4752-9610-573ae235739e",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T04:34:47.278224+00:00",
+          "error": "RAGFlow 文档知识库 检索失败：HTTPConnectionPool(host='localhost', port=9380): Read timed out. (read timeout=8)"
+        },
+        {
+          "started_at": "2026-10-08T04:34:47.398009+00:00",
+          "run_id": "app-b673105f-0fcb-4dc3-8f5e-c32c8da6b7c8",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T04:34:47.398009+00:00",
+          "error": "当前问题未明确对象，历史中存在多个候选对象"
+        },
+        {
+          "started_at": "2026-10-08T04:35:23.987053+00:00",
+          "run_id": "app-ec1983f4-8429-4f0b-b787-ee5a3a4d953e",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T04:35:23.987053+00:00",
+          "error": "RAGFlow 文档知识库 检索失败：HTTPConnectionPool(host='localhost', port=9380): Read timed out. (read timeout=8)"
+        },
+        {
+          "started_at": "2026-10-08T04:36:02.087004+00:00",
+          "run_id": "app-c3973f1f-4842-4730-8986-ef15aa255a77",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T04:36:02.087004+00:00",
+          "error": "RAGFlow 文档知识库 检索失败：HTTPConnectionPool(host='localhost', port=9380): Read timed out. (read timeout=8)"
+        },
+        {
+          "started_at": "2026-10-08T04:36:39.072312+00:00",
+          "run_id": "app-f3367c78-855a-4160-850d-b18cb0c65ddf",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T04:36:39.072312+00:00",
+          "error": "RAGFlow 文档知识库 检索失败：HTTPConnectionPool(host='localhost', port=9380): Read timed out. (read timeout=8)"
+        },
+        {
+          "started_at": "2026-10-08T04:37:23.368662+00:00",
+          "run_id": "app-55c6cdf6-a79e-4017-926f-9d657f87ccce",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T04:37:23.368662+00:00",
+          "error": "RAGFlow 文档知识库 检索失败：HTTPConnectionPool(host='localhost', port=9380): Read timed out. (read timeout=8)"
+        },
+        {
+          "started_at": "2026-10-08T04:37:58.902356+00:00",
+          "run_id": "app-0d81fc32-3ec1-43ef-b83d-2ddf31bdb27b",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T04:37:58.902356+00:00",
+          "error": "RAGFlow 文档知识库 检索失败：HTTPConnectionPool(host='localhost', port=9380): Read timed out. (read timeout=8)"
+        },
+        {
+          "started_at": "2026-10-08T04:38:40.541968+00:00",
+          "run_id": "app-b3db7d36-c9f4-4c33-bf73-2a1a01ecbd8e",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T04:38:40.541968+00:00",
+          "error": "RAGFlow 文档知识库 检索失败：HTTPConnectionPool(host='localhost', port=9380): Read timed out. (read timeout=8)"
+        },
+        {
+          "started_at": "2026-10-08T04:39:16.477885+00:00",
+          "run_id": "app-3ff6b06a-d1d3-43a4-bc83-2f526cbbb8b1",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T04:39:16.477885+00:00",
+          "error": "RAGFlow 文档知识库 检索失败：HTTPConnectionPool(host='localhost', port=9380): Read timed out. (read timeout=8)"
+        },
+        {
+          "started_at": "2026-10-08T04:39:59.304572+00:00",
+          "run_id": "app-198128f0-d7bc-410f-97ad-557f624422dc",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T04:39:59.304572+00:00",
+          "error": "RAGFlow 文档知识库 检索失败：HTTPConnectionPool(host='localhost', port=9380): Read timed out. (read timeout=8)"
+        },
+        {
+          "started_at": "2026-10-08T05:14:36.574435+00:00",
+          "run_id": "app-f905b3b6-5aa6-43e3-8a57-068ae3718108",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T05:14:36.574435+00:00",
+          "error": "3 个候选片段通过通用相关性和证据校验"
+        },
+        {
+          "started_at": "2026-10-08T05:41:27.324480+00:00",
+          "run_id": "app-f879224d-f68a-4ce4-9ec0-01885fa7a0f5",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T05:41:27.324480+00:00",
+          "error": "12 个候选片段通过通用相关性和证据校验"
+        },
+        {
+          "started_at": "2026-10-08T05:41:27.494532+00:00",
+          "run_id": "app-456c648e-8ae7-47c6-87ed-3d6769dfa0dc",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T05:41:27.494532+00:00",
+          "error": "当前问题未明确对象，历史中存在多个候选对象"
+        },
+        {
+          "started_at": "2026-10-08T05:42:04.098074+00:00",
+          "run_id": "app-58e9325b-5c4b-4896-a836-57d2c7cdba9d",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T05:42:04.098074+00:00",
+          "error": "11 个候选片段通过通用相关性和证据校验"
+        },
+        {
+          "started_at": "2026-10-08T05:42:33.682708+00:00",
+          "run_id": "app-ee895254-dcb6-418d-a5d1-90bf2bfddc98",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T05:42:33.682708+00:00",
+          "error": "11 个候选片段通过通用相关性和证据校验"
+        },
+        {
+          "started_at": "2026-10-08T05:43:14.758887+00:00",
+          "run_id": "app-71e7c808-7d57-41e8-8b67-ba290b9ba021",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T05:43:14.758887+00:00",
+          "error": "12 个候选片段通过通用相关性和证据校验"
+        },
+        {
+          "started_at": "2026-10-08T05:43:14.872080+00:00",
+          "run_id": "app-24c9423a-884d-4729-8d0f-409233ee4e92",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T05:43:14.872080+00:00",
+          "error": "当前问题未明确对象，历史中存在多个候选对象"
+        },
+        {
+          "started_at": "2026-10-08T05:43:44.165420+00:00",
+          "run_id": "app-8d5f74b7-d6b9-41cf-9dd8-e4f52ec454e0",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T05:43:44.165420+00:00",
+          "error": "12 个候选片段通过通用相关性和证据校验"
+        },
+        {
+          "started_at": "2026-10-08T05:44:04.131962+00:00",
+          "run_id": "app-07795d44-9234-47a3-bfe8-335d2742f2fa",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T05:44:04.131962+00:00",
+          "error": "12 个候选片段通过通用相关性和证据校验"
+        },
+        {
+          "started_at": "2026-10-08T05:44:29.168416+00:00",
+          "run_id": "app-a0e9ea56-20eb-4683-8e88-e12a1e379823",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T05:44:29.168416+00:00",
+          "error": "9 个候选片段通过通用相关性和证据校验"
+        },
+        {
+          "started_at": "2026-10-08T05:44:53.661082+00:00",
+          "run_id": "app-bfba7b3b-543d-4545-8385-0e1ac40f7d98",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T05:44:53.661082+00:00",
+          "error": "6 个候选片段通过通用相关性和证据校验"
+        },
+        {
+          "started_at": "2026-10-08T05:45:23.714882+00:00",
+          "run_id": "app-c251f1bd-4300-438a-b266-839a20279def",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T05:45:23.714882+00:00",
+          "error": "12 个候选片段通过通用相关性和证据校验"
+        },
+        {
+          "started_at": "2026-10-08T05:45:23.818162+00:00",
+          "run_id": "app-74932097-d9b6-4aa8-8b8c-0be1686f648f",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T05:45:23.818162+00:00",
+          "error": "当前问题未明确对象，历史中存在多个候选对象"
+        },
+        {
+          "started_at": "2026-10-08T05:45:45.809963+00:00",
+          "run_id": "app-90bb330e-cdd0-40fa-a088-44a7d42f4218",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T05:45:45.809963+00:00",
+          "error": "12 个候选片段通过通用相关性和证据校验"
+        },
+        {
+          "started_at": "2026-10-08T05:46:16.186916+00:00",
+          "run_id": "app-c8223d33-3649-45c4-9a75-b6014424a3dd",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T05:46:16.186916+00:00",
+          "error": "12 个候选片段通过通用相关性和证据校验"
+        },
+        {
+          "started_at": "2026-10-08T07:19:25.611853+00:00",
+          "run_id": "app-a7b8c96d-fee0-4b7d-ac90-5df53c7b9cff",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T07:19:25.611853+00:00",
+          "error": "没有候选片段通过通用相关性和证据校验"
+        },
+        {
+          "started_at": "2026-10-08T07:23:34.500537+00:00",
+          "run_id": "app-586b0b2d-c55a-45cd-b841-e20969d2dc3e",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T07:23:34.500537+00:00",
+          "error": "没有候选片段通过通用相关性和证据校验"
+        },
+        {
+          "started_at": "2026-10-08T07:24:34.062940+00:00",
+          "run_id": "app-c65f6801-cf4a-4f79-a67a-5de832835876",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T07:24:34.062940+00:00",
+          "error": "没有候选片段通过通用相关性和证据校验"
+        },
+        {
+          "started_at": "2026-10-08T07:45:48.785540+00:00",
+          "run_id": "app-a5ed9c82-6aa9-4d80-87bf-2220d7c7b140",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T07:45:48.785540+00:00",
+          "error": "1 个候选片段通过内容和对象校验；相似度仅用于排序"
+        },
+        {
+          "started_at": "2026-10-08T07:54:27.230680+00:00",
+          "run_id": "app-84a26b96-1833-4b5a-bf6b-067cd0fdbcf9",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T07:54:27.230680+00:00",
+          "error": "1 个候选片段通过内容和对象校验；相似度仅用于排序"
+        },
+        {
+          "started_at": "2026-10-08T08:03:34.928507+00:00",
+          "run_id": "app-5dcfe9d1-e4f4-4c9c-81df-8a4409ec3e87",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T08:03:34.928507+00:00",
+          "error": "1 个候选片段通过内容和对象校验；相似度仅用于排序"
+        },
+        {
+          "started_at": "2026-10-08T08:11:09.439662+00:00",
+          "run_id": "app-beca8313-13ac-4a6e-8c2f-aba0317bea06",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T08:11:09.439662+00:00",
+          "error": "RAGFlow 文档知识库 检索失败：ValueError('Error calling QWenRerank model qwen3-rerank: 400 - {\"status_code\": 400, \"request_id\": \"9a111f83-52ee-903c-8ab8-f14002551b9c\", \"code\": \"InvalidParameter\", \"message\": \"<400> InternalError.Algo.InvalidParameter: Value error, document index:32 is invalid, it should not be larger than 50000: input.documents\", \"output\": null, \"usage\": null}')"
+        },
+        {
+          "started_at": "2026-10-08T08:11:31.566458+00:00",
+          "run_id": "app-9c23a289-21eb-4d61-8604-aaf8d120d1fe",
+          "version": 3,
+          "status": "success",
+          "updated_at": "2026-10-08T08:11:31.566458+00:00",
+          "error": "RAGFlow 文档知识库 检索失败：ValueError('Error calling QWenRerank model qwen3-rerank: 400 - {\"status_code\": 400, \"request_id\": \"bad5cfec-6200-99a4-baae-7d46264af532\", \"code\": \"InvalidParameter\", \"message\": \"<400> InternalError.Algo.InvalidParameter: Value error, document index:18 is invalid, it should not be larger than 50000: input.documents\", \"output\": null, \"usage\": null}')"
+        },
+        {
+          "started_at": "2026-10-09T02:32:01.090315+00:00",
+          "run_id": "app-4cc611aa-5866-4c14-b293-815a3d2c4871",
+          "version": 4,
+          "status": "success",
+          "updated_at": "2026-10-09T02:32:01.090315+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-09T02:33:43.799072+00:00",
+          "run_id": "app-a4e00750-b39d-448e-9929-4f6bc366c23e",
+          "version": 4,
+          "status": "success",
+          "updated_at": "2026-10-09T02:33:43.799072+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-09T02:34:43.466996+00:00",
+          "run_id": "app-b302d049-88e2-41f2-94f4-1b970e650a74",
+          "version": 4,
+          "status": "success",
+          "updated_at": "2026-10-09T02:34:43.466996+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-09T03:07:56.008709+00:00",
+          "run_id": "app-baf9aa21-a0ca-4b65-8d7c-68672f616908",
+          "version": 4,
+          "status": "success",
+          "updated_at": "2026-10-09T03:07:56.008709+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-09T03:11:08.065576+00:00",
+          "run_id": "app-c39ac03b-80fb-4797-9bb5-f7afe67a9803",
+          "version": 4,
+          "status": "success",
+          "updated_at": "2026-10-09T03:11:08.065576+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-09T03:36:19.023086+00:00",
+          "run_id": "app-5560c7b1-980b-4ef2-a514-f07f49bbd5a5",
+          "version": 4,
+          "status": "success",
+          "updated_at": "2026-10-09T03:36:19.023086+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-09T03:54:21.232893+00:00",
+          "run_id": "app-645a97f4-8ff5-4204-a001-51dff3939a68",
+          "version": 4,
+          "status": "success",
+          "updated_at": "2026-10-09T03:54:21.232893+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-10T00:45:18.152698+00:00",
+          "run_id": "app-86f7904f-86d0-4d44-a83c-ba74c69a9764",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-10T00:45:18.152698+00:00",
+          "error": "RAGFlow 文档知识库 检索失败：ValueError('Error calling QWenRerank model qwen3-rerank: 400 - {\"status_code\": 400, \"request_id\": \"4af0f9af-d6a2-97f2-bfb5-cb2800dfb0ea\", \"code\": \"InvalidParameter\", \"message\": \"<400> InternalError.Algo.InvalidParameter: Value error, document index:33 is invalid, it should not be larger than 50000: input.documents\", \"output\": null, \"usage\": null}')"
+        },
+        {
+          "started_at": "2026-10-10T01:10:08.334416+00:00",
+          "run_id": "app-574e87e7-a93f-4fbc-9f02-7716861aaf7f",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-10T01:10:08.334416+00:00",
+          "error": "RAGFlow 文档知识库 检索失败：ValueError('Error calling QWenRerank model qwen3-rerank: 400 - {\"status_code\": 400, \"request_id\": \"cc7c02b4-389b-9216-8352-82a78163394b\", \"code\": \"InvalidParameter\", \"message\": \"<400> InternalError.Algo.InvalidParameter: Value error, document index:33 is invalid, it should not be larger than 50000: input.documents\", \"output\": null, \"usage\": null}')"
+        },
+        {
+          "started_at": "2026-10-10T01:34:27.554256+00:00",
+          "run_id": "app-deffa6f8-e007-4d37-8684-9ba92d4f2f70",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-10T01:34:27.554256+00:00",
+          "error": "RAGFlow 文档知识库 检索失败：ValueError('Error calling QWenRerank model qwen3-rerank: 400 - {\"status_code\": 400, \"request_id\": \"fa662e7a-0ef8-949a-b03b-6b7a5c6422d7\", \"code\": \"InvalidParameter\", \"message\": \"<400> InternalError.Algo.InvalidParameter: Value error, document index:19 is invalid, it should not be larger than 50000: input.documents\", \"output\": null, \"usage\": null}')"
+        },
+        {
+          "started_at": "2026-10-10T02:05:04.916393+00:00",
+          "run_id": "app-463233f4-4b0c-43fa-b554-5fb74b50cf7b",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-10T02:05:04.916393+00:00",
+          "error": "RAGFlow 文档知识库 检索失败：RAGFlow 检索失败（查询 1/3）：ValueError('Error calling QWenRerank model qwen3-rerank: 400 - {\"status_code\": 400, \"request_id\": \"c22acc9a-449d-99e8-b73c-455b7f5d7132\", \"code\": \"InvalidParameter\", \"message\": \"<400> InternalError.Algo.InvalidParameter: Value error, document index:35 is invalid, it should not be larger than 50000: input.documents\", \"output\": null, \"usage\": null}')"
+        },
+        {
+          "started_at": "2026-10-10T02:18:04.382410+00:00",
+          "run_id": "app-e84c01a8-dbdf-46fd-87d1-1207c5dfb094",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-10T02:18:04.382410+00:00",
+          "error": "RAGFlow 文档知识库 检索失败：RAGFlow 检索失败（查询 1/3）：ValueError('Error calling QWenRerank model qwen3-rerank: 400 - {\"status_code\": 400, \"request_id\": \"e4c59e3d-63e2-99f2-8d19-84a6c4ee8fe8\", \"code\": \"InvalidParameter\", \"message\": \"<400> InternalError.Algo.InvalidParameter: Value error, document index:35 is invalid, it should not be larger than 50000: input.documents\", \"output\": null, \"usage\": null}')"
+        },
+        {
+          "started_at": "2026-10-10T02:36:22.860099+00:00",
+          "run_id": "app-4d192b62-0986-48a1-a6ea-0d3f45db3fbf",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-10T02:36:22.860099+00:00",
+          "error": "RAGFlow 文档知识库 检索失败：RAGFlow 检索失败（查询 2/3）：ValueError('Error calling QWenRerank model qwen3-rerank: 400 - {\"status_code\": 400, \"request_id\": \"da7dfb5b-e59e-9f3a-a00b-1fd37cdcfe4f\", \"code\": \"InvalidParameter\", \"message\": \"<400> InternalError.Algo.InvalidParameter: Value error, document index:16 is invalid, it should not be larger than 50000: input.documents\", \"output\": null, \"usage\": null}')"
+        },
+        {
+          "started_at": "2026-10-10T07:25:35.405385+00:00",
+          "run_id": "app-945dac2a-83ca-4265-baed-5dcde409db86",
+          "version": 5,
+          "status": "error",
+          "updated_at": "2026-10-10T07:25:35.405385+00:00",
+          "error": "Agent 调用失败：Error code: 400 - {'error': {'code': 'upstream_request_rejected', 'message': 'System message must be at the beginning.', 'trace_id': 'bdc6dd5ee2434ebd538bb7da21eff45b', 'type': 'invalid_request_error'}, 'request_id': 'req_f7ffdb56-6aa4-40f6-a7e8-72e5c570fd1b'}"
+        },
+        {
+          "started_at": "2026-10-12T01:23:20.295061+00:00",
+          "run_id": "app-425f9f02-61d4-461e-adb7-616d3549b7bf",
+          "version": 5,
+          "status": "error",
+          "updated_at": "2026-10-12T01:23:20.295061+00:00",
+          "error": "Agent 调用失败：Error code: 400 - {'error': {'code': 'upstream_request_rejected', 'message': 'System message must be at the beginning.', 'trace_id': '3a9fb7cc765ca7679a520730b2d3f7ab', 'type': 'invalid_request_error'}, 'request_id': 'req_cf7cb25d-7e83-4edf-ba73-cc491af55430'}"
+        },
+        {
+          "started_at": "2026-10-12T01:26:08.852652+00:00",
+          "run_id": "app-3dce7ef1-d31d-4dd9-8e3d-f351cf663915",
+          "version": 5,
+          "status": "error",
+          "updated_at": "2026-10-12T01:26:08.852652+00:00",
+          "error": "Agent 调用失败：Error code: 400 - {'error': {'code': 'upstream_request_rejected', 'message': 'System message must be at the beginning.', 'trace_id': '8577ce16dcda46485dc5d1d3b2ac1704', 'type': 'invalid_request_error'}, 'request_id': 'req_31a88def-42e2-40b4-9159-30601fbe6d0c'}"
+        },
+        {
+          "started_at": "2026-10-12T01:30:07.996272+00:00",
+          "run_id": "app-5179d7a7-8f9a-4e2e-9ebb-2c7aed3fbd3e",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-12T01:30:07.996272+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-12T02:11:19.072591+00:00",
+          "run_id": "app-4ecbd341-72bc-4388-9f39-b9c06e0bd648",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-12T02:11:19.072591+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-12T02:31:25.127731+00:00",
+          "run_id": "app-9199010e-4c9b-4326-b405-d3e28d7f7e08",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-12T02:31:25.127731+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-12T02:34:12.355044+00:00",
+          "run_id": "app-e3e18e90-cb0c-428b-b44e-36b78738e15a",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-12T02:34:12.355044+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-12T02:35:43.580096+00:00",
+          "run_id": "app-7ddda4a7-0664-491e-9067-65ab697659ad",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-12T02:35:43.580096+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-12T02:39:26.231831+00:00",
+          "run_id": "app-328223a1-c4fe-4ce3-bd52-8f70b6f74c16",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-12T02:39:26.231831+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-12T02:40:18.492502+00:00",
+          "run_id": "app-64834551-dc06-407a-abc3-e635f4e71f87",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-12T02:40:18.492502+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-12T02:41:21.428081+00:00",
+          "run_id": "app-165911d7-ce9c-4cca-8d42-d1630ee64c6d",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-12T02:41:21.428081+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-12T02:41:50.668147+00:00",
+          "run_id": "app-71811c1d-e12a-495c-b414-a5689f3c6a64",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-12T02:41:50.668147+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-12T02:42:23.478503+00:00",
+          "run_id": "app-41d836d6-90e2-4e73-87ba-0eb1027c8606",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-12T02:42:23.478503+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-12T02:42:50.082333+00:00",
+          "run_id": "app-16611834-f412-411c-a486-24c97a4a72c1",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-12T02:42:50.082333+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-12T02:43:12.455986+00:00",
+          "run_id": "app-4b84b61d-07d0-4ff1-8396-cb28e095939d",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-12T02:43:12.455986+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-12T02:43:37.175310+00:00",
+          "run_id": "app-982d4c64-f524-42c6-b4cd-6d95efadb9e9",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-12T02:43:37.175310+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-12T02:44:21.376552+00:00",
+          "run_id": "app-0edc1d9a-3d92-436a-a7df-807a7aa79d57",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-12T02:44:21.376552+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-12T02:44:50.689367+00:00",
+          "run_id": "app-53493a34-811b-469f-beed-213b27a9f0b4",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-12T02:44:50.689367+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-12T02:45:30.528188+00:00",
+          "run_id": "app-9a05441f-913f-4bad-a306-bb7fe2e01857",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-12T02:45:30.528188+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-12T02:46:03.907542+00:00",
+          "run_id": "app-08fb7f70-0ecb-4a17-8f13-82a5501b70b7",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-12T02:46:03.907542+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-12T02:46:36.111858+00:00",
+          "run_id": "app-e1ac088f-64d1-4f39-9bf3-ad45585db336",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-12T02:46:36.111858+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-12T02:47:57.442684+00:00",
+          "run_id": "app-def71c1c-416f-4f43-9a82-879b2c9f5271",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-12T02:47:57.442684+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-12T02:48:31.860017+00:00",
+          "run_id": "app-cd37618f-3b35-40ad-9629-49353068ec30",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-12T02:48:31.860017+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-12T02:49:11.455874+00:00",
+          "run_id": "app-3c31e141-eadf-4f6e-8705-79a2a2fd72f4",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-12T02:49:11.455874+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-12T02:49:43.771844+00:00",
+          "run_id": "app-94d30184-a043-4a36-b2d6-49a9d9d6555a",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-12T02:49:43.771844+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-12T02:50:10.719500+00:00",
+          "run_id": "app-44b52fdc-be6c-4591-adbf-4a8f3ae160f0",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-12T02:50:10.719500+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-12T02:50:39.735903+00:00",
+          "run_id": "app-997f6c75-3fe0-467c-b20c-58653fbab516",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-12T02:50:39.735903+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-13T07:14:34.605671+00:00",
+          "run_id": "app-790b79eb-fcac-485a-ae14-76ad41d4dc89",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-13T07:14:34.605671+00:00",
+          "error": "RAGFlow 文档知识库 检索失败：RAGFlow 检索失败（查询 1/5）：HTTPConnectionPool(host='localhost', port=9380): Read timed out. (read timeout=8)"
+        },
+        {
+          "started_at": "2026-10-13T07:38:06.051163+00:00",
+          "run_id": "app-b794ca3d-5200-4916-8fa0-030d5bb7296a",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-13T07:38:06.051163+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-13T09:23:16.035907+00:00",
+          "run_id": "app-2551d07f-fde0-4e76-a6b1-97098359426c",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-13T09:23:16.035907+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-14T01:31:31.002402+00:00",
+          "run_id": "app-c242a609-d53c-4c74-88f9-9dcba08dc739",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-14T01:31:31.002402+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-14T01:54:40.110115+00:00",
+          "run_id": "app-c889507a-8790-43dc-8b39-67c7d881f756",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-14T01:54:40.110115+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-14T03:34:43.207663+00:00",
+          "run_id": "app-177a435c-cd1d-4672-aba0-fdcf81a3f279",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-14T03:34:43.207663+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-14T03:58:35.305250+00:00",
+          "run_id": "app-61beb863-8864-4151-b847-3aced0047a31",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-14T03:58:35.305250+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-14T05:44:52.328732+00:00",
+          "run_id": "app-f6c3d35b-333b-4028-a3cd-7d5952420780",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-14T05:44:52.328732+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-14T06:03:58.533446+00:00",
+          "run_id": "app-94c8a25b-90a1-42d4-90d9-25507d3df389",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-14T06:03:58.533446+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-14T06:14:38.426097+00:00",
+          "run_id": "app-c33d2341-013d-4db9-8ccf-630b23d41f52",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-14T06:14:38.426097+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-14T06:16:01.088990+00:00",
+          "run_id": "app-8ff2e306-7b8b-4632-b35a-2ab52549d7e2",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-14T06:16:01.088990+00:00",
+          "error": "RAGFlow 文档知识库 检索失败：RAGFlow 检索失败（查询 4/5）：HTTPConnectionPool(host='localhost', port=9380): Read timed out. (read timeout=8)"
+        },
+        {
+          "started_at": "2026-10-14T06:17:26.884195+00:00",
+          "run_id": "app-70f63b85-1947-469e-9caa-651449cd253f",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-14T06:17:26.884195+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-14T06:18:41.659005+00:00",
+          "run_id": "app-731a89d6-91b0-4811-bf5a-10de4e3df331",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-14T06:18:41.659005+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-14T06:19:32.589603+00:00",
+          "run_id": "app-0eec46f2-98fb-4df2-b4b7-82f842a5e6e6",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-14T06:19:32.589603+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-14T06:20:45.190596+00:00",
+          "run_id": "app-95085025-3ff7-4e05-bbd7-f2b9e51bd0b2",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-14T06:20:45.190596+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        },
+        {
+          "started_at": "2026-10-14T06:31:36.607647+00:00",
+          "run_id": "app-b77446e1-5aae-415c-8446-870c4cf44787",
+          "version": 5,
+          "status": "success",
+          "updated_at": "2026-10-14T06:31:36.607647+00:00",
+          "error": "后端证据校验已关闭，RAGFlow 候选片段已原样提供给回答模型"
+        }
+      ]
+    },
+    {
+      "app_id": "evidence-reviewer",
+      "id": "evidence-reviewer",
+      "name": "证据校验 Agent",
+      "description": "对检索结果、事实声明、版本和引用进行后端校验。",
+      "category": "质量治理",
+      "type": "DeepAgent",
+      "icon": "证",
+      "enabled": true,
+      "status": "published",
+      "version": 1,
+      "published_version": 1,
+      "tags": [
+        "Evidence",
+        "覆盖审计",
+        "冲突提示"
+      ],
+      "workflow_id": "evidence-review",
+      "workflow_version": 1,
+      "workflow_bindings": [
+        {
+          "workflow_id": "evidence-review",
+          "version": 1,
+          "role": "primary",
+          "enabled": true
+        }
+      ],
+      "data_sources": [
+        {
+          "source_type": "document",
+          "name": "检索文档",
+          "enabled": true,
+          "config": {}
+        },
+        {
+          "source_type": "qa",
+          "name": "标准 QA",
+          "enabled": true,
+          "config": {}
+        },
+        {
+          "source_type": "graph",
+          "name": "知识图谱",
+          "enabled": true,
+          "config": {}
+        }
+      ],
+      "tools": [
+        {
+          "tool_id": "evidence_review",
+          "name": "证据裁判",
+          "enabled": true,
+          "requires_confirmation": false,
+          "config": {}
+        },
+        {
+          "tool_id": "coverage_audit",
+          "name": "覆盖审计",
+          "enabled": true,
+          "requires_confirmation": false,
+          "config": {}
+        }
+      ],
+      "runtime": {
+        "top_k": 12,
+        "similarity_threshold": 0.3,
+        "evidence_mode": "industrial_strict",
+        "timeout_seconds": 8,
+        "human_confirmation": {
+          "enabled": false,
+          "actions": []
+        }
+      },
+      "permissions": {
+        "owner": "当前登录用户",
+        "run_roles": [
+          "员工",
+          "管理员"
+        ],
+        "edit_roles": [
+          "管理员"
+        ],
+        "publish_roles": [
+          "管理员"
+        ]
+      },
+      "channels": [
+        "工作台",
+        "API"
+      ],
+      "created_at": "2026-09-17T02:44:39.423667+00:00",
+      "updated_at": "2026-09-17T02:44:39.423667+00:00",
+      "updated_by": "system",
+      "versions": [
+        {
+          "version": 1,
+          "status": "published",
+          "created_at": "2026-09-17T02:44:39.423667+00:00",
+          "published_at": "2026-09-17T02:44:39.423667+00:00",
+          "note": "内置应用",
+          "snapshot": {
+            "app_id": "evidence-reviewer",
+            "id": "evidence-reviewer",
+            "name": "证据校验 Agent",
+            "description": "对检索结果、事实声明、版本和引用进行后端校验。",
+            "category": "质量治理",
+            "type": "DeepAgent",
+            "icon": "证",
+            "enabled": true,
+            "tags": [
+              "Evidence",
+              "覆盖审计",
+              "冲突提示"
+            ],
+            "workflow_id": "evidence-review",
+            "workflow_version": 1,
+            "workflow_bindings": [
+              {
+                "workflow_id": "evidence-review",
+                "version": 1,
+                "role": "primary",
+                "enabled": true
+              }
+            ],
+            "data_sources": [
+              {
+                "source_type": "document",
+                "name": "检索文档",
+                "enabled": true,
+                "config": {}
+              },
+              {
+                "source_type": "qa",
+                "name": "标准 QA",
+                "enabled": true,
+                "config": {}
+              },
+              {
+                "source_type": "graph",
+                "name": "知识图谱",
+                "enabled": true,
+                "config": {}
+              }
+            ],
+            "tools": [
+              {
+                "tool_id": "evidence_review",
+                "name": "证据裁判",
+                "enabled": true,
+                "requires_confirmation": false,
+                "config": {}
+              },
+              {
+                "tool_id": "coverage_audit",
+                "name": "覆盖审计",
+                "enabled": true,
+                "requires_confirmation": false,
+                "config": {}
+              }
+            ],
+            "runtime": {
+              "top_k": 12,
+              "similarity_threshold": 0.3,
+              "evidence_mode": "industrial_strict",
+              "timeout_seconds": 8,
+              "human_confirmation": {
+                "enabled": false,
+                "actions": []
+              }
+            },
+            "permissions": {
+              "owner": "当前登录用户",
+              "run_roles": [
+                "员工",
+                "管理员"
+              ],
+              "edit_roles": [
+                "管理员"
+              ],
+              "publish_roles": [
+                "管理员"
+              ]
+            },
+            "channels": [
+              "工作台",
+              "API"
+            ],
+            "version": 1,
+            "knowledge_binding_mode": "inherit",
+            "knowledge_bindings": []
+          }
+        }
+      ],
+      "run_history": [
+        {
+          "started_at": "2026-09-17T03:53:29.796808+00:00",
+          "run_id": "app-5e2879a8-ce29-40a4-9560-774a99499ee1",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-09-17T03:53:29.796808+00:00",
+          "error": "没有候选片段能够同时证明问题中的对象和所问属性"
+        },
+        {
+          "started_at": "2026-09-22T01:22:19.322803+00:00",
+          "run_id": "app-7fe630f5-465f-4df7-9973-9ccb91a4f6bc",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-09-22T01:22:19.322803+00:00",
+          "error": "仅部分证据通过校验；细分参数证据不足：M1401→digital_input"
+        },
+        {
+          "started_at": "2026-09-22T01:52:10.304705+00:00",
+          "run_id": "app-2fd233db-4168-40c0-b425-cc4cbcfa862e",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-09-22T01:52:10.304705+00:00",
+          "error": "9 个候选片段通过实体、主题、属性和相似度校验"
+        },
+        {
+          "started_at": "2026-10-08T03:01:25.051661+00:00",
+          "run_id": "app-d5074ab3-b2b9-4311-8095-93fa1c7e165a",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-08T03:01:25.051661+00:00",
+          "error": "4 个候选片段通过实体、主题、属性和相似度校验"
+        },
+        {
+          "started_at": "2026-10-08T03:19:23.961354+00:00",
+          "run_id": "app-6e1e6f73-5967-4684-98de-53df3ca27d18",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-08T03:19:23.961354+00:00",
+          "error": "2 个候选片段通过实体、主题、属性和相似度校验"
+        },
+        {
+          "started_at": "2026-10-08T05:07:53.627253+00:00",
+          "run_id": "app-47e898d3-639c-4ef6-8036-7bd1a12f32ed",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-08T05:07:53.627253+00:00",
+          "error": "3 个候选片段通过实体、主题、属性和相似度校验"
+        },
+        {
+          "started_at": "2026-10-08T05:08:24.752355+00:00",
+          "run_id": "app-f233d92b-b947-4eed-a8e3-4c5a3500b881",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-08T05:08:24.752355+00:00",
+          "error": "3 个候选片段通过实体、主题、属性和相似度校验"
+        },
+        {
+          "started_at": "2026-10-08T05:31:34.606101+00:00",
+          "run_id": "app-7eabc2ef-032f-4c1e-968c-3c3d4af86466",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-08T05:31:34.606101+00:00",
+          "error": "12 个候选片段通过实体、主题、属性和相似度校验"
+        },
+        {
+          "started_at": "2026-10-08T06:02:53.996259+00:00",
+          "run_id": "app-fb874f45-b388-4a4c-8f46-b1c06776f05d",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-08T06:02:53.996259+00:00",
+          "error": "没有候选片段能够同时证明问题中的对象和所问属性；缺少对象：M120、M160；属性：protocol_interface；对象与属性的联合证据不足：M120→protocol_interface、M160→protocol_interface"
+        },
+        {
+          "started_at": "2026-10-08T06:51:04.949975+00:00",
+          "run_id": "app-03fb08b6-9b1f-4f11-86e2-2e79d062c3b5",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-08T06:51:04.949975+00:00",
+          "error": "没有候选片段能够同时证明问题中的对象和所问属性；缺少对象：M120、M160；属性：protocol_interface；对象与属性的联合证据不足：M120→protocol_interface、M160→protocol_interface"
+        },
+        {
+          "started_at": "2026-10-08T06:53:50.029906+00:00",
+          "run_id": "app-1a1c01c2-3c81-46fc-9f68-131a40100195",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-08T06:53:50.029906+00:00",
+          "error": "没有候选片段能够同时证明问题中的对象和所问属性；缺少对象：M120、M160；属性：protocol_interface；对象与属性的联合证据不足：M120→protocol_interface、M160→protocol_interface"
+        },
+        {
+          "started_at": "2026-10-08T06:56:20.272153+00:00",
+          "run_id": "app-9c43d01b-f5b1-466f-b357-337bf3b87b60",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-08T06:56:20.272153+00:00",
+          "error": "没有候选片段能够同时证明问题中的对象和所问属性；缺少对象：M120、M160；属性：protocol_interface；对象与属性的联合证据不足：M120→protocol_interface、M160→protocol_interface"
+        },
+        {
+          "started_at": "2026-10-08T07:15:09.566652+00:00",
+          "run_id": "app-41e34b49-bae9-4e18-bbc0-5a777c99274b",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-08T07:15:09.566652+00:00",
+          "error": "没有候选片段能够同时证明问题中的对象和所问属性；缺少对象：M120、M160；属性：protocol_interface；对象与属性的联合证据不足：M120→protocol_interface、M160→protocol_interface"
+        },
+        {
+          "started_at": "2026-10-08T08:15:33.111526+00:00",
+          "run_id": "app-c3d73ced-b0e8-4884-a7a6-f2cac9719e03",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-08T08:15:33.111526+00:00",
+          "error": "当前问题未明确对象，历史中存在多个候选对象"
+        },
+        {
+          "started_at": "2026-10-08T08:16:35.486318+00:00",
+          "run_id": "app-2ad7bcbb-0a36-4d29-a146-dbcbc9ef7b9c",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-08T08:16:35.486318+00:00",
+          "error": "12 个候选片段通过实体、主题和属性校验；相似度仅用于排序"
+        },
+        {
+          "started_at": "2026-10-08T08:20:03.357390+00:00",
+          "run_id": "app-814c900d-737f-4980-8a4b-f996c9738a62",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-08T08:20:03.357390+00:00",
+          "error": "12 个候选片段通过实体、主题和属性校验；相似度仅用于排序"
+        },
+        {
+          "started_at": "2026-10-08T08:51:33.732068+00:00",
+          "run_id": "app-3fc07407-7e32-4bfd-a1e5-84e4c67bce9a",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-08T08:51:33.732068+00:00",
+          "error": "12 个候选片段通过实体、主题和属性校验；相似度仅用于排序"
+        },
+        {
+          "started_at": "2026-10-08T09:21:43.228148+00:00",
+          "run_id": "app-c3e6f26b-eff1-474c-844a-864ebfbefbfb",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-08T09:21:43.228148+00:00",
+          "error": "12 个候选片段通过实体、主题和属性校验；相似度仅用于排序"
+        },
+        {
+          "started_at": "2026-10-08T09:30:26.273519+00:00",
+          "run_id": "app-4bd59691-a353-4bcb-a567-77054b6f495e",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-08T09:30:26.273519+00:00",
+          "error": "12 个候选片段通过实体、主题和属性校验；相似度仅用于排序"
+        },
+        {
+          "started_at": "2026-10-09T00:44:34.951111+00:00",
+          "run_id": "app-4a459deb-4a97-4911-b1cf-5a243cbf732b",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-09T00:44:34.951111+00:00",
+          "error": "当前问题未明确对象，历史中存在多个候选对象"
+        },
+        {
+          "started_at": "2026-10-09T00:45:16.972026+00:00",
+          "run_id": "app-112ad6e7-7a98-408d-a416-b65108ab20aa",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-09T00:45:16.972026+00:00",
+          "error": "12 个候选片段通过实体、主题和属性校验；相似度仅用于排序"
+        },
+        {
+          "started_at": "2026-10-09T00:46:38.764287+00:00",
+          "run_id": "app-c7bf282e-c8c9-444c-b381-928531176f1b",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-09T00:46:38.764287+00:00",
+          "error": "当前问题未明确对象，历史中存在多个候选对象"
+        },
+        {
+          "started_at": "2026-10-09T00:47:06.092447+00:00",
+          "run_id": "app-a2fb1f9f-e9ed-4c2d-9cfa-21d6cc174421",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-09T00:47:06.092447+00:00",
+          "error": "6 个候选片段通过实体、主题和属性校验；相似度仅用于排序"
+        },
+        {
+          "started_at": "2026-10-09T01:08:58.577462+00:00",
+          "run_id": "app-cf00630d-b36a-472c-a9fb-646d26b2d2b5",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-09T01:08:58.577462+00:00",
+          "error": "2 个候选片段通过实体、主题和属性校验；相似度仅用于排序"
+        },
+        {
+          "started_at": "2026-10-09T01:09:40.461271+00:00",
+          "run_id": "app-40a8a947-4c14-429e-b1de-31397545ea9e",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-09T01:09:40.461271+00:00",
+          "error": "12 个候选片段通过实体、主题和属性校验；相似度仅用于排序"
+        },
+        {
+          "started_at": "2026-10-09T01:14:23.345923+00:00",
+          "run_id": "app-85afc3fa-7ea0-4edd-b486-2d967be6b97c",
+          "version": 1,
+          "status": "success",
+          "updated_at": "2026-10-09T01:14:23.345923+00:00",
+          "error": "2 个候选片段通过实体、主题和属性校验；相似度仅用于排序"
+        }
+      ],
+      "knowledge_binding_mode": "inherit",
+      "knowledge_bindings": []
+    }
+  ]
+}

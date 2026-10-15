@@ -1,0 +1,33 @@
+{
+  "recordCount": 5,
+  "truncated": false,
+  "metadata": {
+    "revision": "t7qjr6",
+    "target": {
+      "id": "wb/cs3d94",
+      "beforeLines": 0,
+      "afterLines": 0
+    },
+    "kind": {
+      "requested": "workbook,sheet,table",
+      "tokens": [
+        "workbook",
+        "sheet",
+        "table"
+      ]
+    },
+    "include": {
+      "requested": "id,name,visibility",
+      "tokens": [
+        "id",
+        "name"
+      ]
+    },
+    "exclude": {
+      "tokens": []
+    },
+    "notices": [
+      "Unknown include tokens: visibility"
+    ]
+  }
+}

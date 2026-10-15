@@ -1,0 +1,86 @@
+[
+  {
+    "name": "Sheet1",
+    "usedAddress": "A1:D10",
+    "values": [
+      [
+        "任务名称",
+        "任务内容",
+        "完成效果（指标、效果）",
+        "时间周期"
+      ],
+      [
+        "企业知识库 Agent 方案与架构梳理",
+        "围绕制造业手册、设备参数、协议、故障案例、SOP、工单等场景，梳理 RAGFlow 文档检索、GraphRAG、Neo4j、统一搜索、Qwen 和 LangGraph/DeepAgent 的职责边界及问答链路。",
+        "完成了一个小demo还在调试功能",
+        "9.7-9.11"
+      ],
+      [
+        "报表转换与专利资料学习",
+        "完成部分报表的格式转换与整理工作，同时阅读专利相关资料，了解专利材料的基本结构和技术方案表达方式。",
+        "完成若干报表的转换整理；对专利撰写和技术方案整理形成初步认识。",
+        "9.7-9.11"
+      ],
+      [
+        null,
+        null,
+        null,
+        null
+      ],
+      [
+        null,
+        null,
+        null,
+        null
+      ],
+      [
+        null,
+        null,
+        null,
+        null
+      ],
+      [
+        null,
+        null,
+        null,
+        null
+      ],
+      [
+        null,
+        null,
+        null,
+        null
+      ],
+      [
+        null,
+        null,
+        null,
+        null
+      ],
+      [
+        null,
+        null,
+        null,
+        null
+      ]
+    ]
+  },
+  {
+    "name": "Sheet2",
+    "usedAddress": "A1",
+    "values": [
+      [
+        null
+      ]
+    ]
+  },
+  {
+    "name": "Sheet3",
+    "usedAddress": "A1",
+    "values": [
+      [
+        null
+      ]
+    ]
+  }
+]

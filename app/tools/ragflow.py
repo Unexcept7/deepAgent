@@ -16,6 +16,7 @@ from app.agents.evidence import (
 from app.config import get_settings
 from app.observability import current_trace_recorder
 from app.tool_center.context import execution_context
+from app.search.budget import remaining_timeout, cached_search, run_search_task
 
 
 logger = logging.getLogger(__name__)
@@ -161,6 +162,10 @@ class RAGFlowClient:
         ]
 
     def search(self, query: str, top_k: int = 8) -> dict[str, Any]:
+        key = (self.base_url, _sha256_text(self.headers), tuple(self.configured_ids), self.rerank_id, query, top_k)
+        return copy.deepcopy(cached_search(key, lambda: self._search(query, top_k)))
+
+    def _search(self, query: str, top_k: int = 8) -> dict[str, Any]:
         self._ensure_configured()
         top_k = max(1, min(int(top_k), self.max_top_k))
         dataset_ids = list(self.configured_ids)
@@ -203,7 +208,7 @@ class RAGFlowClient:
                 f"{self.base_url}/api/v1/retrieval",
                 headers=self.headers,
                 json=payload,
-                timeout=60,
+                timeout=remaining_timeout(getattr(get_settings(), "ragflow_search_timeout_seconds", 8)),
             )
             if response.status_code == 401:
                 raise RuntimeError("RAGFlow API Key 无效或已过期，请在 RAGFlow 中重新生成 API Key")
@@ -294,6 +299,13 @@ class RAGFlowClient:
                 "dataset_id": item.get("dataset_id"),
                 "page": self._extract_page(item.get("positions"), item),
                 "positions": item.get("positions"),
+                "version": item.get("version"),
+                "effective_from": item.get("effective_from"),
+                "effective_to": item.get("effective_to"),
+                "updated_at": item.get("updated_at"),
+                "authority": item.get("authority"),
+                "freshness": item.get("freshness"),
+                "metadata": item.get("metadata") or {},
                 "score": similarity,
             })
         assessment = assess_evidence(
@@ -413,7 +425,7 @@ class RAGFlowClient:
                 f"{self.base_url}/api/v1/retrieval",
                 headers=self.headers,
                 json=probe_payload,
-                timeout=60,
+                timeout=remaining_timeout(getattr(get_settings(), "ragflow_search_timeout_seconds", 8)),
             )
             if response.status_code == 401:
                 raise RuntimeError("RAGFlow API Key 无效或已过期")
@@ -756,14 +768,21 @@ def search_knowledge_base(query: str, top_k: int = 8) -> str:
             "total": 0,
         }
     else:
+        results = []
+        errors = []
+        def retrieve():
+            for connection_id, client in _runtime_ragflow_clients():
+                try:
+                    results.append(client.search(query=query, top_k=max(1, min(top_k, 20))))
+                except Exception as exc:
+                    errors.append(f"{connection_id}：{exc}")
         try:
-            scoped = _runtime_ragflow_clients()
-            result = _merge_scoped_results(
-                [client.search(query=query, top_k=max(1, min(top_k, 20))) for _, client in scoped],
-                query,
-            )
+            run_search_task(retrieve, getattr(get_settings(), "ragflow_search_timeout_seconds", 8))
         except Exception as exc:
-            result = {"error": str(exc), "query": query, "chunks": [], "total": 0}
+            errors.append(str(exc))
+        result = _merge_scoped_results(list(results), query) if results else {"query": query, "chunks": [], "total": 0}
+        if errors:
+            result["error"] = "；".join(errors)
     if trace is not None:
         trace.record_data_source(
             source_type="document",

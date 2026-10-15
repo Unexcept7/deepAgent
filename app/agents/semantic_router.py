@@ -230,9 +230,12 @@ def run_semantic_router(
     ]
     # The model registry advertises JSON capability, but that metadata does
     # not constrain an OpenAI-compatible request by itself.
+    from app.search.budget import claim_model_call, remaining_timeout
+    claim_model_call(planning=True)
+    options = {"timeout": remaining_timeout(60)} if hasattr(model, "client") else {}
     response = model.bind(
         response_format={"type": "json_object"},
-    ).invoke(messages)
+    ).invoke(messages, **options)
     raw = _content(response).strip()
     try:
         prediction = SemanticRouterPrediction.model_validate(_json_object(raw))

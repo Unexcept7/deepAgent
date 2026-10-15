@@ -327,6 +327,8 @@ def _context_candidates(
             _append_unique(values, seen, value)
             if len(values) >= MAX_CONTEXT_CANDIDATES:
                 return values
+        if values:
+            return values
 
     summary_items = list((context_summary or {}).get("candidate_entities") or [])
     for item in reversed(summary_items):
@@ -377,7 +379,7 @@ def _safe_rewrite(
 
     allowed = {
         _entity_key(item)
-        for item in [*explicit_entities, *candidates]
+        for item in (explicit_entities or candidates)
         if _entity_key(item)
     }
     rewritten_entities = extract_identifiers(rewritten)
@@ -442,6 +444,15 @@ def resolve_history_aware_query(
             candidates=tuple(candidates),
             explicit_entities=tuple(explicit_entities),
             reason="当前问题未明确对象，历史中存在多个候选对象",
+        ).as_dict()
+
+    if len(candidates) == 1:
+        return ContextResolution(
+            query=_fallback_query(original, candidates, explicit_entities),
+            status="fallback",
+            candidates=tuple(candidates),
+            explicit_entities=tuple(explicit_entities),
+            reason="最近用户轮次只有一个明确对象，直接补全并保留原始条件",
         ).as_dict()
 
     model_factory_error: str | None = None

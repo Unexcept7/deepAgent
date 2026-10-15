@@ -10,6 +10,7 @@ from __future__ import annotations
 import copy
 import json
 import os
+import re
 import tempfile
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -48,6 +49,23 @@ def _fold(value: Any) -> str:
 def _contains_expected(expected: str, actual_values: list[str]) -> bool:
     target = _fold(expected)
     return bool(target) and any(target == _fold(value) or target in _fold(value) for value in actual_values)
+
+
+def _answer_contains(expected: str, answer: str) -> bool:
+    target = _fold(expected)
+    for sentence in re.split(r"[。；;\n，,]", answer):
+        folded = _fold(sentence)
+        exact_term = re.escape(target)
+        if target and target[0].isascii() and target[0].isalnum():
+            exact_term = r"(?<![a-z0-9])" + exact_term
+        if target and target[-1].isascii() and target[-1].isalnum():
+            exact_term += r"(?![a-z0-9])"
+        if target and re.search(exact_term, folded) and not re.search(
+            r"不支持|不包含|不具备|没有|并非|不是|不提供|无法确认|未确认|未找到|不适用|\b(?:not|no|without)\b",
+            sentence, re.IGNORECASE,
+        ):
+            return True
+    return False
 
 
 def _case_id(case: EvaluationCase) -> str:
@@ -250,13 +268,38 @@ def _evaluate_case(case: EvaluationCase, result: dict[str, Any], duration_ms: in
     actual_documents, evidence_text = _actual_documents_and_text(result)
     evidence_status = _text((result.get("evidence") or {}).get("status"))
     checks: list[dict[str, Any]] = []
+    for expected in case.expected_facts:
+        parts = [expected.attribute, f"{expected.value} {expected.unit}".strip(), expected.condition]
+        matched = False
+        for sentence in re.split(r"[。；;\n]", answer):
+            subject_matches = not expected.subject or bool(re.search(
+                r"(?<![a-z0-9_-])" + re.escape(expected.subject) + r"(?![a-z0-9_-])", sentence, re.IGNORECASE,
+            ))
+            if subject_matches and all(_answer_contains(part, sentence) for part in parts if part):
+                matched = True
+                break
+        checks.append({"type": "fact", "expected": expected.model_dump(), "actual": answer, "passed": matched})
+    if case.expected_citation_support is not None:
+        from app.agents.claims import fact_value_supported
+        chunks = [
+            {**item, "document_name": item.get("document_name") or item.get("title")}
+            for item in [*(result.get("retrieval_hits") or []), *(result.get("citations") or [])]
+            if isinstance(item, dict)
+        ]
+        facts = (result.get("answer_draft") or {}).get("fact_ledger") or result.get("claims") or []
+        supported = [item for item in facts if item.get("status") == "supported"]
+        citation_supported = bool(supported) and all(
+            fact_value_supported(item.get("value"), item.get("entity") or item.get("subject"), [chunk for chunk in chunks if chunk.get("evidence_id") in item.get("evidence_ids", [])], attribute=item.get("attribute") or item.get("request") or "")
+            for item in supported
+        )
+        checks.append({"type": "citation_support", "expected": case.expected_citation_support, "actual": citation_supported, "passed": citation_supported == case.expected_citation_support})
 
     for expected in case.expected_answer_contains:
         checks.append({
             "type": "answer_contains",
             "expected": expected,
             "actual": answer,
-            "passed": _fold(expected) in _fold(answer),
+            "passed": _answer_contains(expected, answer),
         })
     for expected in case.expected_intents:
         checks.append({
@@ -290,8 +333,8 @@ def _evaluate_case(case: EvaluationCase, result: dict[str, Any], duration_ms: in
         checks.append({
             "type": "concept",
             "expected": expected,
-            "actual": f"{answer}\n{evidence_text}",
-            "passed": _fold(expected) in _fold(f"{answer}\n{evidence_text}"),
+            "actual": answer,
+            "passed": _answer_contains(expected, answer),
         })
     if case.expected_outcome:
         outcome = _fold(case.expected_outcome)
@@ -299,7 +342,7 @@ def _evaluate_case(case: EvaluationCase, result: dict[str, Any], duration_ms: in
             marker in _fold(answer)
             for marker in ("无法确认", "没有可靠证据", "未找到", "不能确认", "没有找到", "资料不足", "前提不成立")
         )
-        outcome_passed = abstained if outcome == "abstain" else bool(actual_documents or result.get("retrieval_hits"))
+        outcome_passed = abstained if outcome == "abstain" else bool(answer) and not abstained and not result.get("error")
         checks.append({
             "type": "outcome",
             "expected": case.expected_outcome,
@@ -315,6 +358,20 @@ def _evaluate_case(case: EvaluationCase, result: dict[str, Any], duration_ms: in
         })
 
     trace = result.get("trace") or {}
+    metric_groups = {
+        "answer": {"answer_contains", "concept", "outcome", "fact"},
+        "retrieval": {"document", "source_type"},
+        "context": {"intent", "entity"},
+        "evidence": {"evidence_status"},
+        "citation": {"citation_support"},
+    }
+    metrics = {}
+    for name, types in metric_groups.items():
+        items = [item for item in checks if item["type"] in types]
+        metrics[name] = round(sum(bool(item["passed"]) for item in items) / len(items), 4) if items else None
+    metrics["retrieved_concepts"] = {
+        expected: _fold(expected) in _fold(evidence_text) for expected in case.required_concepts
+    }
     score = None if not checks else round(sum(bool(item["passed"]) for item in checks) / len(checks), 4)
     has_error = bool(result.get("error"))
     return {
@@ -325,6 +382,7 @@ def _evaluate_case(case: EvaluationCase, result: dict[str, Any], duration_ms: in
         "passed": None if score is None else score == 1.0 and not has_error,
         "score": score,
         "checks": checks,
+        "metrics": metrics,
         "answer": str(result.get("answer") or "")[:12000],
         "error": result.get("error"),
         "evidence_status": evidence_status or None,
@@ -366,7 +424,7 @@ def _run_one(agent: dict[str, Any], case: EvaluationCase) -> dict[str, Any]:
             source_types=tuple(source_types) if source_types is not None else None,
         )
         result = run_agent(
-            [],
+            case.history,
             case.query,
             source_types=source_types,
             workflow_id=prepared.get("workflow_id"),

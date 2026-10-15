@@ -542,7 +542,7 @@ def test_generic_answer_rejects_unrequested_explicit_entity():
     assert any("FT-RSA-0204" in item for item in result["violations"])
 
 
-def test_generic_answer_allows_verified_delimited_model_variant():
+def test_generic_answer_does_not_infer_model_alias_from_filename():
     query = "XP3018 IO模块的长度是多少？"
     assessment = assess_evidence(
         query,
@@ -562,7 +562,8 @@ def test_generic_answer_allows_verified_delimited_model_variant():
         mode="generic",
     )
 
-    assert result["passed"] is True
+    assert result["passed"] is False
+    assert any("XP3018-AO" in item for item in result["violations"])
 
 
 def test_generic_answer_validation_does_not_classify_domain_tokens():
@@ -859,7 +860,7 @@ def test_run_agent_releases_supported_answer_with_verified_citation(monkeypatch)
     assert result["retrieval_hits"][0]["evidence_id"] == evidence_id
 
 
-def test_run_agent_binds_plain_answer_to_verified_evidence(monkeypatch):
+def test_run_agent_does_not_attach_all_evidence_to_unbound_plain_answer(monkeypatch):
     query = "FT-RS-0808 支持哪些功能码？"
     assessment = assess_evidence(
         query,
@@ -915,9 +916,9 @@ def test_run_agent_binds_plain_answer_to_verified_evidence(monkeypatch):
 
     result = graph.run_agent([], query)
 
-    assert result["evidence"]["status"] == "supported"
-    assert result["evidence"]["used_evidence_ids"] == [evidence_id]
-    assert result["answer"].startswith("FT-RS-0808 支持功能码")
+    assert result["evidence"]["status"] == "answer_blocked"
+    assert not result["evidence"]["used_evidence_ids"]
+    assert "事实回答没有声明所使用的证据 ID" in result["evidence"]["violations"]
 
 
 def test_run_agent_blocks_unsupported_fact_even_with_a_real_evidence_id(monkeypatch):

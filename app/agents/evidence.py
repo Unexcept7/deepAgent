@@ -387,35 +387,6 @@ def _identifier_matches_allowed(identifier: str, allowed: set[str]) -> bool:
     return len(parts) > 1 and all(canonical_identifier(part) in allowed for part in parts)
 
 
-def _identifier_matches_verified_variant(
-    identifier: str,
-    requested_identifiers: list[str],
-    verified_identifiers: set[str],
-) -> bool:
-    """Allow a verified, delimiter-separated model variant of a requested ID.
-
-    A source file may identify the same product family as ``XP3018-AO`` while
-    the user asks for ``XP3018``. Generic evidence validation must not treat
-    that source-bound suffix as a new, unrelated object, but it must also not
-    allow an arbitrary model merely because it looks similar. The variant is
-    accepted only when it is a delimiter-separated suffix of an explicitly
-    requested identifier and the exact variant occurs in this turn's verified
-    evidence text or document metadata.
-    """
-    candidate = unicodedata.normalize("NFKC", str(identifier or "")).strip()
-    candidate_key = canonical_identifier(candidate)
-    if not candidate_key or candidate_key not in verified_identifiers:
-        return False
-    for requested in requested_identifiers:
-        base = unicodedata.normalize("NFKC", str(requested or "")).strip()
-        if not base or candidate_key == canonical_identifier(base):
-            continue
-        pattern = rf"{re.escape(base)}[-_/][A-Za-z0-9]+(?:[-_/][A-Za-z0-9]+)*"
-        if re.fullmatch(pattern, candidate, flags=re.IGNORECASE):
-            return True
-    return False
-
-
 def extract_identifiers(text: str) -> list[str]:
     """Extract product entities, excluding technical values and references.
 
@@ -1164,38 +1135,26 @@ def validate_answer(
             canonical_identifier(item)
             for item in requested_identifiers
         }
-        # Document names are provenance metadata, not factual evidence. They
-        # are included here only as a safe identity alias source, so a file
-        # named ``XP3018-AO...pdf`` can be recognized as a verified variant of
-        # a query for ``XP3018`` without making the filename prove a value.
         bound_chunks = [
             item for item in chunks
             if not cited or str(item.get("evidence_id") or "") in cited
         ]
-        verified_identifier_text = "\n".join(
-            f"{item.get('document_name') or ''}\n{item.get('content') or ''}"
-            for item in bound_chunks
-        )
-        verified_identifiers = {
-            canonical_identifier(item)
-            for item in extract_identifiers(verified_identifier_text)
-        }
         if query_identifiers:
             unsupported_answer_identifiers = [
                 item
                 for item in extract_identifiers(answer)
                 if canonical_identifier(item) not in query_identifiers
-                and not _identifier_matches_verified_variant(
-                    item,
-                    requested_identifiers,
-                    verified_identifiers,
-                )
             ]
             if unsupported_answer_identifiers:
                 violations.append(
                     "回答引入了问题未指定的对象："
                     + "、".join(unsupported_answer_identifiers)
                 )
+        bound_text = "\n".join(str(item.get("content") or "") for item in bound_chunks)
+        for value in _high_risk_values(answer):
+            if not _value_supported(value, bound_text):
+                violations.append(f"关键数值或报文缺少引用证据：{value}")
+        violations.extend(_validate_entity_bound_values(answer, query, bound_chunks))
         if evidence_ids and not chunks:
             violations.append("回答没有绑定任何可用证据片段")
         if not str(answer or "").strip():
@@ -1522,6 +1481,8 @@ def public_evidence_summary(assessment: dict[str, Any], *, requires_evidence: bo
         "warnings",
         "violations",
         "used_evidence_ids",
+        "has_error",
+        "errors",
     )
     result = {key: assessment.get(key) for key in keys if assessment.get(key) not in (None, [], {})}
     result["requires_evidence"] = requires_evidence
@@ -1530,6 +1491,7 @@ def public_evidence_summary(assessment: dict[str, Any], *, requires_evidence: bo
     result.setdefault("rejected_count", 0)
     result.setdefault("violations", [])
     result.setdefault("warnings", [])
+    result.setdefault("used_evidence_ids", [])
     return result
 
 

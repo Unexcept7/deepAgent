@@ -14,7 +14,10 @@ configured retrieval tools and pass the backend evidence gate.
 from __future__ import annotations
 
 import copy
-from typing import Any
+from datetime import datetime
+from zoneinfo import ZoneInfo
+from typing import Any, Callable
+from app.config import get_settings
 
 from app.agents.evidence import (
     canonical_identifier,
@@ -99,7 +102,7 @@ def _collect_candidate_entities(messages: list[dict[str, str]], query: str) -> l
     seen: set[str] = set()
     for source, text in [
         ("current_query", query),
-        *[("conversation_user", item.get("content", "")) for item in messages if item.get("role") == "user"],
+        *[("conversation_user", item.get("content", "")) for item in reversed(messages) if item.get("role") == "user"],
     ]:
         for value in extract_identifiers(text):
             key = canonical_identifier(value)
@@ -151,6 +154,7 @@ def build_semantic_context(
     previous_summary: dict[str, Any] | None = None,
     *,
     route_catalog: list[dict[str, Any]] | None = None,
+    clock: Callable[[], datetime] | None = None,
 ) -> dict[str, Any]:
     """Build the bounded semantic-router context and the next persisted state."""
     messages = _valid_messages(history)
@@ -161,6 +165,16 @@ def build_semantic_context(
         + [current_query]
     )
     candidate_entities = _collect_candidate_entities(messages, current_query)
+    current_entities = [item for item in candidate_entities if item["source"] == "current_query"]
+    active_entities = current_entities
+    if not active_entities:
+        for message in reversed(messages):
+            if message["role"] == "user":
+                active_entities = _collect_candidate_entities([], message["content"])
+                if active_entities:
+                    break
+    if active_entities:
+        candidate_entities = active_entities
     technical_subjects = extract_technical_subjects(combined_user_text)
     aspects = extract_aspects(combined_user_text)
     dictionary_hints = _dictionary_hints(current_query)
@@ -174,7 +188,7 @@ def build_semantic_context(
     prior_entities = prior.get("candidate_entities") or []
     merged_entities: list[dict[str, Any]] = []
     seen_entities: set[str] = set()
-    for item in [*(prior_entities if is_follow_up else []), *candidate_entities]:
+    for item in (candidate_entities or (prior_entities if is_follow_up else [])):
         value = _text(item.get("value"), 240)
         key = canonical_identifier(value) or value.casefold()
         if not value or key in seen_entities:
@@ -216,6 +230,10 @@ def build_semantic_context(
     next_summary["summary_text"] = _summary_text(next_summary)
 
     prompt_context = {
+        "temporal_context": {
+            "now": (clock() if clock else datetime.now(ZoneInfo(get_settings().business_timezone))).astimezone(ZoneInfo(get_settings().business_timezone)).isoformat(),
+            "timezone": get_settings().business_timezone,
+        },
         "conversation_summary": next_summary,
         "recent_turns": recent_turns,
         "dictionary_hints": dictionary_hints,

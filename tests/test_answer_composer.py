@@ -65,7 +65,8 @@ def test_fact_plan_renders_ledger_value_and_ignores_free_form_answer():
     )
 
     assert composition.draft is not None
-    assert composition.draft.answer == "XP3018-AO 的总体宽度为145 mm。"
+    assert composition.draft.answer == "XP3018的总体宽度为145 mm。"
+    assert "XP3018-AO" not in composition.draft.answer
     assert "999" not in composition.draft.answer
     assert composition.draft.used_evidence_ids == ["E-1"]
     assert validate_answer_plan(composition.draft, CHUNKS)["passed"] is True

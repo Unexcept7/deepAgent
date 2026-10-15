@@ -26,6 +26,12 @@ class Settings(BaseSettings):
     # 或出现冲突时再扩大到 unified_search_top_k，避免普通问题携带过多片段。
     unified_search_initial_top_k: int = 6
     unified_search_timeout_seconds: int = 8
+    agent_search_budget_seconds: int = 120
+    agent_max_search_calls: int = 24
+    agent_max_model_calls: int = 16
+    agent_max_planning_calls: int = 4
+    business_timezone: str = "Asia/Shanghai"
+    ragflow_search_timeout_seconds: int = 8
     unified_search_prefetch_enabled: bool = False
     search_sources: str = "document,qa,graph,sql,api"
     search_max_parallel: int = 4
@@ -72,6 +78,7 @@ class Settings(BaseSettings):
     # 重排窗口，因此这里保留有限的过召回即可，不应无界增大。
     ragflow_retrieval_top_k: int = 24
     ragflow_chunk_max_chars: int = 2200
+    evidence_context_max_chars: int = 24000
     # 知识库目录页使用较短的超时，避免 RAGFlow 未启动时阻塞管理界面。
     ragflow_catalog_timeout_seconds: int = 5
 

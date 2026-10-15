@@ -61,7 +61,8 @@ def test_unified_search_merges_sources_and_returns_trace(monkeypatch):
 
     assert response.total == 3
     assert response.sources_used == ["document", "graph", "qa"]
-    assert response.hits[0].title == "设备关系"
+    assert response.hits[0].title == "标准答案"
+    assert len({item.metadata["fusion_score"] for item in response.hits}) == 1
     assert len(response.trace) == 3
     assert all(item["status"] == "success" for item in response.trace)
 

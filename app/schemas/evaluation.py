@@ -7,6 +7,14 @@ from uuid import uuid4
 from pydantic import BaseModel, Field
 
 
+class ExpectedFact(BaseModel):
+    subject: str = Field(default="", max_length=160)
+    attribute: str = Field(default="", max_length=240)
+    value: str = Field(min_length=1, max_length=1200)
+    unit: str = Field(default="", max_length=40)
+    condition: str = Field(default="", max_length=240)
+
+
 class EvaluationCase(BaseModel):
     """一条可重复执行的 Agent 问题和可选期望。"""
 
@@ -15,6 +23,9 @@ class EvaluationCase(BaseModel):
     id: str | None = Field(default=None, max_length=120)
     query: str = Field(min_length=1, max_length=10000)
     expected_answer_contains: list[str] = Field(default_factory=list, max_length=20)
+    expected_facts: list[ExpectedFact] = Field(default_factory=list, max_length=20)
+    expected_citation_support: bool | None = None
+    history: list[dict[str, str]] = Field(default_factory=list, max_length=40)
     expected_intents: list[str] = Field(default_factory=list, max_length=12)
     expected_entities: list[str] = Field(default_factory=list, max_length=20)
     expected_source_types: list[str] = Field(default_factory=list, max_length=12)

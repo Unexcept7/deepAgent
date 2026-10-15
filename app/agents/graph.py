@@ -48,6 +48,7 @@ from app.graph.provenance import normalize_graph_relation_evidence
 from app.multimodal import multimodal_content, normalize_attachments
 from app.model_registry import plan_model_routing
 from app.search.query_plan import build_safe_retrieval_plan
+from app.search.budget import search_budget_scope, claim_model_call, search_budget, remaining_timeout
 from app.tools.ragflow import RAGFLOW_TOOLS, list_knowledge_bases, search_knowledge_base
 from app.tools.unified import unified_search
 from app.tool_center.context import ContextThreadPoolExecutor as ThreadPoolExecutor, ExecutionContext, runtime_scope
@@ -169,6 +170,9 @@ class RetrievalGuardMiddleware(AgentMiddleware):
         retrieval tool from the next model request and let the model produce
         the structured answer from the evidence already in state.
         """
+        claim_model_call()
+        if search_budget.get() is not None and hasattr(request, "model_settings"):
+            request = request.override(model_settings={**request.model_settings, "timeout": remaining_timeout(60)})
         completed_searches = 0
         for message in (request.state or {}).get("messages", []):
             if not isinstance(message, ToolMessage):
@@ -445,19 +449,7 @@ def _prefetch_multi_entity_messages(query: str, *, top_k: int = 8) -> list[Any]:
 
 def _prefetch_single_query_messages(query: str, *, top_k: int = 8) -> list[Any]:
     """Force one compact RAGFlow retrieval before factual claim processing."""
-    identifiers = extract_identifiers(query)
-    aspects = extract_aspects(query)
-    if "channels_io" in aspects:
-        aspects = [aspect for aspect in aspects if aspect != "channels_generic"]
-    focus = " ".join(PREFETCH_ASPECT_LABELS.get(item, item) for item in aspects)
-    if "批量" in query:
-        focus = f"{focus} 批量读写".strip()
-    if identifiers:
-        search_query = f"{identifiers[0]} {focus or '相关技术参数'}"
-    elif focus:
-        search_query = focus
-    else:
-        search_query = " ".join(query.split())[:240]
+    search_query = " ".join(query.split())
 
     tool_call_id = "prefetch-search-1"
     try:
@@ -640,6 +632,34 @@ def _prefetch_unified_search_messages(
     ]
 
 
+def _workflow_condition_matches(expression: Any, confirmation: bool) -> bool:
+    normalized = " ".join(str(expression or "").casefold().split())
+    if not normalized or normalized == "true":
+        return True
+    if normalized == "false":
+        return False
+    if normalized == "requires_confirmation == true":
+        return confirmation
+    if normalized == "requires_confirmation == false":
+        return not confirmation
+    return False
+
+
+def _workflow_branch_allowed(workflow: dict, node_id: str, confirmation: bool, visited: frozenset = frozenset()) -> bool:
+    if node_id in visited:
+        return False
+    node = next((item for item in workflow.get("nodes", []) if str(item.get("id")) == node_id), None)
+    if not node or not node.get("enabled", True) or not _workflow_condition_matches(node.get("condition"), confirmation):
+        return False
+    incoming = [edge for edge in workflow.get("edges", []) if str(edge.get("target")) == node_id]
+    return not incoming or any(
+        edge.get("enabled", True)
+        and _workflow_condition_matches(edge.get("condition"), confirmation)
+        and _workflow_branch_allowed(workflow, str(edge.get("source")), confirmation, visited | {node_id})
+        for edge in incoming
+    )
+
+
 def _prefetch_parallel_workflow_messages(
     query: str,
     workflow: dict[str, Any] | None,
@@ -662,8 +682,9 @@ def _prefetch_parallel_workflow_messages(
         return []
     nodes = workflow.get("nodes") or []
     edges = workflow.get("edges") or []
-    parallel_nodes = [item for item in nodes if item.get("type") == "parallel" and item.get("enabled", True)]
-    if not parallel_nodes:
+    confirmation = any(term in query for term in ("提交", "写入", "创建工单", "导入", "删除", "执行动作", "发布"))
+    parallel_nodes = [item for item in nodes if item.get("type") == "parallel" and item.get("enabled", True) and _workflow_branch_allowed(workflow, str(item.get("id")), confirmation)]
+    if not any(item.get("type") == "parallel" and item.get("enabled", True) for item in nodes):
         return []
     by_id = {str(item.get("id")): item for item in nodes}
     branches: list[dict[str, Any]] = []
@@ -672,10 +693,10 @@ def _prefetch_parallel_workflow_messages(
             if edge.get("source") != parallel.get("id") or edge.get("enabled", True) is False:
                 continue
             target = by_id.get(str(edge.get("target")))
-            if target and target.get("enabled", True) and target not in branches:
+            if target and target.get("enabled", True) and target not in branches and _workflow_condition_matches(edge.get("condition"), confirmation) and _workflow_branch_allowed(workflow, str(target.get("id")), confirmation):
                 branches.append(target)
     if not branches:
-        return []
+        return [ToolMessage(name="unified_search", tool_call_id="conditional-search-skipped", content=json.dumps({"query": query, "hits": [], "warnings": ["搜索分支条件未满足，已跳过"]}, ensure_ascii=False))]
 
     _emit_workflow_node(
         callback,
@@ -881,6 +902,13 @@ def _should_expand_evidence_retrieval(
     return False
 
 
+def _missing_retrieval_requirements(messages: list[Any], requirements: list[dict], evidence_mode: str) -> list[dict]:
+    return [
+        requirement for requirement in requirements
+        if _summarize_evidence(messages, str(requirement.get("retrieval_query") or ""), evidence_mode="industrial_strict" if evidence_mode == "generic" else evidence_mode).get("status") != "supported"
+    ]
+
+
 def _emit_workflow_node(
     callback: Callable[[dict[str, Any]], None] | None,
     workflow: dict[str, Any] | None,
@@ -957,6 +985,8 @@ def _stream_agent(
     invoke_input: dict[str, Any],
     settings: Any,
     callback: Callable[[dict[str, Any]], None],
+    *,
+    publish_tokens: bool = True,
 ) -> dict[str, Any]:
     """Stream LangGraph updates/messages while reconstructing invoke-like state."""
     state: dict[str, Any] = {
@@ -997,7 +1027,7 @@ def _stream_agent(
         elif mode == "messages":
             message = chunk[0] if isinstance(chunk, tuple) and chunk else chunk
             text = _message_content_text(message)
-            if text:
+            if text and publish_tokens:
                 callback({"type": "token", "content": text})
 
     return state
@@ -1128,6 +1158,9 @@ def _try_semantic_route(
             if not value:
                 continue
             normalized = str(entity.get("normalized_value") or value).strip()
+            user_text = "\n".join([query, *[str(item.get("content") or "") for item in context_payload.get("recent_turns", []) if item.get("role") == "user"]])
+            if value.casefold() not in user_text.casefold() or normalized.casefold() != value.casefold():
+                continue
             key = normalized.casefold()
             if key in known_entity_keys:
                 continue
@@ -1208,6 +1241,7 @@ def _try_semantic_route(
 
 @trace_scope
 @runtime_scope
+@search_budget_scope
 def run_agent(
     history: list[dict[str, Any]],
     query: str,
@@ -1496,7 +1530,7 @@ def run_agent(
                 )
             if configured_node.get("type") == "condition" and configured_node.get("enabled", True):
                 expression = str(configured_node.get("condition") or "requires_confirmation == true")
-                passed = confirmation_requested if "requires_confirmation" in expression else True
+                passed = _workflow_condition_matches(expression, confirmation_requested)
                 _emit_workflow_node(
                     on_event,
                     workflow,
@@ -1549,7 +1583,13 @@ def run_agent(
                 requirement_token_usage,
                 plan.token_usage,
             )
-            if bool(getattr(settings, "requirement_plan_audit_enabled", True)):
+            simple_requirement = (
+                len(requirements) == 1
+                and len(extract_identifiers(retrieval_query)) <= 1
+                and len(extract_aspects(retrieval_query)) <= 1
+                and not any(term in retrieval_query for term in ("对比", "比较", "分别", "和", "及", "、", "以及"))
+            )
+            if bool(getattr(settings, "requirement_plan_audit_enabled", True)) and not simple_requirement:
                 audit = audit_requirement_plan(
                     _create_stage_model(
                         "requirement_audit",
@@ -1686,8 +1726,22 @@ def run_agent(
                 or getattr(settings, "sql_search_url", None)
                 or getattr(settings, "mcp_search_url", None)
             )
-            def prefetch_at_top_k(top_k: int) -> list[Any]:
+            def prefetch_at_top_k(top_k: int, targeted_requirements: list[dict] | None = None) -> list[Any]:
+                if workflow:
+                    search_nodes = [node for node in workflow.get("nodes", []) if node.get("type") in {"search", "unified_search", "parallel", "api"}]
+                    confirmation = any(term in query for term in ("提交", "写入", "创建工单", "导入", "删除", "执行动作", "发布"))
+                    if search_nodes and not any(_workflow_branch_allowed(workflow, str(node.get("id")), confirmation) for node in search_nodes):
+                        return [ToolMessage(name="unified_search", tool_call_id="conditional-search-skipped", content=json.dumps({"query": retrieval_query, "hits": [], "warnings": ["所有搜索分支条件未满足，已跳过"]}, ensure_ascii=False))]
                 if use_unified_prefetch and not dataset_list_query and requires_evidence:
+                    if targeted_requirements is not None:
+                        targeted_plan = retrieval_plan.model_copy(update={
+                            "document_queries": list(dict.fromkeys(str(item.get("retrieval_query") or retrieval_query) for item in targeted_requirements)),
+                            "graph_queries": list(dict.fromkeys(str(item.get("subject") or "") for item in targeted_requirements if item.get("subject"))),
+                        })
+                        return _prefetch_unified_search_messages(
+                            retrieval_query, source_types=requested_source_types, filters=requested_search_filters,
+                            top_k=top_k, query_plan=targeted_plan.model_dump(mode="json"),
+                        )
                     messages_at_top_k = _prefetch_parallel_workflow_messages(
                         retrieval_query,
                         workflow,
@@ -1712,7 +1766,7 @@ def run_agent(
                 if requires_evidence:
                     if requirement_pipeline_enabled and requirements:
                         return _prefetch_requirement_messages(
-                            requirements,
+                            targeted_requirements if targeted_requirements is not None else requirements,
                             max_workers=max(
                                 1,
                                 min(
@@ -1750,9 +1804,10 @@ def run_agent(
                     first_pass_assessment,
                     requirement_count=len(requirements),
                 ):
-                    expanded_messages = prefetch_at_top_k(workflow_top_k)
+                    missing_requirements = _missing_retrieval_requirements(prefetch_messages, requirements, evidence_mode) if requirements else None
+                    expanded_messages = prefetch_at_top_k(workflow_top_k, missing_requirements) if missing_requirements is None or missing_requirements else []
                     if expanded_messages:
-                        prefetch_messages = expanded_messages
+                        prefetch_messages = [*prefetch_messages, *expanded_messages]
                         retrieval_expanded = True
             routing_policy["retrieval_expanded"] = retrieval_expanded
             if prefetch_messages:
@@ -1809,7 +1864,7 @@ def run_agent(
         else:
             invoke_input = {"messages": agent_messages}
             if on_event is not None and hasattr(agent, "stream"):
-                result = _stream_agent(agent, invoke_input, settings, on_event)
+                result = _stream_agent(agent, invoke_input, settings, on_event, publish_tokens=not requires_evidence)
             else:
                 try:
                     result = agent.invoke(
@@ -1946,12 +2001,8 @@ def run_agent(
     # invalid or incomplete structured payload.  Bind the plain answer to the
     # verified chunks in this turn on the server instead.  Legacy/test agents
     # that still return AgentAnswer keep their explicit evidence IDs.
-    if plain_response and verified_chunks:
-        used_evidence_ids = [
-            str(item.get("evidence_id"))
-            for item in verified_chunks
-            if item.get("evidence_id")
-        ]
+    if plain_response and verified_chunks and not requirement_pipeline_enabled:
+        used_evidence_ids = []
 
     if requires_evidence:
         if evidence.get("has_error") and not verified_chunks:
@@ -2027,6 +2078,11 @@ def run_agent(
             attachments=normalized_attachments,
         )
         requirement_results = evaluation.results
+        if evidence.get("has_error"):
+            for item in requirement_results:
+                if item.get("status") == "unsupported" and item.get("reason_code") == "no_evidence":
+                    item["reason_code"] = "source_error"
+                    item["reason"] = "部分检索来源故障，当前无法确认；这不表示资料中没有答案。"
         coverage = evaluation.coverage
         requirement_warning = evaluation.warning
         claims = requirement_results_to_claims(requirement_results)
@@ -2313,6 +2369,16 @@ def run_agent(
     routing_policy["answer_assembly"] = answer_assembly
     result_payload["trace"]["routing_policy"] = routing_policy
     result_payload["trace"]["context_resolution"] = context_resolution
+    budget = search_budget.get()
+    if budget is not None:
+        result_payload["trace"]["request_budget"] = {
+            "search_calls": budget.calls,
+            "max_search_calls": budget.max_calls,
+            "model_calls": budget.model_calls,
+            "max_model_calls": budget.max_model_calls,
+            "planning_calls": budget.planning_calls,
+            "max_planning_calls": budget.max_planning_calls,
+        }
     if business_action and not requires_evidence:
         labels = {"awaiting_confirmation": "等待你点击确认，尚未提交", "awaiting_approval": "等待其他审批者批准，尚未执行",
                   "success": "执行成功", "error": "执行失败", "unknown": "结果不确定，请核对业务系统，不能自动重试",
@@ -3135,7 +3201,6 @@ def _summarize_evidence(
             search_calls += 1
             if payload.get("error"):
                 errors.append(str(payload["error"]))
-                continue
             raw_chunks = payload.get("chunks") or []
             payload_chunks = [item for item in raw_chunks if isinstance(item, dict)]
             candidate_count += int(payload.get("candidate_count") or len(payload_chunks))
@@ -3154,6 +3219,7 @@ def _summarize_evidence(
                     str(chunk.get("dataset_id") or ""),
                     str(chunk.get("document_id") or ""),
                     str(chunk.get("page") or ""),
+                    str(chunk.get("version") or ""),
                     str(chunk.get("content") or ""),
                 )
                 if key not in seen_chunks:
@@ -3183,6 +3249,8 @@ def _summarize_evidence(
                     "source_type": hit.get("source_type"),
                     "source_name": hit.get("source_name"),
                     "version": hit.get("version"),
+                    "effective_from": hit.get("effective_from"),
+                    "effective_to": hit.get("effective_to"),
                     "updated_at": hit.get("updated_at"),
                     "authority": hit.get("authority"),
                     "freshness": hit.get("freshness"),
@@ -3192,6 +3260,7 @@ def _summarize_evidence(
                     str(chunk.get("source_type") or ""),
                     str(chunk.get("document_id") or chunk.get("document_name") or ""),
                     str(chunk.get("page") or ""),
+                    str(chunk.get("version") or ""),
                     str(chunk.get("content") or ""),
                 )
                 if key not in seen_chunks:

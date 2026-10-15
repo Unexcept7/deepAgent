@@ -198,6 +198,8 @@ class ExecutionTrace(BaseModel):
 
 
 class EvidenceSummary(BaseModel):
+    has_error: bool = False
+    errors: list[str] = Field(default_factory=list)
     status: str = "not_required"
     requires_evidence: bool = False
     reason: str | None = None

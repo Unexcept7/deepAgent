@@ -21,6 +21,8 @@ from app.agents.claims import (
     _invoke_json,
     _payload_model_calls,
     _payload_token_usage,
+    fact_value_supported,
+    bounded_evidence_chunks,
 )
 from app.schemas.answer import (
     AnswerClaim,
@@ -125,7 +127,8 @@ def build_fact_ledger(
         evidence_ids = _valid_ids(item.get("evidence_ids"), allowed_ids)
         status = _normalize_status(item.get("status"))
         value = str(item.get("value") or "").strip()
-        if status == "supported" and (not value or not evidence_ids):
+        bound_chunks = [chunk for chunk in chunks if str(chunk.get("evidence_id")) in evidence_ids]
+        if status == "supported" and (not value or not evidence_ids or not fact_value_supported(value, item.get("subject"), bound_chunks, attribute=str(item.get("request") or ""))):
             status = "unsupported"
         source_names = list(dict.fromkeys(
             str(source.get("document_name") or "").strip()
@@ -195,7 +198,7 @@ def _fact_context(facts: list[AnswerFact]) -> list[dict[str, Any]]:
 def _evidence_context(chunks: list[dict[str, Any]]) -> list[dict[str, Any]]:
     evidence: list[dict[str, Any]] = []
     total_chars = 0
-    for item in chunks:
+    for item in bounded_evidence_chunks(chunks):
         try:
             evidence_item = EvidenceItem.model_validate({
                 **item,
@@ -304,12 +307,12 @@ def _fallback_plan(
         elif fact.status == "conflict":
             segments.append(AnswerPlanSegment(
                 type="text",
-                text=f"{fact.entity}的{fact.attribute}存在资料冲突，当前无法安全确认。",
+                text=f"{fact.entity}的{fact.attribute}存在资料冲突，当前无法安全确认。" + (f"冲突来源：{'、'.join(fact.source_names)}。" if fact.source_names else ""),
             ))
         else:
             segments.append(AnswerPlanSegment(
                 type="text",
-                text=f"当前资料无法确认{fact.entity}的{fact.attribute}。",
+                text=f"当前资料无法确认{fact.entity}的{fact.attribute}。" + ("部分检索来源故障，不代表资料中没有答案。" if "检索来源故障" in fact.reason else ""),
             ))
     if not facts:
         segments.append(AnswerPlanSegment(
@@ -333,10 +336,12 @@ def _render_plan(
     rendered_fact_ids: list[str] = []
     invalid_fact_ids = list(plan.invalid_fact_ids)
     dropped_segments = int(plan.dropped_segments or 0)
+    safe_text = {segment.text for segment in _fallback_plan(facts, {}).segments if segment.type == "text"}
+    safe_text.update({"以上仅包含当前资料能够支持的部分，未确认内容不会被推断。", "具体如下：", "对比如下：", "", "根据资料："})
     for segment in plan.segments[:32]:
         if segment.type == "text":
             text = segment.text.strip()
-            if text:
+            if text and text in safe_text:
                 rendered.append(text)
             else:
                 dropped_segments += 1
@@ -352,7 +357,8 @@ def _render_plan(
                 invalid_fact_ids.append(segment.fact_id.strip())
             dropped_segments += 1
             continue
-        rendered.append(f"{segment.prefix}{fact.value}{segment.suffix}")
+        prefix = f"{fact.entity}的{fact.attribute}为"
+        rendered.append(f"{prefix}{fact.value}。")
         rendered_fact_ids.append(fact.fact_id)
     rendered_fact_ids = list(dict.fromkeys(rendered_fact_ids))
     invalid_fact_ids = list(dict.fromkeys(item for item in invalid_fact_ids if item))
@@ -584,13 +590,7 @@ def validate_answer_plan(
     draft: AnswerDraft,
     chunks: list[dict[str, Any]],
 ) -> dict[str, Any]:
-    """Validate only fact-ID/source binding and plan structure.
-
-    This deliberately does not compare arbitrary prose with source text.  The
-    factual value in every ``fact`` segment already comes from the server-side
-    ledger, so the backend only needs to reject unknown IDs, unsupported facts,
-    and missing source bindings.
-    """
+    """Validate rendered facts, critical values and their selected evidence."""
     allowed_ids = _allowed_evidence_ids(chunks)
     violations: list[str] = []
     plan = draft.answer_plan
@@ -607,6 +607,9 @@ def validate_answer_plan(
     rendered_fact_ids: list[str] = []
     invalid_fact_ids: list[str] = []
     if plan is not None:
+        rendered_answer, _, _, _ = _render_plan(plan, draft.fact_ledger)
+        if draft.answer != rendered_answer:
+            violations.append("答案与服务器渲染的事实计划不一致")
         invalid_fact_ids.extend(plan.invalid_fact_ids)
         for segment in plan.segments:
             if segment.type != "fact":
@@ -631,6 +634,10 @@ def validate_answer_plan(
                     + "、".join(unknown_evidence_ids)
                 )
                 continue
+            bound_chunks = [chunk for chunk in chunks if str(chunk.get("evidence_id")) in fact.evidence_ids]
+            if not fact_value_supported(fact.value, fact.entity, bound_chunks, attribute=fact.attribute):
+                violations.append(f"事实 {fact_id} 的引用不支持关键型号、数值或单位")
+                continue
             rendered_fact_ids.append(fact_id)
         expected_used = list(dict.fromkeys(rendered_fact_ids))
         if list(dict.fromkeys(plan.used_fact_ids)) != expected_used:
@@ -647,6 +654,8 @@ def validate_answer_plan(
     )
     if supported_fact_count and not rendered_fact_ids:
         violations.append("事实账本存在可发布事实，但答案没有引用任何事实段")
+    if len(set(rendered_fact_ids)) < supported_fact_count:
+        violations.append("答案遗漏了已支持的需求项")
     used_evidence_ids = list(dict.fromkeys(
         evidence_id
         for fact in draft.fact_ledger

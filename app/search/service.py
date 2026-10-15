@@ -3,19 +3,52 @@
 from __future__ import annotations
 
 import time
-from concurrent.futures import as_completed
+from concurrent.futures import wait
 from functools import lru_cache
-from threading import RLock
+from threading import RLock, BoundedSemaphore
 
 from app.config import get_settings
 from app.search.connectors import SearchConnector, default_connectors
 from app.search.models import SearchHit, SearchRequest, SearchResponse
 from app.observability import current_trace_recorder
 from app.tool_center.context import ContextThreadPoolExecutor as ThreadPoolExecutor, execution_context
+from app.search.budget import remaining_timeout, search_budget, source_deadline
+
+
+_search_executor = ThreadPoolExecutor(max_workers=8)
+_search_slots = BoundedSemaphore(8)
+_managed_health: dict[str, dict[str, object]] = {}
+_managed_health_lock = RLock()
+
+
+def _connector_key(connector) -> str:
+    connection = getattr(connector, "connection", {}) or {}
+    context = execution_context.get()
+    workspace = context.workspace_id if context else "default"
+    return f"{workspace}:{connector.source_type}:{connection.get('connection_id') or connector.name}"
+
+
+def _run_connector(connector, request, limiter, deadline):
+    token = source_deadline.set(deadline)
+    try:
+        if not limiter.acquire(timeout=remaining_timeout(max(0, deadline - time.monotonic()))):
+            raise TimeoutError("搜索执行等待超时")
+        try:
+            budget = search_budget.get()
+            if budget is not None and connector.source_type != "document":
+                budget.claim()
+            timeout = remaining_timeout(max(0, deadline - time.monotonic()))
+            request = request.model_copy(update={"timeout_ms": max(1, int(timeout * 1000))})
+            return connector.search(request)
+        finally:
+            limiter.release()
+    finally:
+        source_deadline.reset(token)
+        _search_slots.release()
 
 
 def _rrf_merge(
-    groups: dict[str, list[SearchHit]],
+    groups: dict[object, list[SearchHit]],
     *,
     top_k: int,
     rank_constant: int = 60,
@@ -34,25 +67,37 @@ def _rrf_merge(
         "sql": 1.0,
         "mcp": 0.95,
     }
-    fused: dict[tuple[str, str, str], tuple[float, SearchHit]] = {}
-    for source_type, source_hits in groups.items():
+    fused = {}
+    for source_hits in groups.values():
         ranked = sorted(
             source_hits,
             key=lambda item: item.ranking_score,
             reverse=True,
         )
-        for rank, hit in enumerate(ranked, start=1):
+        seen = set()
+        rank = 0
+        for hit in ranked:
             key = _hit_identity(hit)
-            score = source_weights.get(source_type, 1.0) / (rank_constant + rank)
+            if key in seen:
+                continue
+            seen.add(key)
+            rank += 1
+            score = source_weights.get(hit.source_type, 1.0) / (rank_constant + rank)
             previous = fused.get(key)
             if previous is None:
                 fused[key] = (score, hit)
             else:
-                fused[key] = (previous[0] + score, previous[1])
+                queries = list(dict.fromkeys([
+                    *previous[1].metadata.get("retrieval_queries", []),
+                    str(previous[1].metadata.get("retrieval_query") or ""),
+                    str(hit.metadata.get("retrieval_query") or ""),
+                ]))
+                merged = previous[1].model_copy(update={"metadata": {**previous[1].metadata, "retrieval_queries": [query for query in queries if query]}})
+                fused[key] = (previous[0] + score, merged)
 
     ordered = sorted(
         fused.values(),
-        key=lambda item: (item[0], item[1].ranking_score),
+        key=lambda item: (item[0], item[1].evidence_id),
         reverse=True,
     )
     result: list[SearchHit] = []
@@ -71,7 +116,7 @@ def _rrf_merge(
     return result
 
 
-def _hit_identity(hit: SearchHit) -> tuple[str, str, str, str, str, str]:
+def _hit_identity(hit: SearchHit) -> tuple[str, ...]:
     """Return a stable chunk identity for deduplication.
 
     Titles are not document identities: two pages in one PDF often share the
@@ -85,6 +130,7 @@ def _hit_identity(hit: SearchHit) -> tuple[str, str, str, str, str, str]:
         str(hit.document_id or ""),
         str(hit.evidence_id or ""),
         str(hit.page or ""),
+        str(hit.version or ""),
         " ".join(str(hit.content or "").split()),
     )
 
@@ -105,6 +151,9 @@ class UnifiedSearchService:
         )
         self._health_lock = RLock()
         self._health: dict[str, dict[str, object]] = {}
+        if execution_context.get() is not None:
+            self._health = _managed_health
+            self._health_lock = _managed_health_lock
 
     def _health_record(self, source_type: str) -> dict[str, object]:
         with self._health_lock:
@@ -155,9 +204,9 @@ class UnifiedSearchService:
         result = []
         for connector in self.connectors:
             configured = bool(connector.available)
-            record = dict(self._health_record(connector.source_type))
+            record = dict(self._health_record(_connector_key(connector)))
             open_until = record.get("circuit_open_until")
-            circuit_open = self._circuit_open(connector.source_type, now)
+            circuit_open = self._circuit_open(_connector_key(connector), now)
             state = "unconfigured"
             if configured:
                 state = "circuit_open" if circuit_open else (
@@ -203,7 +252,7 @@ class UnifiedSearchService:
             if connector.source_type in requested
             and connector.source_type in configured_types
             and connector.available
-            and not self._circuit_open(connector.source_type)
+            and not self._circuit_open(_connector_key(connector))
         ]
         warnings: list[str] = []
         errors: list[str] = []
@@ -211,36 +260,56 @@ class UnifiedSearchService:
         for connector in self.connectors:
             if connector.source_type in requested and not connector.available:
                 warnings.append(f"{connector.name} 未配置，已跳过")
-            elif connector.source_type in requested and self._circuit_open(connector.source_type):
+            elif connector.source_type in requested and self._circuit_open(_connector_key(connector)):
                 warnings.append(
                     f"{connector.name} 最近连续失败，暂时熔断 {self._cooldown_seconds} 秒，已跳过"
                 )
+                errors.append(f"{connector.name} 来源熔断，未执行检索")
         if not selected:
             return SearchResponse(
                 query=request.query,
                 sources_requested=sorted(requested),
                 warnings=[*warnings, "没有可用的已配置搜索源"],
+                errors=errors,
                 duration_ms=round((time.perf_counter() - started) * 1000),
             )
 
-        hits_by_source: dict[str, list[SearchHit]] = {}
-        worker_count = max(1, min(len(selected), int(settings.search_max_parallel)))
+        hits_by_source: dict[tuple[str, str], list[SearchHit]] = {}
         source_started_at: dict[int, float] = {}
-        with ThreadPoolExecutor(max_workers=worker_count) as executor:
+        timeout = remaining_timeout(min(request.timeout_ms / 1000, getattr(settings, "unified_search_timeout_seconds", 8)))
+        deadline = time.monotonic() + timeout
+        limiter = BoundedSemaphore(max(1, min(8, int(settings.search_max_parallel))))
+        request = request.model_copy(update={"timeout_ms": max(1, int(timeout * 1000))})
+        if selected:
             futures = {}
             source_started_at = {}
             for connector in selected:
                 source_started_at[id(connector)] = time.perf_counter()
-                futures[executor.submit(connector.search, request)] = connector
-            for future in as_completed(futures):
+                if not _search_slots.acquire(blocking=False):
+                    errors.append(f"{connector.name} 搜索执行容量已满")
+                    trace.append({"source_type": connector.source_type, "source_name": connector.name, "status": "error", "error": "搜索执行容量已满"})
+                    continue
+                future = _search_executor.submit(_run_connector, connector, request, limiter, deadline)
+                future.add_done_callback(lambda completed: _search_slots.release() if completed.cancelled() else None)
+                futures[future] = connector
+            completed, pending = wait(futures, timeout=max(0, deadline - time.monotonic()))
+            for future in pending:
+                connector = futures[future]
+                future.cancel()
+                errors.append(f"{connector.name} 检索超时")
+                self._record_failure(_connector_key(connector), "检索超时")
+                trace.append({"source_type": connector.source_type, "source_name": connector.name, "status": "timeout", "error": "检索超时"})
+            for future in completed:
                 connector = futures[future]
                 source_started = source_started_at.get(id(connector), time.perf_counter())
                 connection = getattr(connector, "connection", {}) or {}
                 connection_id = connection.get("connection_id") if isinstance(connection, dict) else None
                 try:
                     source_hits = future.result()
-                    hits_by_source.setdefault(connector.source_type, []).extend(source_hits)
-                    self._record_success(connector.source_type)
+                    for hit in source_hits:
+                        path = str(hit.metadata.get("retrieval_query") or request.query)
+                        hits_by_source.setdefault((_connector_key(connector), path), []).append(hit)
+                    self._record_success(_connector_key(connector))
                     duration_ms = round((time.perf_counter() - source_started) * 1000)
                     trace.append({
                         "source_type": connector.source_type,
@@ -267,7 +336,7 @@ class UnifiedSearchService:
                 except Exception as exc:  # 单个系统故障不能拖垮其他来源
                     message = f"{connector.name} 检索失败：{exc}"
                     errors.append(message)
-                    self._record_failure(connector.source_type, str(exc))
+                    self._record_failure(_connector_key(connector), str(exc))
                     duration_ms = round((time.perf_counter() - source_started) * 1000)
                     trace.append({
                         "source_type": connector.source_type,
@@ -292,9 +361,9 @@ class UnifiedSearchService:
                             },
                         )
 
-        deduplicated_groups: dict[str, list[SearchHit]] = {}
+        deduplicated_groups: dict[object, list[SearchHit]] = {}
         for source_type, source_hits in hits_by_source.items():
-            deduplicated: dict[tuple[str, str, str, str, str, str], SearchHit] = {}
+            deduplicated: dict[tuple[str, ...], SearchHit] = {}
             for hit in source_hits:
                 key = _hit_identity(hit)
                 existing = deduplicated.get(key)

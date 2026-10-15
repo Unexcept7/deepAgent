@@ -16,6 +16,7 @@ import requests
 
 from app.agents.evidence import extract_identifiers
 from app.config import get_settings
+from app.search.budget import remaining_timeout
 from app.graph.neo4j_store import GraphStoreError, Neo4jGraphStore
 from app.graph.provenance import (
     graph_relation_id,
@@ -102,12 +103,16 @@ class RAGFlowSearchConnector(SearchConnector):
                     title=str(item.get("document_name") or "未知文档"),
                     content=str(item.get("content") or ""),
                     score=float(item.get("score") or 0),
-                    authority=0.8,
-                    freshness=0.8,
+                    authority=item.get("authority"),
+                    freshness=item.get("freshness"),
                     entity_match=0.7 if query else 0,
                     document_id=document_id,
                     dataset_id=dataset_id,
                     page=item.get("page"),
+                    version=item.get("version"),
+                    effective_from=item.get("effective_from"),
+                    effective_to=item.get("effective_to"),
+                    updated_at=item.get("updated_at"),
                     evidence_id=evidence_id,
                     url=(
                         f"/source-documents/{dataset_id}/{document_id}"
@@ -165,8 +170,8 @@ class QAFileConnector(SearchConnector):
                 title=question or f"QA-{index + 1}",
                 content=answer,
                 score=score,
-                authority=float(item.get("authority", 0.95)),
-                freshness=float(item.get("freshness", 0.9)),
+                authority=item.get("authority"),
+                freshness=item.get("freshness"),
                 entity_match=score,
                 version=str(item.get("version") or "") or None,
                 evidence_id=f"qa:{index + 1}",
@@ -257,8 +262,8 @@ class Neo4jSearchConnector(SearchConnector):
                     title=str(left.get("name") or left.get("id") or "图谱关系"),
                     content=content,
                     score=float(relevance.get("score") or 0.85),
-                    authority=0.9,
-                    freshness=0.8,
+                    authority=None,
+                    freshness=None,
                     entity_match=1.0,
                     document_id=str(primary_evidence.get("document_id") or "") or None,
                     dataset_id=str(primary_evidence.get("dataset_id") or "") or None,
@@ -307,7 +312,7 @@ class BusinessSearchConnector(SearchConnector):
             f"{self.base_url}/search",
             headers=headers,
             json={"query": request.query, "filters": request.filters, "top_k": request.top_k},
-            timeout=min(self.timeout, max(1, request.timeout_ms // 1000)),
+            timeout=min(self.timeout, remaining_timeout(request.timeout_ms / 1000)),
         )
         response.raise_for_status()
         payload = response.json()
@@ -322,8 +327,8 @@ class BusinessSearchConnector(SearchConnector):
                 title=str(item.get("title") or item.get("name") or "业务记录"),
                 content=str(item.get("content") or item.get("summary") or json.dumps(item, ensure_ascii=False)),
                 score=float(item.get("score") or 0.8),
-                authority=float(item.get("authority") or 0.9),
-                freshness=float(item.get("freshness") or 0.9),
+                authority=item.get("authority"),
+                freshness=item.get("freshness"),
                 entity_match=float(item.get("entity_match") or 0.8),
                 document_id=str(item.get("id") or "") or None,
                 version=str(item.get("version") or "") or None,
@@ -374,7 +379,7 @@ class SQLSearchConnector(SearchConnector):
             self.url,
             headers=headers,
             json=payload,
-            timeout=min(self.timeout, max(1, request.timeout_ms // 1000)),
+            timeout=min(self.timeout, remaining_timeout(request.timeout_ms / 1000)),
         )
         response.raise_for_status()
         return normalize_sql_hits(
@@ -411,7 +416,7 @@ class MCPReadSearchConnector(SearchConnector):
             self.url,
             headers=headers,
             json={"query": request.query, "top_k": request.top_k, "filters": request.filters},
-            timeout=max(1, request.timeout_ms // 1000),
+            timeout=remaining_timeout(request.timeout_ms / 1000),
         )
         response.raise_for_status()
         payload = response.json()
@@ -423,8 +428,8 @@ class MCPReadSearchConnector(SearchConnector):
                 title=str(item.get("title") or "MCP 记录"),
                 content=str(item.get("content") or ""),
                 score=float(item.get("score") or 0.75),
-                authority=float(item.get("authority") or 0.8),
-                freshness=float(item.get("freshness") or 0.8),
+                authority=item.get("authority"),
+                freshness=item.get("freshness"),
                 entity_match=float(item.get("entity_match") or 0.7),
                 evidence_id=str(item.get("evidence_id") or f"mcp:{index + 1}"),
                 metadata={"read_only": True, **item},

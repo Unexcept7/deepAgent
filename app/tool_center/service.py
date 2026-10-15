@@ -19,6 +19,7 @@ from app.graph.provenance import graph_relation_id, normalize_graph_relation_evi
 from app.graph.relevance import expand_graph_attribute_terms, rank_graph_records
 from app.schemas.tool_center import ConnectionInput, InvokeRequest
 from app.search.models import SearchHit, SearchRequest
+from app.search.budget import remaining_timeout
 from app.search.structured_query import (
     StructuredQueryPolicyError,
     merge_sql_scope,
@@ -882,9 +883,10 @@ class ToolCenterService:
                 for item in result_chunks:
                     chunks.append({**item, "retrieval_query": retrieval_query})
             return [SearchHit(source_type="document", source_name=connection["name"], title=item.get("document_name") or "文档",
-                content=item.get("content") or "", score=float(item.get("score") or 0), authority=0.8, freshness=0.8, entity_match=0.7,
+                content=item.get("content") or "", score=float(item.get("score") or 0), authority=item.get("authority"), freshness=item.get("freshness"), entity_match=0.7,
                 evidence_id=f"{connection['connection_id']}:{item.get('evidence_id') or index}",
                 document_id=item.get("document_id"), dataset_id=item.get("dataset_id"), page=item.get("page"),
+                version=item.get("version"), effective_from=item.get("effective_from"), effective_to=item.get("effective_to"), updated_at=item.get("updated_at"),
                 metadata={
                     "connection_id": connection["connection_id"],
                     "retrieval_query": item.get("retrieval_query") or request.query,
@@ -957,8 +959,8 @@ class ToolCenterService:
                     title=left.get("name") or left.get("id") or "关系",
                     content=f"{left.get('name', '')} -[{relation.get('type', '关联')}]-> {right.get('name', '')}",
                     score=float(relevance.get("score") or 0.85),
-                    authority=0.9,
-                    freshness=0.8,
+                    authority=None,
+                    freshness=None,
                     entity_match=1,
                     evidence_id=relation_id,
                     document_id=primary.get("document_id"),
@@ -1018,7 +1020,7 @@ class ToolCenterService:
             data, _ = self.request(
                 "POST",
                 connection["endpoint"],
-                timeout=min(connection["timeout_seconds"], max(1, request.timeout_ms // 1000)),
+                timeout=min(connection["timeout_seconds"], remaining_timeout(request.timeout_ms / 1000)),
                 headers=self.headers(workspace, connection),
                 payload=sql_request_payload(request, plans, max_rows=max_rows),
             )
@@ -1045,13 +1047,13 @@ class ToolCenterService:
             data = response.get("structuredContent") or {}
         else:
             endpoint = connection["endpoint"].rstrip("/") + "/search" if ctype == "business_api" else connection["endpoint"]
-            data, _ = self.request("POST", endpoint, timeout=min(connection["timeout_seconds"], max(1, request.timeout_ms // 1000)),
+            data, _ = self.request("POST", endpoint, timeout=min(connection["timeout_seconds"], remaining_timeout(request.timeout_ms / 1000)),
                                     headers=headers, payload={"query": request.query, "top_k": request.top_k,
                                                               "limit": request.top_k, "filters": request.filters})
         items = data.get("items") or data.get("hits") or [] if isinstance(data, dict) else data
         return [SearchHit(source_type=source_type, source_name=connection["name"], title=item.get("title") or item.get("name") or "业务记录",
             content=item.get("content") or item.get("summary") or json.dumps(self.scrub(workspace, item), ensure_ascii=False),
-            score=float(item.get("score", 0.8)), authority=0.9, freshness=0.9, entity_match=0.8,
+            score=float(item.get("score", 0.8)), authority=item.get("authority"), freshness=item.get("freshness"), entity_match=0.8,
             evidence_id=f"{connection['connection_id']}:{item.get('evidence_id') or index}",
             metadata={"connection_id": connection["connection_id"], **self.scrub(workspace, item)})
             for index, item in enumerate(items) if isinstance(item, dict)]

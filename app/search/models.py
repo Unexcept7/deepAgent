@@ -153,8 +153,8 @@ class SearchHit(BaseModel):
     title: str
     content: str
     score: float = 0.0
-    authority: float = 0.5
-    freshness: float = 0.5
+    authority: float | None = None
+    freshness: float | None = None
     entity_match: float = 0.0
     document_id: str | None = None
     dataset_id: str | None = None
@@ -172,8 +172,8 @@ class SearchHit(BaseModel):
         """返回可解释的融合排序分数。"""
         return round(
             0.50 * self.score
-            + 0.20 * self.authority
-            + 0.15 * self.freshness
+            + 0.20 * (self.authority if self.authority is not None else 0.5)
+            + 0.15 * (self.freshness if self.freshness is not None else 0.5)
             + 0.10 * self.entity_match
             + 0.05 * _source_priority(self.source_type),
             6,

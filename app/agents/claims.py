@@ -842,11 +842,11 @@ def _claim_value_matches(value: Any, searchable: str) -> tuple[bool, int]:
     compact_searchable = _compact_claim_text(searchable)
     if not compact_value or not compact_searchable:
         return False, 0
-    if compact_value in compact_searchable:
-        return True, 100
     from app.agents.evidence import _high_risk_values, _value_supported
     if any(not _value_supported(item, searchable) for item in _high_risk_values(str(value or ""))):
         return False, 0
+    if compact_value in compact_searchable:
+        return True, 100
     terms = _claim_terms(value)
     hits = sum(1 for term in terms if _compact_claim_text(term) in compact_searchable)
     required = 1 if len(terms) <= 2 else 2
@@ -854,7 +854,21 @@ def _claim_value_matches(value: Any, searchable: str) -> tuple[bool, int]:
 
 
 def fact_value_supported(value: Any, subject: Any, chunks: list[dict[str, Any]], *, attribute: str = "") -> bool:
-    from app.agents.evidence import _high_risk_values, _value_supported, extract_identifiers
+    from app.agents.evidence import _high_risk_values, _value_supported, extract_identifiers, fact_clauses, FACT_QUALIFIERS
+    required_identifiers = extract_identifiers(str(subject or ""))
+    qualifiers = [item for item in FACT_QUALIFIERS if item in attribute]
+    scoped = []
+    for chunk in chunks:
+        defaults = extract_identifiers(str((chunk.get("metadata") or {}).get("question") or "")) if chunk.get("source_type") == "qa" else []
+        for clause, identifiers in fact_clauses(str(chunk.get("content") or ""), defaults):
+            known = {item.casefold() for item in identifiers}
+            if required_identifiers and not all(item.casefold() in known for item in required_identifiers):
+                continue
+            if all(item in clause for item in qualifiers):
+                scoped.append(clause)
+    risky_values = _high_risk_values(str(value or ""))
+    if risky_values and any(not any(_value_supported(item, clause) for clause in scoped) for item in risky_values):
+        return False
     content = "\n".join(str(item.get("content") or "") for item in chunks)
     content = re.sub(r"(?i)\brs\s*-?\s*(\d+)\b", r"RS\1", content)
     identity_text = content + "\n" + "\n".join(
@@ -872,7 +886,7 @@ def fact_value_supported(value: Any, subject: Any, chunks: list[dict[str, Any]],
         ]
         if related_segments:
             content = "\n".join(related_segments)
-    for qualifier in ("额定", "最大", "最小", "峰值", "空载", "满载", "默认"):
+    for qualifier in FACT_QUALIFIERS:
         if qualifier in attribute and qualifier not in content:
             return False
     if any(not _value_supported(item, content) for item in _high_risk_values(str(value or ""))):

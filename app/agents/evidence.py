@@ -12,6 +12,7 @@ import re
 import unicodedata
 from collections import Counter
 from difflib import SequenceMatcher
+from decimal import Decimal
 from typing import Any, Iterable
 
 from app.dictionary_store import get_dictionary_store
@@ -269,9 +270,9 @@ COMPLETE_COVERAGE_PATTERNS = (
 
 
 MEASUREMENT_PATTERN = re.compile(
-    r"(?<![A-Za-z0-9])"
-    r"\d+(?:\.\d+)?\s*"
-    r"(?:k?v|ma|ka|a|w|kw|hz|khz|mhz|bps|kbps|mbps|ms|s|mm|cm|m|kg|℃|°c|%|路|通道|位|字节)"
+    r"(?<![A-Za-z0-9_.+\-])"
+    r"(?P<number>[+-]?(?:\d+(?:\.\d+)?|\.\d+))\s*"
+    r"(?P<unit>k?v|mv|ma|ka|a|w|kw|hz|khz|mhz|bps|kbps|mbps|ms|s|mm|cm|m|kg|℃|°c|%|路|通道|位|字节)"
     r"(?![A-Za-z0-9])",
     re.IGNORECASE,
 )
@@ -288,6 +289,28 @@ GENERIC_STOPWORDS = {
 
 def normalize_text(value: str) -> str:
     return unicodedata.normalize("NFKC", value or "").casefold()
+
+
+FACT_QUALIFIERS = ("额定", "最大", "最小", "峰值", "空载", "满载", "默认")
+
+
+def fact_clauses(text: str, default_identifiers: Iterable[str] = ()) -> list[tuple[str, tuple[str, ...]]]:
+    active = tuple(default_identifiers)
+    result = []
+    identifiers_in_text = sorted(extract_identifiers(text), key=len, reverse=True)
+    split_pattern = r"[。；;\n，,]+|(?=" + "|".join(FACT_QUALIFIERS) + ")"
+    if identifiers_in_text:
+        object_pattern = "|".join(re.escape(item) for item in identifiers_in_text)
+        split_pattern += r"|(?=(?<![A-Za-z0-9_-])(?:" + object_pattern + r")(?![A-Za-z0-9_-]))"
+    for clause in re.split(split_pattern, text, flags=re.IGNORECASE):
+        clause = clause.strip()
+        if not clause:
+            continue
+        identifiers = extract_identifiers(clause)
+        if identifiers:
+            active = tuple(identifiers)
+        result.append((clause, active))
+    return result
 
 
 def normalize_evidence_mode(value: str | None) -> str:
@@ -1260,7 +1283,14 @@ def _value_supported(value: str, known_text: str) -> bool:
 
     normalized_value = re.sub(r"\s+", "", normalize_text(value))
     normalized_known = re.sub(r"\s+", "", normalize_text(known_text))
-    if normalized_value in normalized_known:
+    measurement = MEASUREMENT_PATTERN.fullmatch(normalize_text(value).strip())
+    if measurement:
+        expected = (Decimal(measurement.group("number")), measurement.group("unit"))
+        return any(
+            (Decimal(match.group("number")), match.group("unit")) == expected
+            for match in MEASUREMENT_PATTERN.finditer(normalize_text(known_text))
+        )
+    if re.search(r"(?<![A-Za-z0-9_.+\-])" + re.escape(normalized_value) + r"(?![A-Za-z0-9_.])", normalized_known):
         return True
 
     # Treat 0x01 and a source expression such as “1 号功能码” as equivalent,

@@ -887,8 +887,11 @@ def _should_expand_evidence_retrieval(
     assessment: dict[str, Any],
     *,
     requirement_count: int = 0,
+    missing_requirements: list[dict] | None = None,
 ) -> bool:
     """决定首轮候选是否需要扩大，不把 Top-K 缩减变成准确率风险。"""
+    if missing_requirements:
+        return True
     if not assessment:
         return True
     status = str(assessment.get("status") or "").strip().lower()
@@ -1800,11 +1803,12 @@ def run_agent(
                     generic_min_similarity=workflow_similarity_threshold,
                     evidence_mode=evidence_mode,
                 )
+                missing_requirements = _missing_retrieval_requirements(prefetch_messages, requirements, evidence_mode) if requirements else None
                 if _should_expand_evidence_retrieval(
                     first_pass_assessment,
                     requirement_count=len(requirements),
+                    missing_requirements=missing_requirements,
                 ):
-                    missing_requirements = _missing_retrieval_requirements(prefetch_messages, requirements, evidence_mode) if requirements else None
                     expanded_messages = prefetch_at_top_k(workflow_top_k, missing_requirements) if missing_requirements is None or missing_requirements else []
                     if expanded_messages:
                         prefetch_messages = [*prefetch_messages, *expanded_messages]

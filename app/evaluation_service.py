@@ -22,6 +22,7 @@ from typing import Any
 from uuid import uuid4
 
 from app.agents.graph import run_agent
+from app.agents.evidence import fact_clauses, MEASUREMENT_PATTERN, normalize_text, _value_supported
 from app.application_store import ApplicationError, get_application_store
 from app.config import get_settings
 from app.schemas.evaluation import EvaluationCase, EvaluationRunRequest
@@ -51,19 +52,20 @@ def _contains_expected(expected: str, actual_values: list[str]) -> bool:
     return bool(target) and any(target == _fold(value) or target in _fold(value) for value in actual_values)
 
 
-def _answer_contains(expected: str, answer: str) -> bool:
+def _answer_contains(expected: str, answer: str, *, check_polarity: bool = True) -> bool:
     target = _fold(expected)
     for sentence in re.split(r"[。；;\n，,]", answer):
         folded = _fold(sentence)
         exact_term = re.escape(target)
         if target and target[0].isascii() and target[0].isalnum():
-            exact_term = r"(?<![a-z0-9])" + exact_term
+            exact_term = r"(?<![a-z0-9_.+\-])" + exact_term
         if target and target[-1].isascii() and target[-1].isalnum():
             exact_term += r"(?![a-z0-9])"
-        if target and re.search(exact_term, folded) and not re.search(
-            r"不支持|不包含|不具备|没有|并非|不是|不提供|无法确认|未确认|未找到|不适用|\b(?:not|no|without)\b",
-            sentence, re.IGNORECASE,
-        ):
+        negation = r"不支持|不包含|不具备|没有|并非|不是|不提供|无法确认|未确认|未找到|不适用|\b(?:not|no|without)\b"
+        expected_negative = bool(re.search(negation, expected, re.IGNORECASE))
+        actual_negative = bool(re.search(negation, sentence, re.IGNORECASE))
+        term_matches = _value_supported(expected, sentence) if MEASUREMENT_PATTERN.fullmatch(normalize_text(expected).strip()) else bool(target and re.search(exact_term, folded))
+        if term_matches and (not check_polarity or expected_negative == actual_negative):
             return True
     return False
 
@@ -271,11 +273,12 @@ def _evaluate_case(case: EvaluationCase, result: dict[str, Any], duration_ms: in
     for expected in case.expected_facts:
         parts = [expected.attribute, f"{expected.value} {expected.unit}".strip(), expected.condition]
         matched = False
-        for sentence in re.split(r"[。；;\n]", answer):
+        for sentence, identifiers in fact_clauses(answer):
             subject_matches = not expected.subject or bool(re.search(
                 r"(?<![a-z0-9_-])" + re.escape(expected.subject) + r"(?![a-z0-9_-])", sentence, re.IGNORECASE,
             ))
-            if subject_matches and all(_answer_contains(part, sentence) for part in parts if part):
+            subject_matches = subject_matches or expected.subject.casefold() in {item.casefold() for item in identifiers}
+            if subject_matches and all(_answer_contains(part, sentence, check_polarity=index == 1) for index, part in enumerate(parts) if part):
                 matched = True
                 break
         checks.append({"type": "fact", "expected": expected.model_dump(), "actual": answer, "passed": matched})
